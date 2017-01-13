@@ -1,6 +1,6 @@
 ---
 title: "Introduction to dplyr for Faster Data Manipulation in R"
-output: html_document
+output: pdf_document
 ---
 
 Note: There is a 40-minute [video tutorial](https://www.youtube.com/watch?v=jWjqLW-u3hc) on YouTube that walks through this document in detail.
@@ -22,9 +22,10 @@ Note: There is a 40-minute [video tutorial](https://www.youtube.com/watch?v=jWjq
 * Examples below are based upon the [latest release](https://github.com/hadley/dplyr/releases), version 0.2 (released May 2014)
 
 
+
 ## Loading dplyr and an example dataset
 
-* dplyr will mask a few base functions
+* dplyr will mask a few base functions 
 * If you also use plyr, load plyr first
 * hflights is flights departing from two Houston airports in 2011
 
@@ -316,7 +317,8 @@ glimpse(flights)
 * Example below is based upon an SQLite database containing the hflights data
     * Instructions for creating this database are in the [databases vignette](http://cran.r-project.org/web/packages/dplyr/vignettes/databases.html)
 
-```{r}
+
+```{r eval=FALSE}
 # connect to an SQLite database containing the hflights data
 my_db <- src_sqlite("my_db.sqlite3")
 
@@ -337,7 +339,7 @@ flights_tbl %>%
 * You can write the SQL commands yourself
 * dplyr can tell you the SQL it plans to run and the query execution plan
 
-```{r}
+```{r eval=FALSE}
 # send SQL commands to the database
 tbl(my_db, sql("SELECT * FROM hflights LIMIT 100"))
 

@@ -1,6 +1,6 @@
 ---
 title: 'Going deeper with dplyr: New features in 0.3 and 0.4'
-output: html_document
+output: pdf_document
 ---
 
 ## Introduction
@@ -24,6 +24,7 @@ rm(flights)
 ```{r}
 # load packages
 suppressMessages(library(dplyr))
+#Make sure to install.packages("nycflights13")
 library(nycflights13)
 
 # print the flights dataset from nycflights13
