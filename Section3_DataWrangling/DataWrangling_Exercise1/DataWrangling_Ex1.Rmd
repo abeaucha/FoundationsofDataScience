@@ -8,7 +8,7 @@ output: html_document
 
 ##Introduction
 
-Let's begin by clearing the working environment and load the require libraries. 
+Let's begin by clearing the working environment and load the required libraries. 
 
 ``` {r}
 rm(list=ls())
