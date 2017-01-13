@@ -1,5 +1,5 @@
 ---
-title: "Data Wrangling: Exercise 1"
+title: "Data Wrangling Exercise 1: Basic Data Manipulation"
 subtitle: "Springboard: Foundations of Data Science"
 author: "Antoine Beauchamp"
 date: "January 13th, 2017"
