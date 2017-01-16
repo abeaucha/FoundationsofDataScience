@@ -122,4 +122,4 @@ refine_clean <- refine_data5 %>%
   write_csv(refine_clean, "refine_clean.csv")
   
   
-
+class(refine_clean)

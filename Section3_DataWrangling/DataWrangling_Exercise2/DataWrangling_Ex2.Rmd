@@ -1,0 +1,140 @@
+---
+title: 'Data Wrangling Exercise 2: Dealing With Missing Values'
+author: "Antoine Beauchamp"
+date: "January 16th, 2017"
+output:
+  pdf_document: default
+subtitle: 'Springboard: Foundations of Data Science'
+---
+
+
+##Introduction
+
+In this exercise, we handle some of the missing values in the Titanic data set. Let's begin by clearing the working environment, loading libraries, and setting the working directory. 
+
+```{r}
+#Clear working environment
+rm(list=ls())
+
+#Import library
+library(readxl)
+library(readr)
+suppressMessages(library(dplyr))
+library(tidyr)
+
+#Set correct working directory
+path_to_wd <- file.path("~","Documents","Work","DataScience","Springboard","FoundationsofDataScience","Section3_DataWrangling","DataWrangling_Exercise2")
+setwd(path_to_wd)
+rm(path_to_wd)
+```
+
+##Section 0: Import Data 
+
+Let's start by converting the data from .xls to .csv, and import the data into a tibble format. 
+
+```{r}
+#Convert data from Excel format to CSV
+read_excel("titanic3.xls") %>% write_csv("titanic_original.csv")
+
+#Import data
+titanicdata <- suppressMessages(read_csv("titanic_original.csv"))
+```
+
+Let's run some basic summary functions to get an idea of the data: 
+
+```{r}
+class(titanicdata)
+str(titanicdata)
+glimpse(titanicdata)
+titanicdata
+```
+
+Let's wrangle some data!
+
+## Section 1: Port of Embarkation
+
+First we begin by replacing the missing values for the `port of embarkation` variable with a value of "S" for Southampton. 
+
+
+```{r}
+#Preserve original data
+titanic_d1 = titanicdata
+
+#Find NA values and replace with "S"
+titanic_d1$embarked[titanicdata$embarked %>% is.na()] = "S"
+
+#Let's just make sure that there aren't any missing values left. 
+titanic_d1 %>% filter(is.na(embarked))
+titanic_d1 %>% filter(embarked == '')
+```
+
+
+## Section 2: Age 
+
+To deal with missing `age` values, we will can use the **mean** or **median** of the rest of the values to estimate the data. Here I used the mean. 
+
+```{r}
+
+titanic_d2 = titanic_d1
+
+#Calculate the mean of the age variable
+age_mean <- titanic_d1 %>% summarise(mean(age, na.rm=TRUE))
+#Calculate the median of the age variable (why not?)
+age_median <- titanic_d1 %>% summarise(median(age,na.rm=TRUE))
+
+#Replace the missing age values with the mean of the variable. 
+titanic_d2$age[titanic_d1$age %>% is.na()] = round(age_mean[[1]])
+
+#Making sure we haven't missed anything. 
+titanic_d2 %>% filter(is.na(age))
+titanic_d2 %>% filter(age=='')
+length(subset(titanic_d2$age, titanic_d2$age %>% is.na()))
+
+
+```
+
+
+In addition to using the mean or the median of the age variable to estimate the missing values, we also could have used the **mode** of the variable. This would be a reasonable estimate, as the mode represents the most common value of the variable. This means that, assuming age to be a random variable, the mode describes the value with the highest probability of occurring. A passenger is then more likely to have this value as their age, making it a good estimate of missing values. 
+
+
+##Section 3: Lifeboat
+
+Let's find the missing values for the `boat` variable and replace them with "None"
+
+```{r}
+
+titanic_d3 = titanic_d2
+
+#Replace missing values with "None"
+titanic_d3$boat[titanic_d2$boat %>% is.na()] = "None"
+
+#Make sure we haven't missed anything
+titanic_d3 %>% filter(is.na(boat))
+titanic_d3 %>% filter(boat=='')
+length(subset(titanic_d3$boat, titanic_d3$boat %>% is.na()))
+
+```
+
+
+
+##Section 4: Cabin
+
+Presumably, the passengers that don't have a cabin number associated with them were not staying in a cabin. More likely they were staying in some common bunker area of sorts. We could replace the missing cabin values with something like "None" or "Bunker", whatever is most appropriate. This might not be telling the whole story however, since some passengers in class 1, who have the means to afford a cabin, also appear not to have cabins. It might not be reasonable to assume that all missing values for this variable correspond to passengers without cabins.  
+
+In any case, we will create a new variable, `has_cabin_number`, that represents whether the passenger had a cabin or not.
+
+```{r}
+
+#Create a new variable describing the existence of a cabin number
+titanic_clean <- titanic_d3 %>% mutate(has_cabin_number = sapply(titanic_d3$cabin, function (x) {if (is.na(x)==TRUE) {0} else {1}}))
+
+titanic_clean %>% select(cabin, has_cabin_number)
+```
+
+
+##Section 5: Write to File 
+
+Finally, let's write the data to a .csv file. 
+```{r}
+write_csv(titanic_clean, "titanic_clean.csv")
+```
