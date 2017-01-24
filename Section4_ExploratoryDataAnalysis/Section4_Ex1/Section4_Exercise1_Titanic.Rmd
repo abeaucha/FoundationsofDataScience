@@ -103,6 +103,9 @@ Now that we have our custom `titanic` data frame, let's generate the plots.
 ggplot(titanic, aes(x=factor(pclass),fill=factor(sex))) + geom_bar(position='dodge')
 ```
 
+![**Figure 4**: Distribution of Sex Among Classes, using `titanic_clean.csv`](Section4_Ex1_clean1.png)
+
+
 Notice that there is an additional category of `NA`, which we need to remove
 ```{r}
 titanic <- titanic[!is.na(titanic$pclass),]
@@ -114,12 +117,16 @@ Let's plot again:
 ggplot(titanic, aes(x=factor(pclass),fill=factor(sex))) + geom_bar(position='dodge')
 ```
 
+![**Figure 5**: Distribution of Sex Among Classes, `NA` removed](Section4_Ex1_clean2.png)
+
 Much better. Now let's add survival information, as above. 
 
 ```{r}
 #Include information about passenger survival by using a facet grid. 
 ggplot(titanic, aes(x=factor(pclass),fill=factor(sex))) + geom_bar(position="dodge")+facet_grid(".~survived")
 ```
+
+![**Figure 6**: Survival Among Passenger Class and Sex Groups with `titanic_clean.csv`](Section4_Ex1_clean3.png)
 
 Finally, include age information. 
 ```{r}
@@ -129,6 +136,7 @@ posn.j <- position_jitter(0.5, 0)
 ggplot(titanic, aes(x=factor(pclass),y=age, col=factor(sex))) + geom_jitter(position=posn.j, size=3, alpha=0.5)+facet_grid(".~survived")
 ```
 
+![**Figure 7**: Titanic Survival by Age, Sex, and Class, with `titanic_clean.csv`](Section4_Ex1_clean4.png)
 
 One might notice that this custom dataset differs slightly from the one in the previous section, but the general trends still hold. One thing to note within this particular data is that there is a large cluster of passengers of age approximately equal to 30 across all passenger classes, both among those who survived and those who didn't. Why is this the case? 
 

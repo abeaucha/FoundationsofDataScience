@@ -53,7 +53,7 @@ library(dplyr)
 library(readr)
 
 #Set the wd
-path_to_wd <- file.path("~","Documents","Work","DataScience","Springboard","FoundationsofDataScience","Section4_ExploratoryDataAnalysis")
+path_to_wd <- file.path("~","Documents","Work","DataScience","Springboard","FoundationsofDataScience","Section4_ExploratoryDataAnalysis","Section4_Ex1")
 setwd(path_to_wd)
 rm(path_to_wd)
 
@@ -72,6 +72,11 @@ str(titanic)
 
 
 #Start by plotting passenger class against sex as a bar plot
+ggplot(titanic, aes(x=factor(pclass),fill=factor(sex))) + geom_bar(position='dodge')
+
+
+titanic <- titanic[!is.na(titanic$pclass),]
+
 ggplot(titanic, aes(x=factor(pclass),fill=factor(sex))) + geom_bar(position='dodge')
 
 #Include information about passenger survival by using a facet grid. 
