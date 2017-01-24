@@ -82,6 +82,8 @@ age_mean <- titanic_d1 %>% summarise(mean(age, na.rm=TRUE))
 #Calculate the median of the age variable (why not?)
 age_median <- titanic_d1 %>% summarise(median(age,na.rm=TRUE))
 
+age_mean[[1]]
+
 #Replace the missing age values with the mean of the variable. 
 titanic_d2$age[titanic_d1$age %>% is.na()] = round(age_mean[[1]])
 
