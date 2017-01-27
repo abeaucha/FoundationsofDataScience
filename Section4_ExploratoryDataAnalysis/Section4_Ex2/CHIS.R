@@ -22,7 +22,7 @@ path_to_wd <- file.path("~","Documents","Work","DataScience","Springboard","Foun
 setwd(path_to_wd)
 rm(path_to_wd)
 
-adult_full <- read_spss("./chis09_adult_spss/chis09_adult_spss/ADULT.sav")
+adult_full <- as.data.frame(read_spss("./chis09_adult_spss/chis09_adult_spss/ADULT.sav"))
 
 adult <- adult_full %>% select(RBMI,BMI_P,RACEHPR2,SRSEX,SRAGE_P,MARIT2,AB1,ASTCUR,AB51,POVLL)
 
@@ -52,6 +52,10 @@ adult <- adult[adult$SRAGE_P <= 84, ]
 # Remove individuals with a BMI below 16 and above or equal to 52
 adult <- adult[adult$BMI_P >= 16 & adult$BMI_P < 52, ]
 
+# Filter rows so that we only have the following races: Latino, Asian, African American, White
+adult <- adult %>% filter(RACEHPR2 %in% c(1,4,5,6))
+
+
 # Relabel the race variable:
 adult$RACEHPR2 <- factor(adult$RACEHPR2, labels = c("Latino", "Asian", "African American", "White"))
 
@@ -59,10 +63,8 @@ adult$RACEHPR2 <- factor(adult$RACEHPR2, labels = c("Latino", "Asian", "African 
 adult$RBMI <- factor(adult$RBMI, labels = c("Under-weight","Normal-weight", "Over-weight", "Obese"))
 
 
+################ Multiple Histograms #################
 
-################# Multiple Histograms #################
-
-# The dataset adult is available
 
 # The color scale used in the plot
 BMI_fill <- scale_fill_brewer("BMI Category", palette = "Reds")
@@ -77,6 +79,7 @@ ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) +
   geom_histogram(binwidth = 1) +
   fix_strips + BMI_fill + facet_grid(RBMI~.)+theme_classic()
 
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) +  geom_histogram(binwidth = 1) + BMI_fill + facet_grid(RBMI~.)+theme_classic()
 
 ################# Alternatives #################
 
@@ -126,7 +129,10 @@ ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) +
   BMI_fill +
   facet_grid(RBMI ~ .)
 
-# Create DF with table()
+# Create DF with table(). What this does is calculate the count of each subcategory as
+# organized by the factor levels for each of the variables. In this case we treat each
+# age value as a factor level. So for each age, we will have the count of each BMI 
+# category. 
 DF <- table(adult$RBMI, adult$SRAGE_P)
 
 # Use apply on DF to get frequency of each group

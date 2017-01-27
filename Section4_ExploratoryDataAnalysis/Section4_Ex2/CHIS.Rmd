@@ -1,0 +1,376 @@
+---
+title: "Exploratory Data Analysis: Exercise 2: CHIS"
+subtitle: "Springboard: Foundations of Data Science"
+author: "Antoine Beauchamp"
+date: "January 26th, 2017"
+output: html_document
+---
+
+
+##Introduction
+
+In this exercise we will make use of the California Health Interview Survey data from 2009 to analyze the relationship between participants' age and their BMI. The specific data set that we will be working with is the `chis09_adult_spss` data set, which can be obtained from http://healthpolicy.ucla.edu. Everything will be done locally. 
+
+Let's begin by clearing the working environment, loading the required libraries, and setting the working environment. 
+
+```{r}
+#Clear working environment. 
+rm(list=ls())
+
+#Load additional data wrangling libraries
+suppressMessages(library(dplyr))
+library(haven)
+library(ggplot2)
+
+#Set the wd
+path_to_wd <- file.path("~","Documents","Work","DataScience","Springboard","FoundationsofDataScience","Section4_ExploratoryDataAnalysis","Section4_Ex2")
+setwd(path_to_wd)
+rm(path_to_wd)
+```
+
+Now we will import the data into a data frame, and select the subset of variables used in the DataCamp exercise. These variables are as follows:
+
+* `RBMI`: BMI Category Description
+* `BMI_P`: BMI Value
+* `RACEHPR2`: Race
+* `SRSEX`: Sex
+* `SRAGE_P`: Age
+* `MARIT2`: Marital Status
+* `AB1`: General Health Condition
+* `ASTCUR`: Current Asthma Status
+* `AB51`: Type 1 or 2 Diabeters
+* `POVLL`: Poverty Level. 
+
+```{r}
+adult_full <- as.data.frame(read_spss("./chis09_adult_spss/chis09_adult_spss/ADULT.sav"))
+adult <- adult_full %>% select(RBMI,BMI_P,RACEHPR2,SRSEX,SRAGE_P,MARIT2,AB1,ASTCUR,AB51,POVLL)
+```
+
+##Exploring Data
+
+With our data loaded, let's examine our data and generate some basic exploratory histograms. 
+
+```{r}
+# Explore the dataset with summary and str
+summary(adult)
+str(adult)
+
+# Age histogram
+ggplot(adult, aes(x=SRAGE_P))+geom_histogram()
+
+# BMI histogram
+ggplot(adult, aes(x=BMI_P))+geom_histogram()
+```
+
+We can note that our binwidth value isn't particularly suited to this data, since we are only using 30 bins. Let's refine the age histogram by setting a `binwidth=1` and including the BMI information on the colour scale: 
+
+```{r}
+# Age colored by BMI, default binwidth
+ggplot(adult, aes(x=SRAGE_P, col=BMI_P, fill=factor(RBMI)))+geom_histogram(binwidth=1)
+```
+
+##Data Cleaning
+
+The previous plot looks much better and gives us some idea of the data, but we can notice that there are some improvements that can be made. As noted on DataCamp, it appears that all the participants aged 85 and above were binned into the same category. We will correct this by removing these values from the data. 
+
+Further, if we examine the histogram of BMI_P above, we can see that there is a long tail that occurs for BMI values over 50. We will remove these values. We will also remove values of BMIs below 16. 
+
+We will also narrow down the number of races included in the data set and label them as well. This will be useful for plotting later on. 
+
+Finally, our legend for the colour scheme is not exactly instructive, so we will convert the BMI categorical data to factors and add appropriate labels.
+
+```{r}
+# Remove individual aboves 84
+adult <- adult[adult$SRAGE_P <= 84, ] 
+
+# Remove individuals with a BMI below 16 and above or equal to 52
+adult <- adult[adult$BMI_P >= 16 & adult$BMI_P < 52, ]
+
+# Filter rows so that we only have the following races: Latino, Asian, African American, White
+adult <- adult %>% filter(RACEHPR2 %in% c(1,4,5,6))
+
+# Relabel the race variable:
+adult$RACEHPR2 <- factor(adult$RACEHPR2, labels = c("Latino", "Asian", "African American", "White"))
+
+# Relabel the BMI categories variable:
+adult$RBMI <- factor(adult$RBMI, labels = c("Under-weight","Normal-weight", "Over-weight", "Obese"))
+```
+
+
+##Multiple Histograms
+
+In this section, we continue to examine our now clean data using multiple histograms, which we will implement with a facet grid. 
+
+```{r}
+# The color scale used in the plot
+BMI_fill <- scale_fill_brewer("BMI Category", palette = "Reds")
+
+# Theme to fix category display in faceted plot
+fix_strips <- theme(strip.text.y = element_text(angle = 0, hjust = 0, vjust = 0.1, size = 14), strip.background = element_blank(), legend.position = "none")
+
+# Histogram, add BMI_fill and customizations
+#ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + geom_histogram(binwidth = 1) + fix_strips + BMI_fill + facet_grid(RBMI~.)+theme_classic()
+ggplot(adult, aes(x=SRAGE_P, fill=factor(RBMI)))+geom_histogram(binwidth=1) + facet_grid(RBMI~.)+theme_classic()+BMI_fill+fix_strips
+```
+
+
+##Alternatives
+
+So far we have been working solely with frequency histograms. In this section we examine the use of density histograms.
+
+```{r}
+# Basic count histogram
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(binwidth = 1) +
+  BMI_fill
+
+# Density histogram
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(binwidth = 1, aes(y=..density..)) +
+  BMI_fill
+```
+
+This plot is strange since the "Under-weight" category values appear larger than we would expect them to be. As mentioned on DataCamp, this is because when using the `..density..` variable from the `ggplot` internal data frame, R is in fact calculating the density **within each sub-group**, and not the density as part of the full data. 
+
+We can also examine the faceted plots for both frequency and density histograms: 
+
+```{r}
+# Faceted count histogram
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(binwidth = 1) +
+  BMI_fill +facet_grid(RBMI~.)
+
+
+# Faceted density histogram
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(binwidth = 1, aes(y=..density..)) +
+  BMI_fill + facet_grid(RBMI~.)
+```
+
+Again we see the same issue of over-representation due to the computation of density based on each category. We will generate a "filled" histogram to reinforce this point: 
+```{r}
+# Density histogram with position = "fill"
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(binwidth = 1, aes(y=..density..), position="fill") +
+  BMI_fill
+```
+
+The proportions are off. In order to generate the density histogram that we want, i.e. with the densities representing the proportion across the entire data set, we need to compute our own density values using the internal data frame variable `..count..`. 
+
+```{r}
+# The accurate histogram
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(binwidth = 1, aes(y=..count../sum(..count..)), position="fill") +
+  BMI_fill
+```
+
+That looks much better.   
+
+In the next section we will attempt to facet this plot as we did with the frequency and incorrect density histograms above. 
+
+
+##Do Things Manually
+
+Let's begin by attempting to create a faceted plot in the standard way:
+
+```{r}
+# An attempt to facet the accurate frequency histogram from before (failed)
+ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
+  geom_histogram(aes(y = ..count../sum(..count..)), binwidth = 1, position = "fill") +
+  BMI_fill +
+  facet_grid(RBMI ~ .)
+```
+
+
+This is clearly not what we want. We seem to have lost all the information about the distribution. According to DataCamp, this error occurs because computing `..count../sum(..count..)` occurs on the fly inside of `ggplot`. We have to calculate the density proportions manually outside of `ggplot`. 
+
+We can begin to do this by building a contingency table using `RBMI` and `SRAGE_P`. This will create a table with the count for each combination of factor levels within the variables. In this case, each age group will be treated as a factor level. Therefore, for each age value, we will have the count of occurrences within each BMI category. 
+
+```{r}
+# Create our contingency table
+(DF <- table(adult$RBMI, adult$SRAGE_P))
+```
+
+In this table, each column represents an age group, while each row represents a BMI category. 
+
+In order to calculate the density, we will divide the count by the sum of the counts in each BMI category. We can do this using `apply()` and an anonymous function. 
+
+```{r}
+# Use apply on DF to get frequency of each group
+# The argument '2' indicates the apply function should be mapped across the columns, 
+# rather than the rows. 
+(DF_freq<-apply(DF, 2, function(x) {x/sum(x)}))
+```
+
+We now have a table of densities within each subgroup. 
+
+Let's convert this table back into a data frame using the `melt()` function. We will also create names for our variables. 
+
+```{r}
+# Load reshape2 and use melt on DF to create DF_melted
+library(reshape2)
+DF_melted <- melt(DF_freq)
+
+# Change names of DF_melted
+names(DF_melted) <- c("FILL", "X", "value")
+
+head(DF_melted)
+```
+
+Now that we have our proper density values, let's make the faceted plot that we intended to make. Note that we have to do this a little differently since we have computed the density values explicitly. We can't just use the `geom_histogram` geometry. 
+
+```{r}
+# Add code to make this a faceted plot
+ggplot(DF_melted, aes(x = X, y = value, fill = FILL)) +
+  geom_bar(stat = "identity", position = "stack") +
+  BMI_fill + facet_grid(FILL ~ .)
+```
+
+
+## Merimeko/Mosaic Plot
+
+In this section we will create a mosaic plot. The purpose of this plot is to encode the density values as we did previously with the filled histogram. However we additionally want to encode the information about the number of absolute counts within each age group. In order to do this, we will generate a sort of stacked bar plot where the height of the bars represents the density and the width of the bars represents the absolute count. Each bar will represent one age group. 
+
+Let's start by creating the same contingency table as above, and converting it to a data frame. What we end up with is a data frame in which the age values form the names of the rows and the BMI categories form the names of the columns. The data frame is populated by the corresponding counts. 
+
+```{r}
+# The initial contingency table
+DF <- as.data.frame.matrix(table(adult$SRAGE_P, adult$RBMI))
+
+```
+
+Next we want to compute some information about how many total counts, i.e. across all BMI categories, are included in each age group. We will encode this into the width of the bars by computing the corresponding `xmin` and `xmax` values. 
+
+
+```{r}
+# First compute the total counts within each age group. Since age is stored in rows within the data frame, this is a simple sum across the columns.
+DF$groupSum <- rowSums(DF)
+
+# The value that we will use as xmax is count sum for a given age group, added to the count sum for the previous age group. The xmin value for a given age group begins where the xmax from the previous group ends. 
+DF$xmax <- cumsum(DF$groupSum)
+DF$xmin <- DF$xmax - DF$groupSum
+
+# The groupSum column needs to be removed, don't remove this line
+DF$groupSum <- NULL
+```
+
+Since the age values are currently being stored as row names, let's convert them to  variables in the data frame. 
+
+```{r}
+# Copy row names to variable X
+DF$X <- row.names(DF)
+```
+
+The current data frame is organized so that there is a variable for each of the BMI categories. We want to clean the data so that the BMI categories are stored in a variable, and their values are stored in a separate variable. 
+
+```{r}
+# Melt the dataset
+library(reshape2)
+DF_melted <- melt(DF, id.vars = c("X","xmin", "xmax"), variable.name = "FILL")
+```
+
+Having melted the data set, the BMI categories are now stored under the variable `FILL` and the BMI values are stored under `value`. 
+
+As mentioned above, for our mosaic plot, we want to encode the densities of each sub-group into the height of the bar on our plot. We can do this in a way similar to the widths of the bars, by calculating `ymin` and `ymax`. 
+
+```{r}
+# dplyr call to calculate ymin and ymax 
+DF_melted <- DF_melted %>% 
+  group_by(X) %>% 
+  mutate(ymax = cumsum(value/sum(value)),
+         ymin = ymax - value/sum(value))
+```
+
+We are finally ready to generate our mosaic plot:
+
+
+```{r}
+# Plot rectangles - don't change.
+library(ggthemes)
+ggplot(DF_melted, aes(ymin = ymin, 
+                      ymax = ymax,
+                      xmin = xmin, 
+                      xmax = xmax, 
+                      fill = FILL)) + 
+  geom_rect(colour = "white") + 
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  BMI_fill + theme_tufte()
+```
+
+Note that each individual bar represents one age group. The width of each bar is representative of the number of absolute counts within the given group. The height of each bar represents the density of the BMI values within the group. 
+
+
+
+
+##Adding Statistics
+
+
+
+```{r}
+# Perform chi.sq test (RBMI and SRAGE_P)
+results <- chisq.test(table(adult$RBMI, adult$SRAGE_P))
+
+# Melt results$residuals and store as resid
+resid=melt(results$residuals)
+
+# Change names of resid
+names(resid) <- c("FILL", "X", "residual")
+
+# merge the two datasets:
+DF_all <- merge(DF_melted,resid)
+```
+
+
+```{r}
+# Update plot command
+library(ggthemes)
+ggplot(DF_all, aes(ymin = ymin, 
+                   ymax = ymax,
+                   xmin = xmin, 
+                   xmax = xmax, 
+                   fill = residual)) + 
+  geom_rect() +
+  scale_fill_gradient2() +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  theme_tufte()
+```
+
+
+
+##Adding Text 
+
+```{r}
+# Position for labels on x axis
+DF_all$xtext <- DF_all$xmin + (DF_all$xmax - DF_all$xmin)/2
+
+# Position for labels on y axis (don't change)
+index <- DF_all$xmax == max(DF_all$xmax)
+DF_all$ytext <- DF_all$ymin[index] + (DF_all$ymax[index] - DF_all$ymin[index])/2
+
+# Plot
+ggplot(DF_all, aes(ymin = ymin, ymax = ymax, xmin = xmin, 
+                   xmax = xmax, fill = residual)) + 
+  geom_rect(col = "white") +
+  # geom_text for ages (i.e. the x axis)
+  geom_text(aes(x = xtext, 
+                label = X),
+            y = 1,
+            size = 3,
+            angle = 90,
+            hjust = 1,
+            show.legend = FALSE) +
+  # geom_text for BMI (i.e. the fill axis)
+  geom_text(aes(x = max(xmax), 
+                y = ytext,
+                label = FILL),
+            size = 3,
+            hjust = 1,
+            show.legend  = FALSE) +
+  scale_fill_gradient2() +
+  theme_tufte() +
+  theme(legend.position = "bottom")
+
+```
+
