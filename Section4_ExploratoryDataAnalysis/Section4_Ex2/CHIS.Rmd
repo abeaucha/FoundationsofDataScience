@@ -116,7 +116,7 @@ ggplot(adult, aes(x=SRAGE_P, fill=factor(RBMI)))+geom_histogram(binwidth=1) + fa
 
 ##Alternatives
 
-So far we have been working solely with frequency histograms. In this section we examine the use of density histograms.
+So far we have been working solely with frequency histograms. In this section we examine the use of density histograms. 
 
 ```{r}
 # Basic count histogram
@@ -188,7 +188,9 @@ We can begin to do this by building a contingency table using `RBMI` and `SRAGE_
 
 ```{r}
 # Create our contingency table
-(DF <- table(adult$RBMI, adult$SRAGE_P))
+DF <- table(adult$RBMI, adult$SRAGE_P)
+
+DF[,1:10]
 ```
 
 In this table, each column represents an age group, while each row represents a BMI category. 
@@ -199,7 +201,9 @@ In order to calculate the density, we will divide the count by the sum of the co
 # Use apply on DF to get frequency of each group
 # The argument '2' indicates the apply function should be mapped across the columns, 
 # rather than the rows. 
-(DF_freq<-apply(DF, 2, function(x) {x/sum(x)}))
+DF_freq<-apply(DF, 2, function(x) {x/sum(x)})
+
+DF_freq[,1:10]
 ```
 
 We now have a table of densities within each subgroup. 
@@ -237,16 +241,17 @@ Let's start by creating the same contingency table as above, and converting it t
 # The initial contingency table
 DF <- as.data.frame.matrix(table(adult$SRAGE_P, adult$RBMI))
 
+head(DF)
 ```
 
-Next we want to compute some information about how many total counts, i.e. across all BMI categories, are included in each age group. We will encode this into the width of the bars by computing the corresponding `xmin` and `xmax` values. 
+Next we want to compute some information about how many **total** counts, i.e. across all BMI categories, are included in each age group. We will encode this into the width of the bars by computing the corresponding `xmin` and `xmax` values. 
 
 
 ```{r}
 # First compute the total counts within each age group. Since age is stored in rows within the data frame, this is a simple sum across the columns.
 DF$groupSum <- rowSums(DF)
 
-# The value that we will use as xmax is count sum for a given age group, added to the count sum for the previous age group. The xmin value for a given age group begins where the xmax from the previous group ends. 
+# The value that we will use as xmax is the count sum for a given age group, added to the count sum for the previous age group. The xmin value for a given age group begins where the xmax from the previous group ends. 
 DF$xmax <- cumsum(DF$groupSum)
 DF$xmin <- DF$xmax - DF$groupSum
 
@@ -259,6 +264,8 @@ Since the age values are currently being stored as row names, let's convert them
 ```{r}
 # Copy row names to variable X
 DF$X <- row.names(DF)
+
+head(DF)
 ```
 
 The current data frame is organized so that there is a variable for each of the BMI categories. We want to clean the data so that the BMI categories are stored in a variable, and their values are stored in a separate variable. 
@@ -267,6 +274,8 @@ The current data frame is organized so that there is a variable for each of the 
 # Melt the dataset
 library(reshape2)
 DF_melted <- melt(DF, id.vars = c("X","xmin", "xmax"), variable.name = "FILL")
+
+head(DF_melted)
 ```
 
 Having melted the data set, the BMI categories are now stored under the variable `FILL` and the BMI values are stored under `value`. 
@@ -305,7 +314,7 @@ Note that each individual bar represents one age group. The width of each bar is
 
 ##Adding Statistics
 
-
+We will refine our mosaic plot by adding statistics to it, particularly the residuals of a chi-squared test. 
 
 ```{r}
 # Perform chi.sq test (RBMI and SRAGE_P)
@@ -317,10 +326,11 @@ resid=melt(results$residuals)
 # Change names of resid
 names(resid) <- c("FILL", "X", "residual")
 
-# merge the two datasets:
+# Merge the two datasets:
 DF_all <- merge(DF_melted,resid)
 ```
 
+Let's now redo the mosaic plot, but mapping the residuals onto the fill scale, rather than the BMI categories. 
 
 ```{r}
 # Update plot command
@@ -341,14 +351,25 @@ ggplot(DF_all, aes(ymin = ymin,
 
 ##Adding Text 
 
+The plot above looks good but we can make it even better by adding some text. 
+
+We will add text on the x axis to identify the age group of each bar. First we set the positions where we want this text to appear. This will be in the center of each bar: 
 ```{r}
 # Position for labels on x axis
 DF_all$xtext <- DF_all$xmin + (DF_all$xmax - DF_all$xmin)/2
+```
 
+We also want to add text on the y axis that indicates the difference between BMI categories. 
+
+```{r]}
 # Position for labels on y axis (don't change)
 index <- DF_all$xmax == max(DF_all$xmax)
 DF_all$ytext <- DF_all$ymin[index] + (DF_all$ymax[index] - DF_all$ymin[index])/2
+```
 
+We can now plot these improvements, while also changing the legend position. 
+
+```{r}
 # Plot
 ggplot(DF_all, aes(ymin = ymin, ymax = ymax, xmin = xmin, 
                    xmax = xmax, fill = residual)) + 
@@ -371,6 +392,91 @@ ggplot(DF_all, aes(ymin = ymin, ymax = ymax, xmin = xmin,
   scale_fill_gradient2() +
   theme_tufte() +
   theme(legend.position = "bottom")
+```
+
+This completes our mosaic plot outlining the relationship between age and BMI. 
+
+
+##Generalizations
+
+In this final section, we will define a function that allows us to generate a mosaic plot for any data set. 
+
+Begin by loading all the required packages:
+
+```{r}
+# Load all packages
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+library(ggthemes)
+```
+
+Write the script into a function, `mosaicGG`:
+
+```{r}
+# Script generalized into a function
+mosaicGG <- function(data, X, FILL) {
+  
+  # Proportions in raw data
+  # This section takes the data that we want to plot and calculates the 
+  # appropriate rectangle widths and rectangle heights, as we did above. 
+  DF <- as.data.frame.matrix(table(data[[X]], data[[FILL]]))
+  DF$groupSum <- rowSums(DF)
+  DF$xmax <- cumsum(DF$groupSum)
+  DF$xmin <- DF$xmax - DF$groupSum
+  DF$X <- row.names(DF)
+  DF$groupSum <- NULL
+  DF_melted <- melt(DF, id = c("X", "xmin", "xmax"), variable.name = "FILL")
+  library(dplyr)
+  DF_melted <- DF_melted %>% 
+    group_by(X) %>% 
+    mutate(ymax = cumsum(value/sum(value)),
+           ymin = ymax - value/sum(value))
+  
+  # Chi-sq test
+  # In this section we perform a chi-squared test on the variables and
+  # extract the residuals. 
+  results <- chisq.test(table(data[[FILL]], data[[X]])) # fill and then x
+  resid <- melt(results$residuals)
+  names(resid) <- c("FILL", "X", "residual")
+  
+  # Merge data
+  DF_all <- merge(DF_melted, resid)
+  
+  # Positions for labels
+  # Here we set the positions for the x axis labels and the y axis labels
+  DF_all$xtext <- DF_all$xmin + (DF_all$xmax - DF_all$xmin)/2
+  index <- DF_all$xmax == max(DF_all$xmax)
+  DF_all$ytext <- DF_all$ymin[index] + (DF_all$ymax[index] - DF_all$ymin[index])/2
+  
+  # Plot:
+  g <- ggplot(DF_all, aes(ymin = ymin,  ymax = ymax, xmin = xmin, 
+                          xmax = xmax, fill = residual)) + 
+    geom_rect(col = "white") +
+    geom_text(aes(x = xtext, label = X),
+              y = 1, size = 3, angle = 90, hjust = 1, show.legend = FALSE) +
+    geom_text(aes(x = max(xmax),  y = ytext, label = FILL),
+              size = 3, hjust = 1, show.legend = FALSE) +
+    scale_fill_gradient2("Residuals") +
+    scale_x_continuous("Individuals", expand = c(0,0)) +
+    scale_y_continuous("Proportion", expand = c(0,0)) +
+    theme_tufte() +
+    theme(legend.position = "bottom")
+  print(g)
+}
 
 ```
+# BMI described by age
+mosaicGG(adult, "SRAGE_P", "RBMI")
+
+# Poverty described by age
+mosaicGG(adult, "SRAGE_P", "POVLL")
+
+# mtcars: am described by cyl
+mosaicGG(mtcars, "cyl", "am")
+
+# Vocab: vocabulary described by education
+library(car)
+mosaicGG(Vocab, "education", "vocabulary")
+
 
