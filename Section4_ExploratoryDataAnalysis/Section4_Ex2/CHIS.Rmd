@@ -466,17 +466,30 @@ mosaicGG <- function(data, X, FILL) {
 }
 
 ```
+
+To finish off, we will apply our mosaic plotting function to a number of different variables and data sets. 
+
+From the CHIS data set: 
+```{r}
 # BMI described by age
 mosaicGG(adult, "SRAGE_P", "RBMI")
 
 # Poverty described by age
 mosaicGG(adult, "SRAGE_P", "POVLL")
+```
 
+
+From the `mtcars` data set: 
+```{r}
 # mtcars: am described by cyl
 mosaicGG(mtcars, "cyl", "am")
+```
 
+From the `Vocab` data set:
+
+```{r}
 # Vocab: vocabulary described by education
 library(car)
 mosaicGG(Vocab, "education", "vocabulary")
-
+```
 
