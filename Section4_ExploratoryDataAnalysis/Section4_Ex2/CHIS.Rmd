@@ -2,7 +2,7 @@
 title: "Exploratory Data Analysis: Exercise 2: CHIS"
 subtitle: "Springboard: Foundations of Data Science"
 author: "Antoine Beauchamp"
-date: "January 26th, 2017"
+date: "January 29th, 2017"
 output: html_document
 ---
 
@@ -17,10 +17,11 @@ Let's begin by clearing the working environment, loading the required libraries,
 #Clear working environment. 
 rm(list=ls())
 
-#Load additional data wrangling libraries
+#Load libraries
 suppressMessages(library(dplyr))
 library(haven)
 library(ggplot2)
+library(ggthemes)
 
 #Set the wd
 path_to_wd <- file.path("~","Documents","Work","DataScience","Springboard","FoundationsofDataScience","Section4_ExploratoryDataAnalysis","Section4_Ex2")
@@ -54,7 +55,9 @@ With our data loaded, let's examine our data and generate some basic exploratory
 # Explore the dataset with summary and str
 summary(adult)
 str(adult)
+```
 
+```{r eval=FALSE}
 # Age histogram
 ggplot(adult, aes(x=SRAGE_P))+geom_histogram()
 
@@ -62,22 +65,29 @@ ggplot(adult, aes(x=SRAGE_P))+geom_histogram()
 ggplot(adult, aes(x=BMI_P))+geom_histogram()
 ```
 
+![**Figure 1**: Basic Age Histogram](CHIS_Plot1.png)
+
+![**Figure 2**: Basic BMI Histogram](CHIS_Plot2.png)
+
 We can note that our binwidth value isn't particularly suited to this data, since we are only using 30 bins. Let's refine the age histogram by setting a `binwidth=1` and including the BMI information on the colour scale: 
 
-```{r}
+```{r eval=FALSE}
 # Age colored by BMI, default binwidth
 ggplot(adult, aes(x=SRAGE_P, col=BMI_P, fill=factor(RBMI)))+geom_histogram(binwidth=1)
 ```
 
+![**Figure 3**: Age Histogram Coloured by BMI](CHIS_Plot3.png)
+
+
 ##Data Cleaning
 
-The previous plot looks much better and gives us some idea of the data, but we can notice that there are some improvements that can be made. As noted on DataCamp, it appears that all the participants aged 85 and above were binned into the same category. We will correct this by removing these values from the data. 
+Figure 3 looks much better and gives us some idea of the data, but we can notice that there are some improvements that can be made. As noted on DataCamp, it appears that all the participants aged 85 and above were binned into the same category. We will correct this by removing these values from the data. 
 
-Further, if we examine the histogram of BMI_P above, we can see that there is a long tail that occurs for BMI values over 50. We will remove these values. We will also remove values of BMIs below 16. 
+Further, if we examine the histogram of BMI_P in Figure 2, we can see that there is a long tail that occurs for BMI values over 50. We will remove these values. We will also remove values of BMIs below 16. 
 
-We will also narrow down the number of races included in the data set and label them as well. This will be useful for plotting later on. 
+We will also narrow down the number of races included in the data set and label them as well.
 
-Finally, our legend for the colour scheme is not exactly instructive, so we will convert the BMI categorical data to factors and add appropriate labels.
+Finally, our legend for the colour scheme in Figure 3 is not exactly instructive, so we will convert the BMI categorical data to factors and add appropriate labels.
 
 ```{r}
 # Remove individual aboves 84
@@ -107,18 +117,22 @@ BMI_fill <- scale_fill_brewer("BMI Category", palette = "Reds")
 
 # Theme to fix category display in faceted plot
 fix_strips <- theme(strip.text.y = element_text(angle = 0, hjust = 0, vjust = 0.1, size = 14), strip.background = element_blank(), legend.position = "none")
+```
 
+
+```{r eval=FALSE}
 # Histogram, add BMI_fill and customizations
 #ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + geom_histogram(binwidth = 1) + fix_strips + BMI_fill + facet_grid(RBMI~.)+theme_classic()
 ggplot(adult, aes(x=SRAGE_P, fill=factor(RBMI)))+geom_histogram(binwidth=1) + facet_grid(RBMI~.)+theme_classic()+BMI_fill+fix_strips
 ```
 
+![**Figure 4**: Age Histogram Faceted According to BMI](CHIS_Plot4.png)
 
 ##Alternatives
 
 So far we have been working solely with frequency histograms. In this section we examine the use of density histograms. 
 
-```{r}
+```{r eval=FALSE}
 # Basic count histogram
 ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
   geom_histogram(binwidth = 1) +
@@ -130,11 +144,17 @@ ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) +
   BMI_fill
 ```
 
-This plot is strange since the "Under-weight" category values appear larger than we would expect them to be. As mentioned on DataCamp, this is because when using the `..density..` variable from the `ggplot` internal data frame, R is in fact calculating the density **within each sub-group**, and not the density as part of the full data. 
+
+![**Figure 5**: Age Frequency Histogram Coloured by BMI](CHIS_Plot5.png)
+
+![**Figure 6**: Age Density Histogram Coloured by BMI](CHIS_Plot6.png)
+
+
+Figure 6 is strange since the "Under-weight" category values appear larger than we would expect them to be. As mentioned on DataCamp, this is because when using the `..density..` variable from the `ggplot` internal data frame, R is in fact calculating the density **within each sub-group**, and not the density as part of the full data. 
 
 We can also examine the faceted plots for both frequency and density histograms: 
 
-```{r}
+```{r eval=FALSE}
 # Faceted count histogram
 ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
   geom_histogram(binwidth = 1) +
@@ -147,22 +167,31 @@ ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) +
   BMI_fill + facet_grid(RBMI~.)
 ```
 
-Again we see the same issue of over-representation due to the computation of density based on each category. We will generate a "filled" histogram to reinforce this point: 
-```{r}
+![**Figure 7**: Age Frequency Histogram Faceted According to BMI](CHIS_Plot7.png)
+
+![**Figure 8**: Age Density Histogram Faceted According to BMI](CHIS_Plot8.png)
+
+Again we see the same issue of over-representation in Figure 8 due to the computation of density based on each category. We will generate a "filled" histogram to reinforce this point: 
+```{r eval=FALSE}
 # Density histogram with position = "fill"
 ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
   geom_histogram(binwidth = 1, aes(y=..density..), position="fill") +
   BMI_fill
 ```
 
-The proportions are off. In order to generate the density histogram that we want, i.e. with the densities representing the proportion across the entire data set, we need to compute our own density values using the internal data frame variable `..count..`. 
+![**Figure 9**: Filled Age Density Histogram Coloured by BMI, Incorrect](CHIS_Plot9.png)
 
-```{r}
+
+The proportions are off. In order to generate the density histogram that we want, i.e. with the densities representing the proportion across the entire data set, we need to compute our own density values using the `ggplot` internal data frame variable `..count..`. 
+
+```{r eval=FALSE}
 # The accurate histogram
 ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
   geom_histogram(binwidth = 1, aes(y=..count../sum(..count..)), position="fill") +
   BMI_fill
 ```
+
+![**Figure 10**: Filled Age Density Histogram Coloured by BMI, Correct](CHIS_Plot10.png)
 
 That looks much better.   
 
@@ -173,13 +202,17 @@ In the next section we will attempt to facet this plot as we did with the freque
 
 Let's begin by attempting to create a faceted plot in the standard way:
 
-```{r}
+```{r eval=FALSE}
 # An attempt to facet the accurate frequency histogram from before (failed)
 ggplot(adult, aes (x = SRAGE_P, fill= factor(RBMI))) + 
   geom_histogram(aes(y = ..count../sum(..count..)), binwidth = 1, position = "fill") +
   BMI_fill +
   facet_grid(RBMI ~ .)
 ```
+
+
+![**Figure 11**: Naive Age Density Histogram Faceted by BMI, Incorrect](CHIS_Plot11.png)
+
 
 
 This is clearly not what we want. We seem to have lost all the information about the distribution. According to DataCamp, this error occurs because computing `..count../sum(..count..)` occurs on the fly inside of `ggplot`. We have to calculate the density proportions manually outside of `ggplot`. 
@@ -223,13 +256,16 @@ head(DF_melted)
 
 Now that we have our proper density values, let's make the faceted plot that we intended to make. Note that we have to do this a little differently since we have computed the density values explicitly. We can't just use the `geom_histogram` geometry. 
 
-```{r}
+```{r eval=FALSE}
 # Add code to make this a faceted plot
 ggplot(DF_melted, aes(x = X, y = value, fill = FILL)) +
   geom_bar(stat = "identity", position = "stack") +
   BMI_fill + facet_grid(FILL ~ .)
 ```
 
+This is the faceted plot that we were looking for. 
+
+![**Figure 12**: Age Density Histogram Faceted by BMI, Correct](CHIS_Plot12.png)
 
 ## Merimeko/Mosaic Plot
 
@@ -293,9 +329,8 @@ DF_melted <- DF_melted %>%
 We are finally ready to generate our mosaic plot:
 
 
-```{r}
+```{r eval=FALSE}
 # Plot rectangles - don't change.
-library(ggthemes)
 ggplot(DF_melted, aes(ymin = ymin, 
                       ymax = ymax,
                       xmin = xmin, 
@@ -307,8 +342,9 @@ ggplot(DF_melted, aes(ymin = ymin,
   BMI_fill + theme_tufte()
 ```
 
-Note that each individual bar represents one age group. The width of each bar is representative of the number of absolute counts within the given group. The height of each bar represents the density of the BMI values within the group. 
+![**Figure 13**: Mosaic/Merimeko Plot](CHIS_Plot13.png)
 
+Note that each individual bar represents one age group. The width of each bar is representative of the number of absolute counts within the given group. The height of each bar represents the density of the BMI values within the group. 
 
 
 
@@ -332,9 +368,8 @@ DF_all <- merge(DF_melted,resid)
 
 Let's now redo the mosaic plot, but mapping the residuals onto the fill scale, rather than the BMI categories. 
 
-```{r}
+```{r eval=FALSE}
 # Update plot command
-library(ggthemes)
 ggplot(DF_all, aes(ymin = ymin, 
                    ymax = ymax,
                    xmin = xmin, 
@@ -347,6 +382,7 @@ ggplot(DF_all, aes(ymin = ymin,
   theme_tufte()
 ```
 
+![**Figure 14**: Residuals Mosaic Plot](CHIS_Plot14.png)
 
 
 ##Adding Text 
@@ -369,7 +405,7 @@ DF_all$ytext <- DF_all$ymin[index] + (DF_all$ymax[index] - DF_all$ymin[index])/2
 
 We can now plot these improvements, while also changing the legend position. 
 
-```{r}
+```{r eval=FALSE}
 # Plot
 ggplot(DF_all, aes(ymin = ymin, ymax = ymax, xmin = xmin, 
                    xmax = xmax, fill = residual)) + 
@@ -393,6 +429,9 @@ ggplot(DF_all, aes(ymin = ymin, ymax = ymax, xmin = xmin,
   theme_tufte() +
   theme(legend.position = "bottom")
 ```
+
+![**Figure 15**: Residuals Mosaic Plot with Labels](CHIS_Plot15.png)
+
 
 This completes our mosaic plot outlining the relationship between age and BMI. 
 
@@ -470,7 +509,7 @@ mosaicGG <- function(data, X, FILL) {
 To finish off, we will apply our mosaic plotting function to a number of different variables and data sets. 
 
 From the CHIS data set: 
-```{r}
+```{r eval=FALSE}
 # BMI described by age
 mosaicGG(adult, "SRAGE_P", "RBMI")
 
@@ -478,18 +517,28 @@ mosaicGG(adult, "SRAGE_P", "RBMI")
 mosaicGG(adult, "SRAGE_P", "POVLL")
 ```
 
+![**Figure 16**: Mosaic Plot Describing Age and BMI Residuals](CHIS_Plot16.png)
+
+![**Figure 17**: Mosaic Plot Describing Age and Poverty Level Residuals](CHIS_Plot17.png)
+
 
 From the `mtcars` data set: 
-```{r}
+```{r eval=FALSE}
 # mtcars: am described by cyl
 mosaicGG(mtcars, "cyl", "am")
 ```
 
+
+![**Figure 18**: Mosaic Plot Describing `cyl` and `am` Residuals](CHIS_Plot18.png)
+
 From the `Vocab` data set:
 
-```{r}
+```{r eval=FALSE}
 # Vocab: vocabulary described by education
 library(car)
 mosaicGG(Vocab, "education", "vocabulary")
 ```
 
+![**Figure 19**: Mosaic Plot Describing Education and Vocabulary Residuals](CHIS_Plot19.png)
+
+This concludes our analysis. Until next time.
