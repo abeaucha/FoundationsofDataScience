@@ -3,11 +3,19 @@ title: "Exploratory Data Analysis: Exercise 2: CHIS"
 subtitle: "Springboard: Foundations of Data Science"
 author: "Antoine Beauchamp"
 date: "January 29th, 2017"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+    theme: paper
+    highlight: pygments
+    df_print: paged
 ---
 
 
-##Introduction
+#Introduction
 
 In this exercise we will make use of the California Health Interview Survey data from 2009 to analyze the relationship between participants' age and their BMI. The specific data set that we will be working with is the `chis09_adult_spss` data set, which can be obtained from http://healthpolicy.ucla.edu. Everything will be done locally. 
 
@@ -47,7 +55,7 @@ adult_full <- as.data.frame(read_spss("./chis09_adult_spss/chis09_adult_spss/ADU
 adult <- adult_full %>% select(RBMI,BMI_P,RACEHPR2,SRSEX,SRAGE_P,MARIT2,AB1,ASTCUR,AB51,POVLL)
 ```
 
-##Exploring Data
+#Exploring Data
 
 With our data loaded, let's examine our data and generate some basic exploratory histograms. 
 
@@ -79,7 +87,7 @@ ggplot(adult, aes(x=SRAGE_P, col=BMI_P, fill=factor(RBMI)))+geom_histogram(binwi
 ![**Figure 3**: Age Histogram Coloured by BMI](CHIS_Plot3.png)
 
 
-##Data Cleaning
+#Data Cleaning
 
 Figure 3 looks much better and gives us some idea of the data, but we can notice that there are some improvements that can be made. As noted on DataCamp, it appears that all the participants aged 85 and above were binned into the same category. We will correct this by removing these values from the data. 
 
@@ -107,7 +115,7 @@ adult$RBMI <- factor(adult$RBMI, labels = c("Under-weight","Normal-weight", "Ove
 ```
 
 
-##Multiple Histograms
+#Multiple Histograms
 
 In this section, we continue to examine our now clean data using multiple histograms, which we will implement with a facet grid. 
 
@@ -128,7 +136,7 @@ ggplot(adult, aes(x=SRAGE_P, fill=factor(RBMI)))+geom_histogram(binwidth=1) + fa
 
 ![**Figure 4**: Age Histogram Faceted According to BMI](CHIS_Plot4.png)
 
-##Alternatives
+#Alternatives
 
 So far we have been working solely with frequency histograms. In this section we examine the use of density histograms. 
 
@@ -198,7 +206,7 @@ That looks much better.
 In the next section we will attempt to facet this plot as we did with the frequency and incorrect density histograms above. 
 
 
-##Do Things Manually
+#Do Things Manually
 
 Let's begin by attempting to create a faceted plot in the standard way:
 
@@ -267,7 +275,7 @@ This is the faceted plot that we were looking for.
 
 ![**Figure 12**: Age Density Histogram Faceted by BMI, Correct](CHIS_Plot12.png)
 
-## Merimeko/Mosaic Plot
+# Merimeko/Mosaic Plot
 
 In this section we will create a mosaic plot. The purpose of this plot is to encode the density values as we did previously with the filled histogram. However we additionally want to encode the information about the number of absolute counts within each age group. In order to do this, we will generate a sort of stacked bar plot where the height of the bars represents the density and the width of the bars represents the absolute count. Each bar will represent one age group. 
 
@@ -348,7 +356,7 @@ Note that each individual bar represents one age group. The width of each bar is
 
 
 
-##Adding Statistics
+#Adding Statistics
 
 We will refine our mosaic plot by adding statistics to it, particularly the residuals of a chi-squared test. 
 
@@ -385,7 +393,7 @@ ggplot(DF_all, aes(ymin = ymin,
 ![**Figure 14**: Residuals Mosaic Plot](CHIS_Plot14.png)
 
 
-##Adding Text 
+#Adding Text 
 
 The plot above looks good but we can make it even better by adding some text. 
 
@@ -436,7 +444,7 @@ ggplot(DF_all, aes(ymin = ymin, ymax = ymax, xmin = xmin,
 This completes our mosaic plot outlining the relationship between age and BMI. 
 
 
-##Generalizations
+#Generalizations
 
 In this final section, we will define a function that allows us to generate a mosaic plot for any data set. 
 
