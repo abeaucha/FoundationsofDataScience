@@ -8,6 +8,9 @@
 #
 #
 
+## NOTE: To practice using CSS selectors, go here: https://flukeout.github.io/
+
+
 
 library(rvest)
 
@@ -72,12 +75,23 @@ lego_movie %>% html_nodes(".boards a") %>% html_name()
 #
 #Source: https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2
 
-REDS <- read_html("https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2")
+
+baseurl_yelp <- "https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2"
+
+
+
+
+read_html(paste(baseurl_yelp, "?start=140", sep=""))
+
+REDS <- read_html("https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2?start=140")
 REDS
+
+test <- REDS %>% html_nodes(".reviews h3")
 
 reviews <- REDS %>% html_nodes(".review-content p")
 length(reviews)
 reviews[1]
+reviews[20]
 
 ratings <- REDS %>% html_nodes(".rating-large")
 ratings[1]

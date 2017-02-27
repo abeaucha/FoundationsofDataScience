@@ -1477,7 +1477,7 @@ qualityTest &lt;-<span class="st"> </span><span class="kw">subset</span>(quality
 <p>We see that the coefficients (the <span class="math inline">\(\beta\)</span> values) for <code>OfficeVisits</code> and <code>Narcotics</code> are both positive. Since we set <code>PoorCare</code> to be <span class="math inline">\(y=1\)</span>, this means that high values in these variables are indicative of poor care. These variables have at least 1 star, which indicates their significance.</p>
 <p>The <code>AIC</code> value is a measure of the quality of our model. Unfortunately it can only be compared between models on the same data set. <strong>The preferred model is the one with the smallest AIC</strong>.</p>
 <p>Now that we have built our model with the training data, let’s start by making predictions on the training set. Do this with the <code>predict()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictTrain =<span class="st"> </span><span class="kw">predict</span>(QualityLog, <span class="dt">type=</span><span class="st">&quot;response&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictTrain =<span class="st"> </span><span class="kw">predict</span>(QualityLog, <span class="dt">type=</span><span class="st">&quot;response&quot;</span>) <span class="co"># The &quot;response&quot; type indicates that we are predicting probabilities</span>
 <span class="kw">summary</span>(predictTrain)</code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ## 0.06623 0.11910 0.15970 0.25250 0.26760 0.98460</code></pre>
