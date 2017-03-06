@@ -20,18 +20,34 @@ setwd("/Users/Antoine/Documents/Work/DataScience/Springboard/FoundationsofDataSc
 
 ##   You might also start by listing the files in your working directory
 
-getwd() # where am I?
-list.files("dataSets") # files in the dataSets folder
+#What is the working dir? 
+getwd() 
+#What files are in the subdirectory dataSets?
+list.files("dataSets") 
 
-## Load the states data
+## Load the "states" data
 ## ────────────────────────
 
-# read the states data
+#Read the states.rds data
 states.data <- readRDS("dataSets/states.rds") 
-#get labels
+
+#Let's take a look at the data first. 
+head(states.data)
+
+#The data is organized according to states, so this tells me that
+# this contains a variety of information about different states, such as
+# population, area, density, energy, etc. 
+# We can learn more about what these variables are by getting their attributes. 
+attributes(states.data)
+#There are a number of attributes. The ones we want are "names" and "var.labels"
+# "names" is the variable names while "var.labels" is a brief description
+attributes(states.data)$var.labels
+
+#Get the variable names and their descriptions
 states.info <- data.frame(attributes(states.data)[c("names", "var.labels")])
 #look at last few labels
 tail(states.info, 8)
+states.info
 
 ## Linear regression
 ## ═══════════════════
@@ -41,11 +57,19 @@ tail(states.info, 8)
 
 ##   Start by examining the data to check for problems.
 
+#For our linear regression, we will be examining the SAT scores for the different states.
+#The mean composite SAT score is found in the variable csat
+# We will begin by examining the relationship between expenditure and csat scores
+# for different states
+
 # summary of expense and csat columns, all rows
+# csat is the mean composite SAT score
 sts.ex.sat <- subset(states.data, select = c("expense", "csat"))
 summary(sts.ex.sat)
-# correlation between expense and csat
+
+# Is there a correlation between expense and csat
 cor(sts.ex.sat)
+#Seem to be a slight negative correlation
 
 ## Plot the data before fitting models
 ## ───────────────────────────────────────
@@ -56,6 +80,8 @@ cor(sts.ex.sat)
 # scatter plot of expense vs csat
 plot(sts.ex.sat)
 
+#There seems to be a mild negative trend, as indicated by the correlation. Let's fit this. 
+
 ## Linear regression example
 ## ─────────────────────────────
 
@@ -63,11 +89,13 @@ plot(sts.ex.sat)
 ##   • For example, we can use `lm' to predict SAT scores based on
 ##     per-pupal expenditures:
 
-# Fit our regression model
-sat.mod <- lm(csat ~ expense, # regression formula
-              data=states.data) # data set
+# Fit our regression model. We are predicting csat based on expenditure. 
+sat.mod <- lm(csat ~ expense, data=states.data) 
 # Summarize and print the results
 summary(sat.mod) # show regression coefficients table
+
+#We can see that expense is a significant predictor of csat, but it is negative. 
+# This means that less expense predicts higher csat. Also model isn't great based on R square value.
 
 ## Why is the association between expense and SAT scores /negative/?
 ## ─────────────────────────────────────────────────────────────────────
@@ -79,7 +107,10 @@ summary(sat.mod) # show regression coefficients table
 ##   difference among the states in the percentage of students taking the
 ##   SAT?
 
+# percent is the % of high school graduates taking the SAT within that state
 summary(lm(csat ~ expense + percent, data = states.data))
+
+#This is a better model. 
 
 ## The lm class and methods
 ## ────────────────────────────
@@ -87,11 +118,15 @@ summary(lm(csat ~ expense + percent, data = states.data))
 ##   OK, we fit our model. Now what?
 ##   • Examine the model object:
 
+#class() gives the class of the object
 class(sat.mod)
+#names() gives the names of different variables in the model object
 names(sat.mod)
+#Methods shows available methods to use on the given class of object. 
+# This can give us more information about what we can do with our model. 
 methods(class = class(sat.mod))[1:9]
 
-##   • Use function methods to get more information about the fit
+##   • Use function methods() to get more information about the fit
 
 confint(sat.mod)
 # hist(residuals(sat.mod))
@@ -115,13 +150,22 @@ plot(sat.mod, which = c(1, 2)) # "which" argument optional
 ##   Do congressional voting patterns predict SAT scores over and above
 ##   expense? Fit two models and compare them:
 
+#We want to see if the state's house and senate predict the csat scores. 
+states.info
+#House and senate are some measure of the house and senate in that state. 
+
 # fit another model, adding house and senate as predictors
+#This is our new model that takes politics into account
 sat.voting.mod <-  lm(csat ~ expense + house + senate,
                       data = na.omit(states.data))
+#This is our old model
 sat.mod <- update(sat.mod, data=na.omit(states.data))
 # compare using the anova() function
 anova(sat.mod, sat.voting.mod)
+#Extract coefficients
 coef(summary(sat.voting.mod))
+
+#This is not a good model. 
 
 ## Exercise: least squares regression
 ## ────────────────────────────────────────
@@ -136,6 +180,52 @@ coef(summary(sat.voting.mod))
 ##   Select one or more additional predictors to add to your model and
 ##   repeat steps 1-3. Is this model significantly better than the model
 ##   with /metro/ as the only predictor?
+
+str(states.data)
+states.info
+
+#We want to examine how the energy consumed per capita, stored in "energy" is
+# related to the percentages of people living in metropolitan areas, stored in "metro". 
+
+plot(energy ~ metro, data=states.data)
+
+#Looks like we have a few outliers. Data doesn't have much of a linear trend to it, even without outliers
+
+EnergyModel <- lm(energy~metro,data=na.omit(states.data))
+summary(EnergyModel)
+
+# metro appears to be a slightly significant predictor of energy. 
+# However this model is not very good since our R-squared value is very low. 
+
+plot(EnergyModel)
+
+#Let's add more variable to our model to see what might influence the energy use
+states.info
+#Let's add a bunch of variables and see what comes up. 
+EnergyModel2 <- lm(energy~metro+pop+density+area+waste+miles+green, data=na.omit(states.data))
+summary(EnergyModel2)
+
+#Only "green" appears to be significant. 
+#Let's start removing variables with the largest p-values
+
+EnergyModel3 <- lm(energy~metro+density+area+waste+miles+green, data=na.omit(states.data))
+summary(EnergyModel3)
+
+EnergyModel4 <- lm(energy~metro+area+waste+miles+green, data=na.omit(states.data))
+summary(EnergyModel4)
+
+EnergyModel5 <- lm(energy~metro+area+miles+green, data=na.omit(states.data))
+summary(EnergyModel5)
+
+EnergyModel6 <- lm(energy~area+miles+green, data=na.omit(states.data))
+summary(EnergyModel6)
+
+EnergyModel7 <- lm(energy~area+green, data=na.omit(states.data))
+summary(EnergyModel7)
+
+#It seems only the green variable is significant. The area variable is slightly important but not really. 
+# R-squared value is around 0.6, which is okay. 
+
 
 ## Interactions and factors
 ## ══════════════════════════
@@ -168,6 +258,7 @@ states.data$region <- factor(states.data$region)
 sat.region <- lm(csat ~ region,
                  data=states.data) 
 #Show the results
+summary(sat.region)
 coef(summary(sat.region)) # show regression coefficients table
 anova(sat.region) # show ANOVA table
 
@@ -201,5 +292,34 @@ coef(summary(lm(csat ~ C(region, contr.helmert),
 ##   1. Add on to the regression equation that you created in exercise 1 by
 ##      generating an interaction term and testing the interaction.
 
+
+#The regression we created was done by modelling energy via green and area. 
+states.info
+plot(energy~green,data=states.data)
+summary(lm(energy~metro,data=states.data))
+
+#Let's add some variables to green to see what happens
+summary(lm(energy~green*metro,states.data))
+#This is interesting, the interaction between greenhouse gas emissions and metro area population 
+# seems to be a strong predictor of energy consumption
+states.info
+#Let's try other things
+summary(lm(energy~green*density,states.data))
+summary(lm(energy~green*pop,states.data))
+
+#It seems the stronger models are the ones that consider greenhouse gasses and populations
+
 ##   2. Try adding region to the model. Are there significant differences
 ##      across the four regions?
+
+
+states.data$region <- factor(states.data$region)
+
+summary(lm(energy~region,data=na.omit(states.data)))
+
+plot(energy~region,states.data)
+
+summary(lm(energy ~ C(region, base=2),
+                data=states.data))
+
+#I don't really understand how to interpret these coefficients. This is a poor exercise.

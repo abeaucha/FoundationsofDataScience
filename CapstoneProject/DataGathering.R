@@ -360,7 +360,7 @@ ZomatoDF <- data_frame(Reviews=ZomatoData$Reviews,Ratings=ZomatoData$Ratings, Da
 TripAdData$Dates2[grepl("ago",TripAdData$Dates2)] <- TripAdData$Dates1
 
 #Create vector describing website
-TripAdVec <- rep("Trip Advisor",length(TripAdData$Reviews))
+TripAdVec <- rep("TripAdvisor",length(TripAdData$Reviews))
 
 TripAdDF <- data_frame(Reviews=TripAdData$Reviews,Ratings=TripAdData$Ratings,Dates=TripAdData$Dates2,Website=TripAdVec)
 
