@@ -21,12 +21,67 @@ library(tidyr)
 library(readr)
 
 
-RawDF <- read_csv("CapstoneRawData.csv")
+load("./Data/CapstoneRawData.RData")
+
+#Remove additional previous reviews from Yelp data
+NoPrevRev <- grepl("has-previous-review",YelpData$PrevRev) == FALSE
+YelpData$Ratings <- YelpData$Ratings[NoPrevRev]
+YelpData$Dates <- YelpData$Dates[NoPrevRev]
+
+#Create vector to describe the review category as Yelp
+YelpVec <- rep("Yelp",length(YelpData$Reviews))
+
+#Combine Yelp data vectors in DF
+YelpDF <- data_frame(Reviews=YelpData$Reviews,Ratings=YelpData$Ratings,Dates=YelpData$Dates, Website=YelpVec)
+
+
+#Clean OpenTable Data
+#
+#
+
+# Create vector to describe category of OpenTable
+OpenTableVec <- rep("OpenTable", length(OpenTableData$Reviews))
+
+#Create OpenTable data frame
+OpenTableDF <- data_frame(Reviews=OpenTableData$Reviews, Ratings=OpenTableData$Ratings, Dates=OpenTableData$Dates,Website=OpenTableVec)
+
+
+#Clean Zomato Data 
+#Remove the double value from the ratings, which take on NAs
+RatingsNA <- is.na(ZomatoData$Ratings)==FALSE
+ZomatoData$Ratings <- ZomatoData$Ratings[RatingsNA]
+
+#Remove double reviews resulting from full review expansion
+FullRev <- grepl("read more",ZomatoData$Reviews) == FALSE
+ZomatoData$Ratings <- ZomatoData$Ratings[FullRev]
+ZomatoData$Reviews <- ZomatoData$Reviews[FullRev]
+
+#Create vector describe website category
+ZomatoVec <- rep("Zomato", length(ZomatoData$Reviews))
+
+ZomatoDF <- data_frame(Reviews=ZomatoData$Reviews,Ratings=ZomatoData$Ratings, Dates=ZomatoData$Dates, Website=ZomatoVec)
+
+
+
+#Clean TripAdvisor data
+
+#Replace dates of the form "Reviewed ## days ago" with the proper dates
+TripAdData$Dates2[grepl("ago",TripAdData$Dates2)] <- TripAdData$Dates1
+
+#Create vector describing website
+TripAdVec <- rep("TripAdvisor",length(TripAdData$Reviews))
+
+TripAdDF <- data_frame(Reviews=TripAdData$Reviews,Ratings=TripAdData$Ratings,Dates=TripAdData$Dates2,Website=TripAdVec)
+
+
+#Merge all data frames
+d1 <-full_join(YelpDF,OpenTableDF)
+d2 <- full_join(d1,ZomatoDF)
+RawDF <- full_join(d2,TripAdDF) %>% group_by(Website)
 
 str(RawDF)
 summary(RawDF)
 
-head(RawDF$Dates)
 
 #Let's start by cleaning up the dates. 
 
@@ -153,4 +208,5 @@ RawDF$Reviews <- gsub(" +Rated *","",RawDF$Reviews)
 subset(RawDF$Reviews,RawDF$Website=="Zomato")
 
 write_csv(RawDF, "CapstoneCleanData.csv")
+
 
