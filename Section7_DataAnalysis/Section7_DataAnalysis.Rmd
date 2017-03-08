@@ -2237,6 +2237,353 @@ Cons:
 
 Source: https://www.youtube.com/playlist?list=PLea0WJq13cnCZZ3sXVEZ2OE5CLeZUlCmm
 
+## Introduction to the Cross Validation and Hold-Out Methods
+
+Source: https://www.youtube.com/watch?v=JxweGr03W9g&index=1&list=PLea0WJq13cnCZZ3sXVEZ2OE5CLeZUlCmm
+
+
+Methods for evaluating models. 
+
+Model evaluation is an integral part of model dev process. 
+
+Helps to find best model that represents data and how well the model will work in future (train vs test)
+
+Evaluating model performance with data used for training is not acceptable in data mining because can generate overfitted models. Overfitting usually happens when we have a very complicated model specific to training data. 
+Happens when model tries too hard to reduce error on training data, and isn't able to reduce error on test data.
+
+Two methods of evluating models in data mining: Hold-out and cross-validation. 
+
+To avoid overfitting, both methods use a test set to evaluate model performance. 
+
+
+Hold-Out Method
+
+Mostly large dataset is randomly dividied into three subsets
+
+Training set: Used to build mpredictive models
+Validation set: Used to assess the performance of model built in training phase
+
+I tprovides a test platform for fine tuning model's parameters and selecting best-performing model
+
+Not all modelling algorithms need a validation set
+
+Test set: Used to assess the likely future performance of a model. 
+
+If a model fits to the training set much better than it fits the test set, overfitting is probably the cause. 
+
+Cross-Validation Method
+
+When only a limited amount of data available to achieve an unbiased estimate of the model performance we use k-fold cross-validation. 
+
+IN k-fold cross-validation, we divide data into k subsets of equal size
+
+We build models k times, each time leaving out one of the subsets from training and use it as the test set
+
+If k equals the sample size, this is called "leave-one-out". E.g. if dataset has 100 data points and split it into 100 subsets, we have 99 samples for training and 1 for testing. 
+
+Usually use k=10. 
+
+Model evaluation can be divided into two sections
+1. Classification evaluation
+2. Regression evaluation
+
+
+## Evaluating Classifiers
+
+
+
+### Understanding the Confusion Matrix
+
+
+
+Binary classification (two class classification). Only have two classes
+E.g. true/false, 1/0, male/female. 
+
+Multi-class classification problems can be seen as binary classification problems, or reduced to. 
+
+We use a dataset with known classes to a buld a model
+We use another dataset with known classes to evaluate the model (this could be part of the original dataset)
+We compare/count the predicted classes against the actual classes. 
+
+Confusion Matrix
+
+A confusion matrix shows the number of correct and incorrect predictions made by the classification model compared to the actual outcomes (target value) in the data
+
+The matrix is NxN where N is the number of target values (classes)
+
+Performance of such models is commonly evaluated using the data in the matrix. 
+
+![](ConfusionMatrix.png)
+
+a is the number of instances in which we predicted the correct positive values. 
+b is the number of instances that were negative but predicted to be positive
+c is the number of instances that were positive and predicted to be negative
+
+Accuracy: proportion of total number of predictions that were correct
+
+Positive Predictive Value or Precision: proportion to positive cases that were correctly identified
+
+Negative Predictive Value: prportion of negative cases that were correctly identified
+
+Sensitivity or Recall: porportion of actual positive cases which are correctly identified
+
+Specificity: proportion of actual negative cases which are correctly identified
+
+
+Four different possibl eoutcomes of a single prediction for a two-class cases with classes 1 or 0. 
+
+True positives: actual 1, predict 1
+True negativie: actual 0, predict 0
+False positives: actual 0, predict 1
+False negatives: actual 1, predict 0
+
+TP Rate: TP/(TP + FN)
+TN Rate: FP/(FP+TN)
+
+
+### Confusion Matrix for Multiple Classes
+
+![](MulticlassConfusionMatrix.png)
+
+We are interested in TP, TN, FP, and FN. How do we get these? 
+
+The total number of test examples of any class would be the sum of the corresponding row
+
+The total number of FNs for a class is the sum of values in the corresponding row, excluding the TP
+
+The total number of FP for a is the sum of values in the corresponding column, excluding the TP
+
+The total number of TN for a certain will be the sum of all columns and rows excluding that class's column and row. 
+
+Accuracy: calculated as the sum of correct classifications divided by the total number of classifications. 
+Precision is calucated as TP/(TP+FP). FP is the sum of values in the corresponding column, excluding TP. 
+
+Precision A = TP_A/(TP_A + E_BA + E_CA + E_DA + E_EA)
+
+Recall, or sensitivity, corresponds to true positive rate. 
+
+Sensitivity = TP/(TP+FN). TP + FN is total number of test examples of the considered class. 
+
+Specificity is the true negative rate. 
+Speicificty = TN/(TN+FP). The total number of TNs for a certain class is the sum of all columns and rows excluding that class' column and row. 
+
+
+
+### Transforming the Confusion Matrix
+
+We will convert an MxM confusion matrix to a 2x2 confusion matrix. 
+
+
+Refer to previous figure. 
+
+We consider two classes, X and not X. (One agaisnt all approach)
+
+TP X: TP_x from the original matrix. 
+FN X: Sum all counts where class X was incorrectly classified as another class
+FP X: Sum all counts where other classes were incorrectly classified as class X
+TN X: Sum all counts of TP for other classes apart from class X and counts where other classes were incorrectly classified as other classes (apart from class X). 
+
+We can then build a 2x2 matrix for class X using these values. 
+
+
+### Gains and Lift Charts
+
+Gain or lift is a measure of the effectiness of a classification model calculated as te ratio between the results obtained with and without the model. 
+
+Gain and lift charts are visual aids for evaluating performance of classification models. 
+
+Both charts consist of a life curve and a baseline
+
+However in contrast to the confusion matrix that evlautes models on the whole popoulation, gain or lift chart evaluates model performance in a portion of the population. 
+
+The greater the area between the lift curve and the baseline, the better the model. 
+
+Example
+
+A company wants to do a mail marketing campaign. 
+It costs the company $1 for each item mailed. 
+They have information on 100000 customers
+Create a cumulative gains and a lift chart from the following data
+
+Overall response rate: If we assume we have no model other than the prediction of the overall response rate, then we can predict the number of positive responses as a fraction of total customers contacted. 
+
+Suppose the response rate is 20%
+
+If all 100k customers are contacted, we will receive around 20k positive responses. 
+
+Prediction of response model: A response model predicts who will respond to a marketing campaign. 
+
+If we have a response model we can make more detailed predictions. 
+
+For example, we use the response model to assign a score to all 100k customers and predict the results of contacting only the top 10k customers, the top 20k, etc. 
+
+Start by contacting top 10k customers, find positive response rate. 
+Contact top 20k custoemrs, find positive response rate. 
+And so on, until we've contact the whole population. 
+
+To build the chart: 
+
+The y-axis shows the percentage of positive responses. This is a percentage of the total possible positive responses (20k as the overall respone rate shows). 
+
+The x axis shows the percentage of customers contact, whcih is a fraction of the 100k total customers
+
+Baseline (overall response rate): If we contact X% of customers then we will receive X% of total positive responses
+
+Lift Curve: Using the predictions of the response model, calculate the percentage of positive responses for the percent of customers contacted and map these points ot create the lift curve. 
+
+![](GainLiftCurve.png)
+
+Lift Chart shows the actual lift. 
+
+To plot the chart: Calculate the point son the lift curve by determining the ratio between the result predicted by our model and the result using no model. 
+
+![](LiftChart.png)
+
+It's just the ratio of the gain chart. 
+
+The lift describes how much better the predictions are using the model against the baseline. So we will predict a response rate that is 3 times better for the top 10%. 
+
+Analyzing the charts: cumulative gains and lift charts are a graphical representation of the advantage of using a predictive model to choose which customers to contact
+
+The lift chart shows how much more likely we are to receive responses than if we contact a random sample of customers. 
+
+For example, by contacting only 10% of customers based on the predictive model we will reach 3 times as many respondents as if we use no model. 
+
+We can assess the value of a predictive model by using the model to score a set of customers and then contacting them in this order
+
+The actual response rates are recorded for each cut-off point, such as the first 10% contact, the first 20%, etc. 
+
+We create cumulative gains and lift charts using the actual response rates to see how much the predictive model would have helped in this situation
+
+The information can be used to determine whether we should use this model or one similar to it in the future. 
+
+
+
+
+### Kolmogorov-Smirnov (K-S) Charts 
+
+K-S Chart measures performance of classification models. 
+
+K-S is a measure of degree of separation between the positive and negative distributions.
+
+The K-S if 100 if the scores partition the population into two separate groups in which one group contains all the positives and the other all the negatives
+
+On the other hand if the model cannot differentiate between positives and negatives, then it is as if the model selects cases randomly from the population. The K-S Would be 0. 
+
+In most classification models the K-S will fall between 0 and 100, and that the higher the hvalue the better the model is at separating the positive from the negative cases. 
+
+The K-S test measures the distance between the plotted cumulative distribution functions of the two classifications (e.g. target and non-target)
+
+Each classification score can be transformed to lie between 0 and 1
+
+The score that generates the greatest vertical separability between the functions is considered the threshold value for accepting or rejecting an application. 
+
+The model producing the great amount of separability between the distributions would be considered the superior model. 
+
+Example
+
+SHows results from a classification model. 
+
+Model assigns a score between 0-1000 to each positive (Target) and negative (Non-target) outcome. 
+
+![](KSData.png)
+
+![](KSChart.png)
+
+In this illustration the greatest separability between the two distribution functions occurs at a score of approximately 400-500 (81.7% non-target and 34.3% target). 
+
+Using this score if all applictants who scored above 400-500 were accepted and all applicants scoring below 400-500 were rejected, approximately 34.3% of all "target" applicants would be accepted and 81.7% of all "non-target" applicants would be accepted. 
+
+sThe measure of separability or the KS test result would be 47.3% = 81.7 - 34.3. 
+
+
+### Understanding the ROC Curve
+
+ROC stands for receiver operating characteristic. Plot to demonstrate performance of binary classifiers. Can be use to compare models. 
+
+The ROC chart is similar to the gain or lifts charts in that they provide a means of comparison between classification models. 
+
+The ROC chart shows False Positive Rate (1-specificity) on the X-axis, the probability of target=Y when its true value is N, against the True Positive Rate (sensitivity) on Y axis, the probabiliity of target=Y when its true value is Y. 
+
+Ideally the curve will clim quickly toward the top-left, meaning the model correctly predicted the cases. 
+
+The diagonal red line is for a random model. 
+
+![](ROCChart.png)
+ 
+ Red line is random model. Blue line is our model. We want our model to be as far from the red line as possible. 
+ Goes from (0,0) to (1,1). 
+ 
+ To build a ROC curve. We have our actual and predicted data from the model. 
+ Ideally the model should generate prediction probability (cut-off threshold). 
+ Sort your data in descending order according to prediction probability of success class. 
+ Compute TP Rate and FP Rate. 
+ This gives one point on our curve. 
+ 
+ Next thing to do is move our threshold around and extract different data points for TP and FP. E.g. use threshold of 0.5, 0.4, 0.3, etc. based on your data. This will change the values of TP and FP and give different data point for the ROC curve. 
+ 
+ If threshold is 1, everything will be classified as no. 
+ if threshold is 0, everything will be classified as yes. 
+ 
+ Worst case is the baseline model. 
+ 
+The area under the ROC curve is often used as a measure of the quality of classification models. 
+ 
+A random classifier has an area under the curve of 0.5, while the AUC for a perfect classifier is equal to 1. 
+
+In practice, most of the classification models have an AUC between 0.5 and 1. 
+
+AUC of 0.8, e.g., means that a randomly selected case form the group with the target equals Y has a score larger than that for a randomly chosen case from the group with the target equals N in 80% of the time. 
+
+When a classifier cannot distinguish between the two groups, the area will be equal to 0.5. 
+
+When there is a perfect separation of the two groups, i.e, no overlap of the distributions, the AUC will be 1. 
+
+## Evaluating Regression Models
+
+Idea of regression is to predict a real value, rather than a nominal value. 
+
+Root Mean Squared Error
+
+RMSE is a popular formula to measure the error rate of a regression model. However it can only be compared between models whose errors are measured in the same units. 
+
+Relative Squared Error
+
+Unlike RMSE, the relative squared error (RSE) can be compared between models whose errors are measured in different units. p is predicted. a is actual. 
+
+$$RSE = \frac{\sum_{i=1}^n (p_i - a_i)^2}{\sum_{i=1}^n(\bar{a} - a_i)^2} $$
+
+Mean Absolute Error
+
+The mean absolute error (MAE) has the same unit as the original data, and it can only be compared between models whose errors are measured in the same units. 
+
+It is usually similar in magnitude to RMSE, but slightly smaller. 
+
+$$MAE = \frac{1}{n}\sum_{i=1}^n |p_i - a_i|$$
+Relative Absolute Error
+
+Like RSE, the RAE can be compared between models whose errors are measured in the diffeent units. 
+
+$$RAE = \frac{\sum_{i=1}^n |p_i - a_i|}{\sum_{i=1}^n|\bar{a} - a_i|} $$
+
+Coefficient of Determination
+
+The coefficient of determine (R^2) summarizes the explanatory poewr of the regression model and is computed from the sums-of-squares terms. 
+
+R2 describes the proportion of variance of the dependent variable explained by the regression model. 
+
+If the regression model is "perfect", SSE is 0 and R2 is 1. 
+
+If the regression model is a failure, SSE is equal to SST, no variance is explaind by regression and R2= 0 . 
+
+$$R^2 = 1 - \frac{SSE}{SST} = 1 - \frac{\sum_{i=1}^n (y_i - y'_i)^2}{\sum_{i=1}^n(y_i - \bar{y})^2}$$
+The standardized residual plot is a useful visualizaation tool in order to show the residual dispersion patterns on a standardized scale. There are no substantial differences between the pattern for a standardized residual plot and the pattern in the regular residual plot. The only difference is the standardized scale  on the y-axiswhich allows us to easily detect potential outliers. 
+
+We plot 
+
+$$d_i = \frac{y_i-y'_i}{\sqrt{\frac{SSE}{n-k-1}}}$$
+where n = number of observations and k = number of predictors/descriptions/attributes.
+
 
 
 #Cross-validation in R
