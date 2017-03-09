@@ -1,15 +1,18 @@
 ---
 title: "Title"
-subtitle: "Capstone Project Intermediate Report"
-author: Antoine Beauchamp
+author: "Antoine Beauchamp"
 date: "March 8th, 2017"
-output: 
+output:
+  word_document:
+    toc: yes
+    toc_depth: '3'
   pdf_document:
-    toc: true
-    toc_depth: 3
-    number_sections: true
-    latex_engine: xelatex
     highlight: tango
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+subtitle: Capstone Project Intermediate Report
 ---
 
 
