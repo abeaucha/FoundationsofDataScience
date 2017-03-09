@@ -2588,6 +2588,63 @@ where n = number of observations and k = number of predictors/descriptions/attri
 
 #Cross-validation in R
 
+Source: https://www.youtube.com/watch?v=bRTIgv_UVxY
+
+LOOCV Approach
+
+Use auto dataset. Want to predict mpg from hp. 
+
+LOOCV only looks at one observation as testing data and remaining as training data. Repeat this process N times. 
+
+
+```{r}
+library(ISLR)
+library(boot)
+set.seed(1)
+attach(Auto)
+
+#Linear model. 
+model <- glm(mpg ~ horsepower, data=Auto)
+
+#TO do cross-validation
+
+#Just does the LOOCV algorithm for model validation
+MSE_LOOCV <- cv.glm(Auto, model)
+
+MSE_LOOCV
+
+#MSE is under $delta. We choose the first one. Diff formulas. In ISLR, formulas 5.1 and 5.2. 
+
+MSE_LOOCV$delta[1]
+
+
+#If we want to compare multiple polynomial models, we would ahve to do this ten times. 
+#Instead we can use a for loop. 
+
+MSE_LOOCV <- NULL
+for(i in 1:10){
+  model<-glm(mpg~poly(horsepower, degree=i), data=Auto)
+  MSE_LOOCV[i] = cv.glm(Auto, model)$delta[1]
+  }
+
+MSE_LOOCV
+
+### K-Fold Cross-Validation
+k=10
+MSE_10foldCV <- NULL
+for(i in 1:10){
+  model<-glm(mpg~poly(horsepower, degree=i), data=Auto)
+  MSE_10foldCV[i] = cv.glm(Auto, model, K=k)$delta[1]
+  }
+MSE_10foldCV
+
+#Much faster.
+#Similar errors for LOOCV and 10 fold CV. 
+
+```
+
+
+
 #Trees
 
 ##Judge, Jury and the Classifier: Intro to Trees
