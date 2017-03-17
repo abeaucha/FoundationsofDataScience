@@ -291,17 +291,12 @@ DatesLogic <- grepl("[0-9]+.*ago",OpenTableData$Dates)
 #Subset date info to get the instances matching the above format
 DatesTemp <- OpenTableData$Dates[DatesLogic]
 DineDate <- character(length(DatesTemp))
-
-#Extract the actual date information for these instances by comparing to 
-# the present date
-for (i in 1:length(DatesTemp)){
-  #Extract the number of days ago that the review was posted.
-  dineDay <- regmatches(DatesTemp,regexpr("[0-9]+",DatesTemp)) %>% as.numeric()
-  #Grab today's date
-  todayDate <- Sys.Date()
-  #Subtract the number of days from today's date
-  DineDate[i] <- todayDate - dineDay
-}
+#Extract the number of days ago that the review was posted.
+dineDay <- regmatches(DatesTemp,regexpr("[0-9]+",DatesTemp)) %>% as.numeric()
+#Grab today's date
+todayDate <- Sys.Date()
+#Subtract the number of days from today's date
+DineDate <- todayDate - dineDay
 
 #Replace the date entries with the proper dates. Note that these are not yet formatted 
 # as date class

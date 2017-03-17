@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#This is a script to execute data gathering and data cleaning R scripts for this Capstone project
+
+echo "Running DataGathering.R. Beginning web scraping.\n"
+
+RScript DataGathering.R
+
+echo "Data gathering complete.\n Raw data has been saved to ./Data/CapstoneRawData.RData \n"
+
+echo "Running DataCleaning.R. Beginning data cleaning process.\n"
+
+RScript DataCleaning.R 
+
+echo "Data cleaning complete.\n Clean data has been saved to ./Data/CapstoneCleanData.csv \n"
