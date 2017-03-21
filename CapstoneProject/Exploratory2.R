@@ -5,7 +5,7 @@
 # More structured exploratory analysis
 #
 # Antoine Beauchamp
-# Edited: March 17th, 2017
+# Edited: March 21st, 2017
 # Created: March 16th, 2017
 #
 #############################
@@ -36,10 +36,11 @@ WordCloudAnalysis <- function(dataset){
   dataCorpus <- dataCorpus %>% tm_map(removePunctuation) %>% tm_map(removeWords, stopwords("english"))
   
   #Create term document matrix and convert to matrix class.
-  TDM <- TermDocumentMatrix(dataCorpus) %>% as.matrix()
+  TDM <- TermDocumentMatrix(dataCorpus)
+  TDM_m <- TDM %>% as.matrix()
   
   #Compute word frequencies from TDM. 
-  wFreqs = sort(rowSums(TDM), decreasing=TRUE)
+  wFreqs = sort(rowSums(TDM_m), decreasing=TRUE)
   
   return(list("Corpus" = dataCorpus, "TDM"=TDM, "wordFreq"=wFreqs))
   
@@ -55,7 +56,7 @@ WordCloudAnalysis <- function(dataset){
 # Input: df = Review data frame, YearVal=Year that we want to analyze
 # Output: NA. Plots graphs and prints to std.out
 #
-YearAnalysis <- function(df, YearVal){
+YearAnalysis <- function(df, auxdf, YearVal){
   
   #Subset the data to obtain the desired year. 
   data <- df %>% subset(Year==YearVal)
@@ -71,7 +72,7 @@ YearAnalysis <- function(df, YearVal){
   cat("\n")
   
   # Print mean value of ratings for that year
-  print(paste("The mean value of Ratings for", YearVal, "is: ", auxData$MeanRating[auxData$Year==YearVal]))
+  print(paste("The mean value of Ratings for", YearVal, "is: ", auxdf$MeanRating[auxdf$Year==YearVal]))
   cat("\n")
   
   readline(prompt="Press [Enter] to begin plotting.")
@@ -105,8 +106,8 @@ YearAnalysis <- function(df, YearVal){
   dataGood <- data %>% subset(Ratings > 3)
   
   #Print ratios of bad and good ratings for this year.
-  print(paste("The percentage of 'bad' ratings in",YearVal,"is: ",auxData$ratioBadRating[auxData$Year==YearVal]))
-  print(paste("The percentage of 'good' ratings in",YearVal,"is: ", auxData$ratioGoodRating[auxData$Year==YearVal]))
+  print(paste("The percentage of 'bad' ratings in",YearVal,"is: ",auxdf$ratioBadRating[auxdf$Year==YearVal]))
+  print(paste("The percentage of 'good' ratings in",YearVal,"is: ", auxdf$ratioGoodRating[auxdf$Year==YearVal]))
   cat("\n")
   
   readline(prompt="Press [Enter] to begin text analysis.")
@@ -177,6 +178,7 @@ dim(CapstoneDF)
 #Create Quarters variable
 CapstoneDF <- CapstoneDF  %>% mutate(Quarters = quarters.Date(Dates))
 
+
 #Separate date variable into Year, Month, Day
 CapstoneDF <- CapstoneDF %>% separate(Dates, c("Year","Month","Day"))
 
@@ -211,13 +213,13 @@ mean(CapstoneDF$Ratings)
 global_p1 <- ggplot(CapstoneDF, aes(x=Year, y=Ratings)) + 
   stat_summary(fun.y=mean, geom="point") + 
   coord_cartesian(ylim=c(2.5,4.5))
-ggsave(filename="./Plots/global_YearRatings.png",global_p1, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_YearRatings.png",global_p1, width=wd, height=ht)
 
 #Ratings aggregated by Year and Quarters
 global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings)) + 
   stat_summary(fun.y=mean, geom="point") + 
   coord_cartesian(ylim=c(2.5,4.5))
-ggsave(filename="./Plots/global_YearQuartersRatings.png",global_p2,width=wd,height=ht)
+ggsave(filename="./Plots/Global/global_YearQuartersRatings.png",global_p2,width=wd,height=ht)
 
 #  stat_summary(fun.data=mean_sdl, fun.args=list(mult=1), position="identity") 
 
@@ -232,25 +234,25 @@ global_p3 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=YearQuarters)) +
   stat_summary(fun.y=mean, geom="point") +
   coord_cartesian(ylim=c(2.5,4.5)) + 
   theme(axis.text.x =element_text(angle=90))
-ggsave(filename="./Plots/global_YearMonthRatings.png",global_p3, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_YearMonthRatings.png",global_p3, width=wd, height=ht)
 
 #Something I could do here is fit a linear model to see how linear the growth is.
 
 
 #Ratings distribution
 global_p4 <- ggplot(CapstoneDF, aes(x=ceiling(Ratings))) + geom_bar(aes(fill=Website))
-ggsave(filename="./Plots/global_RatingsHist.png", global_p4, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_RatingsHist.png", global_p4, width=wd, height=ht)
 
 #Website distribution
 global_p5<-ggplot(CapstoneDF, aes(Website)) + geom_bar()
-ggsave(filename="./Plots/global_Website.png", global_p5, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_Website.png", global_p5, width=wd, height=ht)
 
 #Add facet to encode time information.
 global_p6 <- ggplot(CapstoneDF, aes(ceiling(Ratings), y=..density..)) +
   geom_histogram(binwidth=1, col="black") +
   facet_grid(.~Year)
 global_p6
-ggsave(filename="./Plots/global_RatingsYearHist_dens.png", global_p6, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_RatingsYearHist_dens.png", global_p6, width=wd, height=ht)
 
 #Geom bar density plot
 #ggplot(CapstoneDF, aes(x=ceiling(Ratings))) + geom_bar(aes(y=..count../sum(..count..)))
@@ -259,13 +261,97 @@ global_p7 <- ggplot(CapstoneDF, aes(Website)) +
   geom_bar() + 
   facet_grid(.~Year) + 
   theme(axis.text.x =element_text(angle=90))
-ggsave(filename="./Plots/global_WebsiteYearHist.png", global_p7, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_WebsiteYearHist.png", global_p7, width=wd, height=ht)
 
 global_p8 <- ggplot(CapstoneDF, aes(ceiling(Ratings))) + geom_bar() + facet_grid(.~Website)
-ggsave(filename="./Plots/global_RatingsWebsiteHist.png", global_p8, width=wd, height=ht)
+ggsave(filename="./Plots/Global/global_RatingsWebsiteHist.png", global_p8, width=wd, height=ht)
+
+#Let's build a plot that describes the time series of the percent of individual star ratings
+
+#Percentage time series analysis. 
+yearVec <- sort(unique(as.numeric(CapstoneDF$Year)))
+
+#Build temporary data frame and round up Ratings
+CapstoneDF_t <- CapstoneDF
+CapstoneDF_t$Ratings <- ceiling(CapstoneDF_t$Ratings)
+
+#Build data frames for rating counts by year
+d1 <- CapstoneDF_t %>% group_by(Year,Ratings) %>% summarise(countRatings=n())
+d2 <- CapstoneDF_t %>% group_by(Year) %>% summarise(countYear=n())
+
+#Join data frames for ratings count and year counts
+percentData <- left_join(d1,d2, by="Year")
+percentData$Ratings <- ceiling(percentData$Ratings)
+
+
+#Create observations for instances when no ratings of that number of stars have been observed
+vec2 <- NULL
+for(i in 1:length(yearVec)){
+  print(i)
+  vec <- percentData$Ratings %>% subset(percentData$Year == yearVec[i])
+  if(!(1 %in% vec)){
+    yearCount <- subset(percentData$countYear, percentData$Year==yearVec[i])[1]
+    vec2 <- data.frame(Year=as.character(yearVec[i]), Ratings=as.numeric(1), countRatings=as.integer(0), countYear=as.integer(yearCount))
+    print(vec2)
+    percentData <- (bind_rows(vec2, as.data.frame(percentData)))
+  }
+}
+
+#Calculate ratings percentages
+percentData <- percentData %>% arrange(Ratings) %>%  mutate(percentRatings = countRatings/countYear)
+#Select columns
+percentData <- percentData %>% select(Year,Ratings,percentRatings, countYear) %>% arrange(Year,Ratings)
+#Treat Ratings as ordinal variables
+percentData$Ratings <- factor(percentData$Ratings)
+
+#Plot percent of ratings over time for each ratings, coloured by ratings and sized by total number of ratings for that year
+#Scatter + line plot
+ggplot(percentData, aes(x=Year, y=percentRatings, group=Ratings)) + 
+  geom_line(aes(col=Ratings)) + 
+  geom_point(aes(col=Ratings, size=countYear))
+
+#Same as above but just scatter
+global_p10 <- ggplot(percentData, aes(x=Year, y=percentRatings, group=Ratings)) + 
+  #geom_line(aes(col=Ratings)) + 
+  geom_point(aes(col=Ratings,  size=countYear))
+global_p10
+ggsave(filename="./Plots/Global/global_percentRatings.png", global_p10, width=wd, height=ht)
+  
+#Add linear regression models to the previous scatter plot.
+# Trends can be described linearly or quadratically
+global_p11 <- global_p10 + 
+  geom_smooth(data=subset(percentData, percentData$Ratings==1), method="lm", se=T, formula=y~poly(x,2, raw=TRUE), linetype="dashed", size=0.5, alpha=0.1, col="black") +
+  geom_smooth(data=subset(percentData, percentData$Ratings==2), method="lm", se=T, formula=y~poly(x,1, raw=TRUE), linetype="dashed", size=0.5, alpha=0.1, col="black") +
+  geom_smooth(data=subset(percentData, percentData$Ratings==3), method="lm", se=T, formula=y~poly(x,1, raw=TRUE), linetype="dashed", size=0.5, alpha=0.1, col="black") + 
+  geom_smooth(data=subset(percentData, percentData$Ratings==4), method="lm", se=T, formula=y~poly(x,2, raw=TRUE), linetype="dashed", size=0.5, alpha=0.1, col="black") + 
+  geom_smooth(data=subset(percentData, percentData$Ratings==5), method="lm", se=T, formula=y~poly(x,2, raw=TRUE), linetype="dashed", size=0.5, alpha=0.1, col="black")
+
+global_p11  
+ggsave(filename="./Plots/Global/global_percentRatings_model.png", global_p11, width=wd, height=ht)
+  
+#Alternative way of adding models to the plot
+global_p10 +
+  geom_line(stat="smooth", data=subset(percentData, percentData$Ratings==1), method="lm", se=T, formula=y~poly(x,2), linetype="dashed", size=0.5) +
+  geom_line(stat="smooth", data=subset(percentData, percentData$Ratings==2), method="lm", se=T, formula=y~poly(x,3), linetype="dashed", size=0.5) + 
+  geom_line(stat="smooth", data=subset(percentData, percentData$Ratings==3), method="lm", se=T, formula=y~poly(x,1), linetype="dashed", size=0.5) + 
+  geom_line(stat="smooth", data=subset(percentData, percentData$Ratings==4), method="lm", se=T, formula=y~poly(x,2), linetype="dashed", size=0.5) + 
+  geom_line(stat="smooth", data=subset(percentData, percentData$Ratings==5), method="lm", se=T, formula=y~poly(x,2), linetype="dashed", size=0.5)
+
+#Let's check the numbers on our models to see if they're actually reasonable
+summary(lm(percentRatings ~ poly(as.numeric(Year),2), data=subset(percentData, percentData$Ratings==1)))
+summary(lm(percentRatings ~ poly(as.numeric(Year),1), data=subset(percentData, percentData$Ratings==2)))
+summary(lm(percentRatings ~ poly(as.numeric(Year),1), data=subset(percentData, percentData$Ratings==3)))
+summary(lm(percentRatings ~ poly(as.numeric(Year),2), data=subset(percentData, percentData$Ratings==4)))
+summary(lm(percentRatings ~ poly(as.numeric(Year),2), data=subset(percentData, percentData$Ratings==5)))
+
+#Most R-squared values are quite high, which is good. Notice that R-squared is low for Ratings==3. This is
+# because the data has almost no discernible slope. This means that it can be approximated well by using
+# the baseline model. R-squared is a measure of how well a function describes the data, compared to the baseline
+# model. If the baseline model works fine, R-squared will be close to 0. This is what is happening with Ratings==3. 
 
 
 # Nice plots. 
+
 # Let's do word analysis. 
 
 
@@ -281,6 +367,36 @@ wordcloud(Capstone_wA$Corpus, max.word=200, random.order=F)
 
 #Now this is the part where Saurabh suggest I do my hypotheses. 
 
+# Obvious one to start with is food. Associations aren't really relevant.
+# E.g. the strongest one is "came". 
+findAssocs(Capstone_wA$TDM, "food", .18)
+findAssocs(Capstone_wA$TDM, "good", .20)
+findAssocs(Capstone_wA$TDM, "great", .20)
+
+#I don't understand how great could have such a high correlation with "blasting". 
+#Only one review in the entire data set contains the word "blasting", while 
+# 270 reviews contain the word "great". 
+CapstoneDF$Reviews[grepl("[Bb]lasting",CapstoneDF$Reviews)]
+CapstoneDF$Reviews[grepl("awkwardly",CapstoneDF$Reviews)] #Again only one review
+CapstoneDF$Reviews[grepl("college",CapstoneDF$Reviews)] #One review
+CapstoneDF$Reviews[grepl("article",CapstoneDF$Reviews)] #2 reviews
+
+length(CapstoneDF$Reviews[grepl("[Gg]reat",CapstoneDF$Reviews)]) #270 reviews
+length(CapstoneDF$Reviews[grepl("[Gg]reat",CapstoneDF$Reviews)])/length(CapstoneDF$Reviews) #40%
+
+
+#Let's look at what "good" associates with. 
+CapstoneDF$Reviews[grepl("croutons",CapstoneDF$Reviews)] # 2 reviews
+length(CapstoneDF$Reviews[grepl("surprisingly",CapstoneDF$Reviews)]) #6 reviews
+length(CapstoneDF$Reviews[grepl("vinaigrette",CapstoneDF$Reviews)]) #2 reviews
+length(CapstoneDF$Reviews[grepl("[Tt]hursday.* good",CapstoneDF$Reviews)]) #4 reviews
+
+length(CapstoneDF$Reviews[grepl("[Gg]ood",CapstoneDF$Reviews)]) #287 reviews
+length(CapstoneDF$Reviews[grepl("[Gg]ood",CapstoneDF$Reviews)])/length(CapstoneDF$Reviews) #43%
+
+#This doesn't make sense to me. 
+# Let's see if this works better with good and bad reviews
+
 #Break data into "good" and "bad" reviews
 CapstoneDF_bad <- CapstoneDF %>% subset(Ratings <= 3)
 CapstoneDF_good <- CapstoneDF %>% subset(Ratings > 3)
@@ -293,9 +409,63 @@ CapstoneGood_wA <- WordCloudAnalysis(CapstoneDF_good)
 head(CapstoneBad_wA$wordFreq)
 wordcloud(CapstoneBad_wA$Corpus, max.words=200, random.order=F)
 
+#Apparently "good" and "great" are showing up in "bad" reviews too. 
+# Do these occur in 3 star reviews or in 1 or 2? 
+dim(CapstoneDF_bad)[1] #Total of 212 bad reviews
+t_good <- CapstoneDF_bad$Ratings[grepl("[Gg]ood",CapstoneDF_bad$Reviews)]
+length(t_good) #96 bad reviews contain the word "good"
+length(t_good)/212 #That's 45%
+table(t_good)
+
+t_great <- CapstoneDF_bad$Ratings[grepl("[Gg]reat",CapstoneDF_bad$Reviews)]
+length(t_great) #57 with "great"
+length(t_great)/212 #27%
+table(t_great)
+# Apparently 16 people rated the restaurant as 2 stars and also said "great". 
+
+
+log <- grepl("[Gg]reat",CapstoneDF_bad$Reviews) & (CapstoneDF_bad$Ratings==2)
+CapstoneDF_bad$Reviews[log]
+#Okay that makes more sense of things. A lot of it says great in the past tense, 
+# or hypothetically, or about another restaurant. 
+
+findAssocs(CapstoneBad_wA$TDM, "food", 0.25)
+findAssocs(CapstoneBad_wA$TDM, "service", 0.30)
+
+length(CapstoneDF_bad$Reviews[grepl("food", CapstoneDF_bad$Reviews)])
+length(CapstoneDF_bad$Reviews[grepl("[Ss]ervice", CapstoneDF_bad$Reviews)])
+length(CapstoneDF_bad$Reviews[grepl("food.*service|service.*food", CapstoneDF_bad$Reviews)])
+
+#Look at random samples
+CapstoneDF_bad_food <-CapstoneDF_bad %>% filter(grepl("food", CapstoneDF_bad$Reviews)) %>% sample_n(5,replace=TRUE)
+CapstoneDF_bad_food$Ratings
+CapstoneDF_bad_food$Reviews
+
+CapstoneDF_bad_great <-CapstoneDF_bad %>% filter(grepl("[Gg]reat", CapstoneDF_bad$Reviews)) %>% sample_n(5,replace=TRUE)
+select(CapstoneDF_bad_great,Ratings,YearMonth)
+CapstoneDF_bad_great$Reviews
+
+
+
+
 #Good review freq. words
 head(CapstoneGood_wA$wordFreq)
 wordcloud(CapstoneGood_wA$Corpus, max.words=200, random.order=F)
+
+dim(CapstoneDF_good)[1]
+length(CapstoneDF_good$Reviews[grepl("food", CapstoneDF_good$Reviews)])
+length(CapstoneDF_good$Reviews[grepl("[Gg]reat", CapstoneDF_good$Reviews)])
+length(CapstoneDF_good$Reviews[grepl("[Gg]ood", CapstoneDF_good$Reviews)])
+length(CapstoneDF_good$Reviews[grepl("[Ss]ervice", CapstoneDF_good$Reviews)])
+length(CapstoneDF_good$Reviews[grepl("[Ss]ervice.*[Ff]ood|[Ff]ood.*[Ss]ervice", CapstoneDF_good$Reviews)])
+
+t_great <- CapstoneDF_good$Ratings[grepl("[Gg]reat",CapstoneDF_good$Reviews)]
+table(t_great)/dim(CapstoneDF_good)[1] #Great seems to be used as often in 4 and 5 star reviews. 
+
+t_good <- CapstoneDF_good$Ratings[grepl("[Gg]ood",CapstoneDF_good$Reviews)]
+table(t_good)/dim(CapstoneDF_good)[1] #Good is used more often in 4 star reviews
+
+
 
 
 
@@ -325,13 +495,17 @@ for(i in 1:length(yearVec)){
 auxData
 
 #Look at how ratios of "good" and "bad" reviews have changed over time. 
-ggplot(auxData, aes(x=Year, y=ratioGoodRating)) + geom_line() + geom_line(aes(x=Year, y=ratioBadRating))
+#Use tidyr to convert this to the proper format for plotting. 
+# Want format similar to percentData df.
+ggplot(auxData, aes(x=Year, y=ratioGoodRating)) + 
+  geom_point() + 
+  geom_line(aes(x=Year, y=ratioBadRating))
 
 
 
 ######################### 2013 ANALYSIS #############################
 
-YearAnalysis(CapstoneDF, 2013)
+YearAnalysis(CapstoneDF, auxData, 2013)
 
 
 ######################### 2014 ANALYSIS #############################
