@@ -1,28 +1,65 @@
 ---
-title: "Title"
+title: "REDS Midtown Tavern Online Review Analytics (WORKING TITLE)"
 author: "Antoine Beauchamp"
-date: "March 8th, 2017"
-output:
-  word_document:
-    toc: yes
-    toc_depth: '3'
+date: "March 25th, 2017"
+output: 
   pdf_document:
-    highlight: tango
     latex_engine: xelatex
-    number_sections: yes
-    toc: yes
+    toc: true
     toc_depth: 3
-subtitle: Capstone Project Intermediate Report
+    number_sections: true
+    includes:
+      in_header: temp.sty
+fontsize: 11pt
+indent: 2pt
+documentclass: article
+bibliography: SpringboardFoundationsCapstone.bib
+subtitle: "Foundations of Data Science: Capstone Project Report"
 ---
 
 
-#Introduction
+<!-- NOTES
 
-In this report, I intend to elaborate on how we can use tools available in R to acquire and manipulate data from the web. This is incredibly useful if we are interested in performing any sort of text analysis using webpages as our source. I intend to use the tools and methods introduced here to ultimately perform a sentiment analysis of user reviews for REDS Midtown Tavern in Toronto, Ontario. The restaurant's website is located here: www.redsmidtowntavern.com. This report is divided into two primary sections: data gathering and data cleaning. In the former, I discuss the methods and tools I used to gather customer review data for REDS from popular review websites. In the second section, I go into detail about the process I used to clean the raw data obtained from these websites. 
+1. LaTeX
 
-Before we dive in, let's load some libraries and set the working directory. 
+When knitting a markdown file in PDF, we can use LaTeX commands, since this is the engine used. I'm not sure of the extent of what commands we can use however. The above \newcommand{} works, as well as something like \pagebreak.
 
-```{r}
+It seems the way that R Markdown works with PDF is that it calls a default LaTeX template, found here: https://github.com/jgm/pandoc-templates/blob/master/default.latex
+
+The values in the form $text$ are variables that can be specified in the metadata of the Markdown file. See the LaTeX Options section of http://rmarkdown.rstudio.com/pdf_document_format.html. Default variables are included in default.latex. Also look at this: http://tex.stackexchange.com/questions/187756/how-does-one-set-document-class-options-e-g-paper-size-for-latex-output
+
+
+One can additionally specify typical LaTeX "header" formatting, i.e. everything that comes before \begin{document} in a LaTeX file. This is done using "includes:" and "in_header:" in the Markdown metadata, as described here: https://bookdown.org/yihui/bookdown/yaml-options.html
+
+To identify the template that R Markdown is using to knit the document, look for the --template argument in the R Markdown knitting output text. By default it appears to be: /Library/Frameworks/R.framework/Versions/3.3/Resources/library/rmarkdown/rmd/latex/default-1.17.0.2.tex
+
+We can modify the formatting of different aspects of the document by changing the code in the .tex template. 
+
+
+
+
+
+-->
+
+\pagebreak
+
+
+#Introduction {#S1}
+
+
+
+\edit{This is an edit comment}
+\edit{I'm not sure if I should do proper bibliographic citations, or if I should just put hyperlinks in the text. Follow up on this.}
+
+\edit{Citation example:}[@REDShome]
+\edit{Would rather have it be only numbered, and hyperlinked to the bibliography}
+
+The past decade has resulted in an explosion in the amount of data that we produce every day by way of our technological activity \edit{cite and quantify this?}. This ever growing amount of data means that we are increasingly becoming saturated with information regarding any number of topics in a wide range of areas of human activity, from personalized healthcare to federal policy to corporate finance. Though this vast sea of data might seem daunting, with the right tools and the right approach, it can also be incredibly useful. Buried in the data is contained important information about various aspects of human and business activity. By manipulating and analyzing this data, we are able to uncover and solidify insights that previously may only have been hinted at on an intuitive level. The data, when analyzed properly, allows us to make decisions and recommendations based on concrete evidence, rather than a gut instinct or biased perception. In the context of business, this is an extremely useful advantage to leverage in order to promote growth and to allocate resources properly. One especially important source of data is the World Wide Web. The Internet provides a massive agglomeration of human opinion and behaviour from all areas of life. From a business perspective, the clientele's online behaviour often provides a wealth of information regarding patterns that may be influential to business activity. For businesses that operate within the service and hospitality industries, important data pertaining to customer sentiment is abundantly available on popular review and travel websites. In this report, I will demonstrate how we can use a variety of tools available in R to acquire and mine the data from such websites in order to uncover insights and make informed business recommendations. In particular, I will focus on gathering and analyzing the user review data for REDS Mditown Tavern, a restaurant in Toronto, Ontario. \edit{Edit this sentence} The restaurant's website is located here: www.redsmidtowntavern.com. \edit{Better to cite things here? Or is this fine?}
+
+This report is divided into \edit{???} primary sections. In [Section 2](#S2), I will elaborate on the methods and tools I used to acquire customer review data for REDS using popular review websites. Once the data is collected and stored locally, I will discuss the process of transforming this raw data into a form suitable for analysis. This is done in [Section 3](#S3). Finally, in [Section 4](#S4), I will dive into the analysis of this customer review data in order to mine for actionable insights. Let's get started.
+
+
+```{r echo=FALSE}
 CapstoneDir = "/Users/Antoine/Documents/Work/DataScience/Springboard/FoundationsofDataScience/CapstoneProject"
 
 setwd(CapstoneDir)
@@ -31,43 +68,77 @@ rm(list=ls())
 ```
 
 
+```{r global_options, echo=FALSE}
+library(knitr)
+opts_chunk$set(tidy=TRUE, message=FALSE)
+```
 
-#Data Acquisition
 
-As mentioned in the Introduction, the aim of this project is to perform a sentiment analysis of REDS Midtown Tavern, based on available customer reviews. It is well known that there is a wealth of such information on the internet, contained on review and travel websites. For the purpose of this investigation, I have focussed my efforts on the following websites: https://www.yelp.com/toronto, https://www.opentable.com/toronto-restaurants, https://www.tripadvisor.ca/, and https://www.zomato.com/toronto. Though this data is readily available for us to see and read, we would like to acquire it in a more structured way, so as to facilitate processing and analysis. This can be done fairly simply using a variety of tools available online. More specifically, I gathered the review data from the aforementioned websites by using the `rvest` package in R (https://cran.r-project.org/web/packages/rvest/index.html) and the web scraping tool, SelectorGadget (http://selectorgadget.com/). 
+# Data Acquisition {#S2}
+
+As mentioned in the [Introduction](#S1), the aim of this project is to perform an analysis of online customer review data for REDS Midtown Tavern. For the purpose of this investigation, I have focussed my efforts on the following review and travel websites: https://www.yelp.com/toronto, https://www.opentable.com/toronto-restaurants, https://www.tripadvisor.ca/, and https://www.zomato.com/toronto. Though this data is readily available to see and read, we would like to acquire it in a more structured way, so as to facilitate processing and analysis. This can be done relatively simply using a variety of tools available online. More specifically, I gathered the review data from the aforementioned websites by using the `rvest` package in R (https://cran.r-project.org/web/packages/rvest/index.html) and the web scraping tool, SelectorGadget (http://selectorgadget.com/). \edit{Proper citations here or is this fine? }
 
 ## SelectorGadget and CSS Selectors
 
 ### Identifying Content with SelectorGadget
 
-Before I begin discussing the web scraping process in depth, I want to spend some time discussing SelectorGadget. SelectorGadget is a wonderful open source tool that allows us to obtain CSS selectors on a website by clicking on select items of interest.  CSS Selectors are what allows us to gather data from the web by using packages such as `rvest`. The difficulty arises in identifying which selectors are associated with which content on a webpage. Traditionally, one might attempt to identify a selector for specific content by scouring the HTML source code for a website. Though it is doable, this isn't exactly effortless. SelectorGadget greatly improves this process by providing a point-and-click interface between the webpage content and the underlying selector. 
+The first step in acquiring data from the web is being able to identify exactly what content needs to be extracted. In practice, this is accomplished with the use of CSS selectors. CSS Selectors are what allows us to gather data from the web by using packages such as `rvest`. The difficulty arises in identifying which selectors are associated with what content on a webpage. Traditionally, one might attempt to identify a selector for specific content by scouring the HTML source code for a website. Though it is possible, this isn't exactly effortless. An alternative way of identifying the appropriate CSS selectors is to use a tool, such as SelectorGadget, that facilitates this process. SelectorGadget is an open source tool, developed by Hadley Wickham \edit{cite?}, that allows us to identify CSS selectors from a website by clicking on select items of interest. SelectorGadget greatly facilitates the process of identifying CSS selectors by providing a point-and-click interface between the webpage content and the underlying selector. I will elaborate on the use of SelectorGadget to obtain CSS selectors using a relevant example. 
 
-I will elaborate on this using a relevant example. Here is the Yelp webpage for REDS Midtown Tavern: https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2. Our goal is to scrape this webpage for the customer reviews, which are located not too far into the page: 
+An important first step \edit{Used "first step" earlier in here} towards the ultimate goal of analysing online customer review data is to scrape popular websites for the customer reviews. In this example, I will work with the first page of reviews for REDS Midtown Tavern on Yelp. Here is the relevant URL:  https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2. The reviews are located not too far down the page. This is displayed in Figure \ref{REDSYelpRev}.
 
-![Figure 2.1](REDSYelpReviews.png)
+\begin{figure}[!ht]
+\centering
+\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpReviews.png}}
+\caption{\edit{Add caption} \label{REDSYelpRev}}
+\end{figure}
 
+<!--Note figure \label{} must appear in caption or afterwards in order to work properly. Don't overlook this. Provides a lot of grief if you don't this right, because figure references will be numbered according to sections and not figure captions.  -->
 
-By running the SelectorGadget, which manifests itself as the grey search bar at the bottom of the page, we can select the first review to start identifying the relevant CSS Selector: 
-
-![Figure 2.2](REDSYelpReviews2.png)
-
-
-
-We see that the SelectorGadget has returned the CSS Selector "`p`". This selector includes the customer reviews, which is what we want, but it also includes additional content, such as "Was this review ...?" and the text under the heading "From the business". We don't need these elements of the webpage. The content that we have selected via point-and-click has been coloured in green, while the content that matches that selector has been highlighted in yellow. This is the initial stage in our filtering process. We can now choose to add additional content to our filter by clicking on content that is not yet highlighted, or we can remove content from our filter by clicking on content that has been highlighted. In this case, we want to click on the text below "From the business" to remove it from our selection. 
-
-![Figure 2.3](REDSYelpReviews3.png)
+The SelectorGadget interface manifests itself on the webpage as a grey search bar at the bottom of the page. To begin identifying the CSS Selector that corresponds to the customer review content, we can select the first customer review by clicking on it. The result of this action is shown in Figure \ref{REDSYelpRev2}. 
 
 
+<!--![Figure 2.1{#Fig2.1}](REDSYelpReviews.png)-->
 
-We see that content that had previously been highlighted but is now de-selected becomes red. We also notice that the text "Was this review...?" is now no longer included in our selection. It appears that the CSS selector "`.review-content p`" is the correct selector associated with the review content on this webpage. We can verify this by noting that SelectorGadget has found 20 items matching this selector, which corresponds to the number of reviews on this page. Now that we have the selector that we want, we can import the data into R. This will be done in detail below. 
+
+<!--![Figure 2.2](REDSYelpReviews2.png)-->
+
+
+We see that the SelectorGadget has returned the CSS Selector "`p`". The content that we have selected via point-and-click has been highlighted in green, while the content that matches that selector has been highlighted in yellow. This selector includes the customer reviews, which is desired, but it also appears to include additional content, such as the text "Was this review ...?" and additional text under the heading "From the business". We don't need these elements of the webpage. This means that the selector "`p`" is returning too broad a selection. This is the initial stage in the filtering process. We can now choose to add additional content to our filter by clicking on content that is not yet highlighted, or we can remove content from our filter by clicking on content that has been highlighted. In this case, we want to click on the text below "From the business" to remove it from our selection. In doing so, we observe that content that had previously been highlighted but is now de-selected becomes red. This is shown in Figure \ref{REDSYelpRev3}. We also notice that the text "Was this review...?" is no longer included in our selection. It appears that the CSS selector "`.review-content p`" is the correct selector associated with the review content on this webpage. This can verified by noting that SelectorGadget has found 20 items matching this selector, which corresponds to the number of reviews on this page. Having identified the correct CSS Selector for the customer review content, we can import the data into R. This process will be described in detail below. 
+
+
+
+\begin{figure}[!ht]
+\centering
+\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpReviews2.png}}
+\caption{\edit{Add caption} \label{REDSYelpRev2}}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpReviews3.png}}
+\caption{\edit{Add caption} \label{REDSYelpRev3}}
+\end{figure}
+
+<!--![Figure 2.3](REDSYelpReviews3.png)-->
+
+\FloatBarrier
+
+<!--\FloatBarrier prevents figures from moving into the next section. Figures in LaTeX are "floating" objects, meaning that they move around until they can find suitable space. There are ways to work with this. FloatBarrier provides a barrier past which figures cannot move. -->
 
 ### CSS Selectors in Detail
 
-When working with SelectorGadget, it is helpful to understand a little about CSS selectors. In essence, CSS selectors allow us to identify given "blocks" of content within an HTML source file. An excellent hands-on tutorial that allows you to get a feel for CSS selectors and how to work with them is found at the following website: https://flukeout.github.io/. This section will loosely follow the layout of this tutorial. 
+When working with SelectorGadget, it is helpful to have some knowledge of CSS selectors. In essence, CSS selectors allow us to identify given "blocks" of content within an HTML source file. An excellent hands-on tutorial regarding CSS selectors is found at the following website: https://flukeout.github.io/ \edit{Cite properly?}. This section will loosely follow the layout of this tutorial. 
 
-An HTML file is comprised of different blocks of content, which are identified by their **type**. For example, `<p>` represents a paragraph block, `<a>` a hyperlink, `<h1>` a heading, and so on. An screenshot of the HTML source file for  https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2 is included in Figure 2.4. To learn more about HTML formatting, visit this website: https://www.w3schools.com/html/default.asp
+An HTML file is comprised of different blocks of content, which are identified by their **type**. For example, in HTML, `<p>` represents a paragraph block, `<a>` a hyperlink, `<h1>` a heading, and so on. A screenshot of the HTML source file for  https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2 is included in Figure \ref{REDSYelpHTML}. To learn more about HTML formatting, visit this website: https://www.w3schools.com/html/default.asp 
 
-![Figure 2.4](REDSYelpHTML.png)
+
+\begin{figure}[!ht]
+\centering
+\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpHTML.png}}
+\caption{\edit{Add caption} \label{REDSYelpHTML}}
+\end{figure}
+
+<!--![Figure 2.4](REDSYelpHTML.png)-->
 
 
 
@@ -231,10 +302,18 @@ YelpScrape <- function(BaseURL) {
     page_url <- paste(BaseURL,"?start=",as.character(ReviewCount),sep="")
   
     #Scrape the reviews and ratings from the current URL
-    ReviewsNew <- read_html(page_url) %>% html_nodes(".review-content p") %>% html_text
-    RatingsNew <- read_html(page_url) %>% html_nodes(".rating-large") %>% html_attr("title")
-    DatesNew <- read_html(page_url) %>% html_nodes(".biz-rating-large .rating-qualifier") %>% html_text()
-    PrevRevNew <- read_html(page_url) %>% html_nodes(".biz-rating-large .rating-qualifier") %>% as.character()
+    ReviewsNew <- read_html(page_url) %>% 
+      html_nodes(".review-content p") %>% 
+      html_text
+    RatingsNew <- read_html(page_url) %>% 
+      html_nodes(".rating-large") %>% 
+      html_attr("title")
+    DatesNew <- read_html(page_url) %>% 
+      html_nodes(".biz-rating-large .rating-qualifier") %>% 
+      html_text()
+    PrevRevNew <- read_html(page_url) %>% 
+      html_nodes(".biz-rating-large .rating-qualifier") %>% 
+      as.character()
     
     print(paste("Scraping Yelp page",ceiling(ReviewCount/20)))
     
@@ -286,9 +365,15 @@ OpenTableScrape <- function(BaseURL) {
     page_url <- paste(BaseURL,as.character(ReviewCount),sep="")
     
     #Obtain data from page
-    ReviewsNew <- read_html(page_url) %>% html_nodes("#reviews-results .review-content") %>% html_text
-    RatingsNew <- read_html(page_url) %>% html_nodes("#reviews-results .filled") %>% html_attr("title")
-    DatesNew <- read_html(page_url) %>% html_nodes(".review-meta-separator+ .color-light") %>% html_text()
+    ReviewsNew <- read_html(page_url) %>% 
+      html_nodes("#reviews-results .review-content") %>% 
+      html_text
+    RatingsNew <- read_html(page_url) %>% 
+      html_nodes("#reviews-results .filled") %>% 
+      html_attr("title")
+    DatesNew <- read_html(page_url) %>% 
+      html_nodes(".review-meta-separator+ .color-light") %>% 
+      html_text()
     
     #Append vectors
     Reviews <- c(Reviews,ReviewsNew)
@@ -329,7 +414,9 @@ TripAdScrape <- function(LandingURL) {
 
 
   #This gets the links to the review pages, which are embedded in the review titles
-  ReviewTitleLink <- read_html(LandingURL) %>% html_nodes(".quote a") %>% html_attr("href")
+  ReviewTitleLink <- read_html(LandingURL) %>% 
+    html_nodes(".quote a") %>% 
+    html_attr("href")
   
   #The base URL to the first review page is
   BaseURL <- paste("https://www.tripadvisor.ca",ReviewTitleLink[1],sep="")
@@ -356,19 +443,33 @@ TripAdScrape <- function(LandingURL) {
     } else {
       
       #Grab the page numbers for the links
-      pagenum <- read_html(page_url) %>% html_nodes(".pageNum") %>% html_attr("data-page-number") %>% as.numeric()
+      pagenum <- read_html(page_url) %>% 
+        html_nodes(".pageNum") %>% 
+        html_attr("data-page-number") %>% 
+        as.numeric()
       #Grab the hyperlinks for the subsequent pages
-      hyperlink <- read_html(page_url) %>% html_nodes(".pageNum") %>% html_attr("href") %>% as.character()
+      hyperlink <- read_html(page_url) %>% 
+        html_nodes(".pageNum") %>% 
+        html_attr("href") %>% 
+        as.character()
       #New URL
       page_url <- paste("https://www.tripadvisor.ca",hyperlink[pagenum==ReviewCount],sep="")
     
     }
     
     #Read in reviews and ratings from current page
-    ReviewsNew <- read_html(page_url) %>% html_nodes("#REVIEWS p") %>% html_text()
-    RatingsNew <- read_html(page_url) %>% html_nodes("#REVIEWS .rating_s_fill") %>% html_attr("alt")
-    DatesNew1 <- read_html(page_url) %>% html_nodes(".relativeDate") %>% html_attr("title",default=NA_character_)
-    DatesNew2 <- read_html(page_url) %>% html_nodes(".ratingDate") %>% html_text()
+    ReviewsNew <- read_html(page_url) %>% 
+      html_nodes("#REVIEWS p") %>% 
+      html_text()
+    RatingsNew <- read_html(page_url) %>% 
+      html_nodes("#REVIEWS .rating_s_fill") %>% 
+      html_attr("alt")
+    DatesNew1 <- read_html(page_url) %>% 
+      html_nodes(".relativeDate") %>% 
+      html_attr("title",default=NA_character_)
+    DatesNew2 <- read_html(page_url) %>% 
+      html_nodes(".ratingDate") %>% 
+      html_text()
     
     
     #End loop condition
@@ -409,9 +510,15 @@ ZomatoScrape <- function(BaseURL) {
   Dates <- character(0)
   flag <- 1 
   
-  Reviews <- read_html(BaseURL) %>% html_nodes(".rev-text-expand , .rev-text") %>% html_text()
-  Ratings <- read_html(BaseURL) %>% html_nodes(".rev-text-expand div , .rev-text div") %>% html_attr("aria-label")
-  Dates <- read_html(BaseURL) %>% html_nodes("time") %>% html_attr("datetime")
+  Reviews <- read_html(BaseURL) %>%
+    html_nodes(".rev-text-expand , .rev-text") %>%
+    html_text()
+  Ratings <- read_html(BaseURL) %>%
+    html_nodes(".rev-text-expand div , .rev-text div") %>%
+    html_attr("aria-label")
+  Dates <- read_html(BaseURL) %>%
+    html_nodes("time") %>%
+    html_attr("datetime")
 
   return(list("Reviews"=Reviews,"Ratings"=Ratings, "Dates"=Dates))
     
@@ -769,57 +876,83 @@ write_csv(CapstoneDF, "./Data/CapstoneCleanData.csv")
 
 
 
-#Exploratory Data Analysis
+#Data Analysis
 
+##Time Series Analysis of Ratings
 
 ```{r}
 
+
+#Load libraries
 library(readr)
 library(dplyr)
-library(tm)
-library(wordcloud)
+library(tidyr)
+suppressMessages(library(tm))
+suppressMessages(library(wordcloud))
+suppressMessages(library(ggplot2))
+suppressMessages(library(syuzhet))
 
-CapstoneDF <- read_csv("./Data/CapstoneCleanData.csv")
+#Read in clean data
+CapstoneDF <- suppressMessages(read_csv("./Data/CapstoneCleanData.csv"))
 
-CapstoneCorpus <- CapstoneDF$Reviews %>% VectorSource() %>% Corpus()
-inspect(CapstoneCorpus[1:2])
+#Summary of data frame
+glimpse(CapstoneDF)
+```
 
-CapstoneCorpus <- CapstoneCorpus %>% tm_map(removePunctuation)
-CapstoneCorpus <- CapstoneCorpus %>% tm_map(removeWords, stopwords("english"))
-inspect(CapstoneCorpus[1:2])
+```{r}
 
+#Create Quarters variable
+CapstoneDF <- CapstoneDF  %>% mutate(Quarters = quarters.Date(Dates))
 
-TermDocMatrix <- TermDocumentMatrix(CapstoneCorpus)
-inspect(TermDocMatrix)
+#Separate date variable into Year, Month, Day
+CapstoneDF <- CapstoneDF %>% separate(Dates, c("Year","Month","Day"))
 
-wordmatrix <- as.matrix(TermDocMatrix)
+#Create variable that describes month and year. 
+tempdf <- CapstoneDF %>% unite("YearMonth", Year, Month, sep="-")
+CapstoneDF$YearMonth <- tempdf$YearMonth
 
-wordfreqs = sort(rowSums(wordmatrix), decreasing=TRUE)
-head(wordfreqs)
+#Create variable that describes quarters and years
+tempdf <- CapstoneDF %>% unite("YearQuarters", Year, Quarters, sep="-")
+CapstoneDF$YearQuarters <- tempdf$YearQuarters
 
-# create a data frame with words and their frequencies
-WordFreqDF = data_frame(word=names(wordfreqs), freq=wordfreqs)
+#Convert Website and Quarters to factor class
+CapstoneDF$Website <- factor(CapstoneDF$Website)
+CapstoneDF$Quarters <- factor(CapstoneDF$Quarters)
 
-head(WordFreqDF)
-
-
-wordcloud(CapstoneCorpus, min.freq=2,scale=c(4,0.5), max.word=200, random.order=F)
-
-findAssocs(TermDocMatrix, "good", .20)
-findAssocs(TermDocMatrix, "service", .18)
-findAssocs(TermDocMatrix,"food",0.20)
-findAssocs(TermDocMatrix, "great", .20)
-findAssocs(TermDocMatrix, "drinks", .25)
-findAssocs(TermDocMatrix, "dinner", .33)
-findAssocs(TermDocMatrix, "time", .25)
-findAssocs(TermDocMatrix, "atmosphere", .20)
-findAssocs(TermDocMatrix, "friendly", .25)
-
-
+#Take a look at the data
+head(CapstoneDF[-1])
 
 ```
 
+```{r}
+#Ratings aggregated by Year
+global_p1 <- ggplot(CapstoneDF, aes(x=Year, y=Ratings)) + 
+  stat_summary(fun.y=mean, geom="point") + 
+  coord_cartesian(ylim=c(2.5,4.5))
+global_p1
+
+#Ratings aggregated by Year and Quarters
+global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings)) + 
+  stat_summary(fun.y=mean, geom="point") + 
+  coord_cartesian(ylim=c(2.5,4.5)) +
+  theme(axis.text.x =element_text(angle=90))
+global_p2
+
+global_p3 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=YearQuarters)) +
+  stat_summary(fun.y=mean, geom="point") +
+  coord_cartesian(ylim=c(2.5,4.5)) + 
+  theme(axis.text.x =element_text(angle=90))
+global_p3
+```
 
 
+##Customer Reviews Text Analysis
+
+
+
+
+# References
+
+\bibliography{SpringboardFoundationsCapstone}
 
 

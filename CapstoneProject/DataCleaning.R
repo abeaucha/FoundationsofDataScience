@@ -16,9 +16,9 @@ rm(list=ls())
 
 #Load required libraries
 library(rvest)
-library(dplyr)
+suppressMessages(library(dplyr))
 library(tidyr)
-library(readr)
+suppressMessages(library(readr))
 
 
 load("./Data/CapstoneRawData.RData")
@@ -66,7 +66,7 @@ ZomatoDF <- data_frame(Reviews=ZomatoData$Reviews,Ratings=ZomatoData$Ratings, Da
 #Clean TripAdvisor data
 
 #Replace dates of the form "Reviewed ## days ago" with the proper dates
-TripAdData$Dates2[grepl("ago",TripAdData$Dates2)] <- TripAdData$Dates1
+TripAdData$Dates2[grepl("ago|yesterday|today",TripAdData$Dates2)] <- TripAdData$Dates1
 
 #Create vector describing website
 TripAdVec <- rep("TripAdvisor",length(TripAdData$Reviews))
@@ -141,12 +141,12 @@ RawDF$Dates[OpenTableDateRegex] <- RawDF$Dates[OpenTableDateRegex] %>% as.Date(f
 head(subset(RawDF$Dates, RawDF$Website=="OpenTable"))
 
 #Next is Trip Advisor. 
-head(subset(RawDF$Dates, RawDF$Website=="Trip Advisor"))
+head(subset(RawDF$Dates, RawDF$Website=="TripAdvisor"))
 
 TripAdRegex <- grep("^[0-9]+ ([Jj]|[Ff]|[Mm]|[Aa]|[Jj]|[Ss]|[Oo]|[Nn]|[Dd]).+[0-9]+$",RawDF$Dates)
 RawDF$Dates[TripAdRegex] <- RawDF$Dates[TripAdRegex] %>% as.Date(format="%d %B %Y")
 
-head(subset(RawDF$Dates, RawDF$Website=="Trip Advisor"))
+head(subset(RawDF$Dates, RawDF$Website=="TripAdvisor"))
 
 #Finally, Zomato. 
 head(subset(RawDF$Dates, RawDF$Website=="Zomato"))
@@ -154,9 +154,12 @@ head(subset(RawDF$Dates, RawDF$Website=="Zomato"))
 #Since this is already in POSIX format, we can trivially convert to date
 RawDF$Dates[which(RawDF$Website == "Zomato")] <- RawDF$Dates[which(RawDF$Website == "Zomato")] %>% as.Date()
 
+head(subset(RawDF$Dates, RawDF$Website=="Zomato"))
+
 class(RawDF$Dates) <- "Date"
 
 str(RawDF)
+
 
 # Ratings Cleaning
 
@@ -207,6 +210,6 @@ RawDF$Reviews <- gsub(" +Rated *","",RawDF$Reviews)
 
 subset(RawDF$Reviews,RawDF$Website=="Zomato")
 
-write_csv(RawDF, "CapstoneCleanData.csv")
+write_csv(RawDF, "./Data/CapstoneCleanData.csv")
 
 

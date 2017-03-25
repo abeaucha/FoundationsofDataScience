@@ -1,207 +1,209 @@
-Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	672 obs. of  4 variables:
- $ Reviews: chr  "I've been meaning to come to Reds for sometime. Well reviewed and recommended in circles around the office. Often used by colle"| __truncated__ "Attended a winterlicious lunch. $18 for 3 courses. I ordered, and enjoyed:Tuna TostadasSteak Bibimbap. (steak slices are pretty"| __truncated__ "As a young barrister  I often visited Red's older, fancier sibling further downtown. Now a seasoned public servant I prefer thi"| __truncated__ "I came here for dinner and had wine and entrees. I wish they have nicer sitting areas that are more comfortable. However, the w"| __truncated__ ...
- $ Ratings: chr  "4.0 star rating" "3.0 star rating" "4.0 star rating" "3.0 star rating" ...
- $ Dates  : chr  "\n        1/24/2017\n    " "\n        1/31/2017\n    " "\n        1/10/2017\n    " "\n        12/27/2016\n    " ...
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	677 obs. of  4 variables:
+ $ Reviews: chr  "The first time I started dining here was due to summerlicious. My friends and I all loved their summerlicious menu. Everything "| __truncated__ "Attended a winterlicious lunch. $18 for 3 courses. I ordered, and enjoyed:Tuna TostadasSteak Bibimbap. (steak slices are pretty"| __truncated__ "I've been meaning to come to Reds for sometime. Well reviewed and recommended in circles around the office. Often used by colle"| __truncated__ "As a young barrister  I often visited Red's older, fancier sibling further downtown. Now a seasoned public servant I prefer thi"| __truncated__ ...
+ $ Ratings: chr  "4.0 star rating" "3.0 star rating" "4.0 star rating" "4.0 star rating" ...
+ $ Dates  : chr  "\n        3/19/2017\n    " "\n        1/31/2017\n    " "\n        1/24/2017\n    " "\n        1/10/2017\n    " ...
  $ Website: chr  "Yelp" "Yelp" "Yelp" "Yelp" ...
  - attr(*, "vars")=List of 1
   ..$ : symbol Website
  - attr(*, "drop")= logi TRUE
  - attr(*, "indices")=List of 4
-  ..$ : int  134 135 136 137 138 139 140 141 142 143 ...
-  ..$ : int  452 453 454 455 456 457 458 459 460 461 ...
+  ..$ : int  136 137 138 139 140 141 142 143 144 145 ...
+  ..$ : int  455 456 457 458 459 460 461 462 463 464 ...
   ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
-  ..$ : int  442 443 444 445 446 447 448 449 450 451
- - attr(*, "group_sizes")= int  308 220 134 10
- - attr(*, "biggest_group_size")= int 308
+  ..$ : int  445 446 447 448 449 450 451 452 453 454
+ - attr(*, "group_sizes")= int  309 222 136 10
+ - attr(*, "biggest_group_size")= int 309
  - attr(*, "labels")='data.frame':	4 obs. of  1 variable:
   ..$ Website: chr  "OpenTable" "TripAdvisor" "Yelp" "Zomato"
   ..- attr(*, "vars")=List of 1
   .. ..$ : symbol Website
   ..- attr(*, "drop")= logi TRUE
    Reviews            Ratings             Dates             Website         
- Length:672         Length:672         Length:672         Length:672        
+ Length:677         Length:677         Length:677         Length:677        
  Class :character   Class :character   Class :character   Class :character  
  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
  [1] "3/5/2016Updated review"      "2/14/2014Updated review"    
- [3] "Dined on February 27, 2017"  "Dined on February 23, 2017" 
- [5] "Dined on February 19, 2017"  "Dined on February 19, 2017" 
- [7] "Dined on February 19, 2017"  "Dined on February 15, 2017" 
- [9] "Dined on February 12, 2017"  "Dined on February 9, 2017"  
-[11] "Dined on February 6, 2017"   "Dined on February 4, 2017"  
-[13] "Dined on January 31, 2017"   "Dined on January 30, 2017"  
-[15] "Dined on January 28, 2017"   "Dined on January 28, 2017"  
-[17] "Dined on January 26, 2017"   "Dined on January 21, 2017"  
-[19] "Dined on January 4, 2017"    "Dined on January 2, 2017"   
-[21] "Dined on January 1, 2017"    "Dined on January 1, 2017"   
-[23] "Dined on December 29, 2016"  "Dined on December 25, 2016" 
-[25] "Dined on December 24, 2016"  "Dined on December 24, 2016" 
-[27] "Dined on December 24, 2016"  "Dined on December 22, 2016" 
-[29] "Dined on December 22, 2016"  "Dined on December 21, 2016" 
-[31] "Dined on December 20, 2016"  "Dined on December 14, 2016" 
-[33] "Dined on December 11, 2016"  "Dined on December 9, 2016"  
-[35] "Dined on December 8, 2016"   "Dined on December 8, 2016"  
-[37] "Dined on December 7, 2016"   "Dined on November 29, 2016" 
-[39] "Dined on November 25, 2016"  "Dined on November 20, 2016" 
-[41] "Dined on November 20, 2016"  "Dined on November 17, 2016" 
-[43] "Dined on November 17, 2016"  "Dined on November 13, 2016" 
-[45] "Dined on November 7, 2016"   "Dined on October 20, 2016"  
-[47] "Dined on October 18, 2016"   "Dined on September 23, 2016"
-[49] "Dined on September 18, 2016" "Dined on September 17, 2016"
-  [1] "Reviewed 6 February 2017"   "Reviewed 2 February 2017"  
-  [3] "Reviewed 2 February 2017"   "Reviewed 31 January 2017"  
-  [5] "Reviewed 29 January 2017"   "Reviewed 28 January 2017"  
-  [7] "Reviewed 27 January 2017"   "Reviewed 24 January 2017"  
-  [9] "Reviewed 19 January 2017"   "Reviewed 13 January 2017"  
- [11] "Reviewed 5 January 2017"    "Reviewed 1 January 2017"   
- [13] "Reviewed 29 December 2016"  "Reviewed 26 December 2016" 
- [15] "Reviewed 8 December 2016"   "Reviewed 3 December 2016"  
- [17] "Reviewed 29 November 2016"  "Reviewed 28 November 2016" 
- [19] "Reviewed 27 November 2016"  "Reviewed 9 November 2016"  
- [21] "Reviewed 6 November 2016"   "Reviewed 31 October 2016"  
- [23] "Reviewed 26 October 2016"   "Reviewed 24 October 2016"  
- [25] "Reviewed 23 October 2016"   "Reviewed 20 October 2016"  
- [27] "Reviewed 17 October 2016"   "Reviewed 17 October 2016"  
- [29] "Reviewed 16 October 2016"   "Reviewed 9 October 2016"   
- [31] "Reviewed 9 October 2016"    "Reviewed 5 October 2016"   
- [33] "Reviewed 4 October 2016"    "Reviewed 29 September 2016"
- [35] "Reviewed 26 September 2016" "Reviewed 10 September 2016"
- [37] "Reviewed 3 September 2016"  "Reviewed 26 August 2016"   
- [39] "Reviewed 25 August 2016"    "Reviewed 24 August 2016"   
- [41] "Reviewed 23 August 2016"    "Reviewed 17 August 2016"   
- [43] "Reviewed 14 August 2016"    "Reviewed 14 August 2016"   
- [45] "Reviewed 11 August 2016"    "Reviewed 11 August 2016"   
- [47] "Reviewed 4 August 2016"     "Reviewed 25 July 2016"     
- [49] "Reviewed 25 July 2016"      "Reviewed 21 July 2016"     
- [51] "Reviewed 19 July 2016"      "Reviewed 18 July 2016"     
- [53] "Reviewed 18 July 2016"      "Reviewed 17 July 2016"     
- [55] "Reviewed 16 July 2016"      "Reviewed 16 July 2016"     
- [57] "Reviewed 14 July 2016"      "Reviewed 11 July 2016"     
- [59] "Reviewed 6 July 2016"       "Reviewed 6 July 2016"      
- [61] "Reviewed 5 July 2016"       "Reviewed 26 June 2016"     
- [63] "Reviewed 19 June 2016"      "Reviewed 10 June 2016"     
- [65] "Reviewed 6 June 2016"       "Reviewed 4 June 2016"      
- [67] "Reviewed 30 May 2016"       "Reviewed 30 May 2016"      
- [69] "Reviewed 28 May 2016"       "Reviewed 25 May 2016"      
- [71] "Reviewed 21 May 2016"       "Reviewed 19 May 2016"      
- [73] "Reviewed 4 May 2016"        "Reviewed 4 April 2016"     
- [75] "Reviewed 21 March 2016"     "Reviewed 15 March 2016"    
- [77] "Reviewed 13 March 2016"     "Reviewed 6 March 2016"     
- [79] "Reviewed 4 March 2016"      "Reviewed 26 February 2016" 
- [81] "Reviewed 21 February 2016"  "Reviewed 20 February 2016" 
- [83] "Reviewed 16 February 2016"  "Reviewed 9 February 2016"  
- [85] "Reviewed 9 February 2016"   "Reviewed 19 January 2016"  
- [87] "Reviewed 14 January 2016"   "Reviewed 1 January 2016"   
- [89] "Reviewed 22 December 2015"  "Reviewed 21 December 2015" 
- [91] "Reviewed 20 December 2015"  "Reviewed 16 December 2015" 
- [93] "Reviewed 15 December 2015"  "Reviewed 12 December 2015" 
- [95] "Reviewed 11 December 2015"  "Reviewed 18 November 2015" 
- [97] "Reviewed 17 November 2015"  "Reviewed 15 November 2015" 
- [99] "Reviewed 15 November 2015"  "Reviewed 9 November 2015"  
-[101] "Reviewed 7 November 2015"   "Reviewed 6 November 2015"  
-[103] "Reviewed 3 November 2015"   "Reviewed 26 October 2015"  
-[105] "Reviewed 26 October 2015"   "Reviewed 24 October 2015"  
-[107] "Reviewed 20 October 2015"   "Reviewed 17 October 2015"  
-[109] "Reviewed 17 October 2015"   "Reviewed 24 September 2015"
-[111] "Reviewed 20 September 2015" "Reviewed 20 September 2015"
-[113] "Reviewed 14 September 2015" "Reviewed 7 September 2015" 
-[115] "Reviewed 7 September 2015"  "Reviewed 30 August 2015"   
-[117] "Reviewed 29 August 2015"    "Reviewed 29 August 2015"   
-[119] "Reviewed 28 August 2015"    "Reviewed 21 August 2015"   
-[121] "Reviewed 19 August 2015"    "Reviewed 18 August 2015"   
-[123] "Reviewed 17 August 2015"    "Reviewed 12 August 2015"   
-[125] "Reviewed 11 August 2015"    "Reviewed 10 August 2015"   
-[127] "Reviewed 4 August 2015"     "Reviewed 3 August 2015"    
-[129] "Reviewed 2 August 2015"     "Reviewed 1 August 2015"    
-[131] "Reviewed 29 July 2015"      "Reviewed 23 July 2015"     
-[133] "Reviewed 21 July 2015"      "Reviewed 19 July 2015"     
-[135] "Reviewed 18 July 2015"      "Reviewed 8 July 2015"      
-[137] "Reviewed 6 July 2015"       "Reviewed 2 July 2015"      
-[139] "Reviewed 22 June 2015"      "Reviewed 20 June 2015"     
-[141] "Reviewed 20 June 2015"      "Reviewed 16 June 2015"     
-[143] "Reviewed 14 June 2015"      "Reviewed 9 June 2015"      
-[145] "Reviewed 8 June 2015"       "Reviewed 4 June 2015"      
-[147] "Reviewed 31 May 2015"       "Reviewed 30 May 2015"      
-[149] "Reviewed 30 May 2015"       "Reviewed 24 May 2015"      
-[151] "Reviewed 24 May 2015"       "Reviewed 17 May 2015"      
-[153] "Reviewed 17 May 2015"       "Reviewed 10 May 2015"      
-[155] "Reviewed 7 May 2015"        "Reviewed 2 April 2015"     
-[157] "Reviewed 26 March 2015"     "Reviewed 15 March 2015"    
-[159] "Reviewed 13 March 2015"     "Reviewed 5 March 2015"     
-[161] "Reviewed 16 February 2015"  "Reviewed 3 February 2015"  
-[163] "Reviewed 31 January 2015"   "Reviewed 30 January 2015"  
-[165] "Reviewed 30 January 2015"   "Reviewed 24 January 2015"  
-[167] "Reviewed 12 January 2015"   "Reviewed 8 January 2015"   
-[169] "Reviewed 5 January 2015"    "Reviewed 5 January 2015"   
-[171] "Reviewed 1 January 2015"    "Reviewed 29 December 2014" 
-[173] "Reviewed 17 December 2014"  "Reviewed 16 December 2014" 
-[175] "Reviewed 15 December 2014"  "Reviewed 6 December 2014"  
-[177] "Reviewed 2 December 2014"   "Reviewed 1 December 2014"  
-[179] "Reviewed 26 November 2014"  "Reviewed 22 November 2014" 
-[181] "Reviewed 13 November 2014"  "Reviewed 6 November 2014"  
-[183] "Reviewed 6 November 2014"   "Reviewed 3 November 2014"  
-[185] "Reviewed 1 November 2014"   "Reviewed 23 October 2014"  
-[187] "Reviewed 26 September 2014" "Reviewed 1 September 2014" 
-[189] "Reviewed 22 August 2014"    "Reviewed 16 August 2014"   
-[191] "Reviewed 16 August 2014"    "Reviewed 8 August 2014"    
-[193] "Reviewed 5 August 2014"     "Reviewed 30 June 2014"     
-[195] "Reviewed 18 June 2014"      "Reviewed 28 May 2014"      
-[197] "Reviewed 11 May 2014"       "Reviewed 13 April 2014"    
-[199] "Reviewed 7 April 2014"      "Reviewed 21 February 2014" 
+ [3] "Dined on March 9, 2017"      "Dined on March 9, 2017"     
+ [5] "Dined on February 27, 2017"  "Dined on February 23, 2017" 
+ [7] "Dined on February 19, 2017"  "Dined on February 19, 2017" 
+ [9] "Dined on February 19, 2017"  "Dined on February 15, 2017" 
+[11] "Dined on February 12, 2017"  "Dined on February 9, 2017"  
+[13] "Dined on February 6, 2017"   "Dined on February 4, 2017"  
+[15] "Dined on January 31, 2017"   "Dined on January 30, 2017"  
+[17] "Dined on January 28, 2017"   "Dined on January 28, 2017"  
+[19] "Dined on January 26, 2017"   "Dined on January 21, 2017"  
+[21] "Dined on January 4, 2017"    "Dined on January 2, 2017"   
+[23] "Dined on January 1, 2017"    "Dined on January 1, 2017"   
+[25] "Dined on December 29, 2016"  "Dined on December 25, 2016" 
+[27] "Dined on December 24, 2016"  "Dined on December 24, 2016" 
+[29] "Dined on December 24, 2016"  "Dined on December 22, 2016" 
+[31] "Dined on December 22, 2016"  "Dined on December 21, 2016" 
+[33] "Dined on December 20, 2016"  "Dined on December 14, 2016" 
+[35] "Dined on December 11, 2016"  "Dined on December 9, 2016"  
+[37] "Dined on December 8, 2016"   "Dined on December 8, 2016"  
+[39] "Dined on December 7, 2016"   "Dined on November 29, 2016" 
+[41] "Dined on November 25, 2016"  "Dined on November 20, 2016" 
+[43] "Dined on November 20, 2016"  "Dined on November 17, 2016" 
+[45] "Dined on November 17, 2016"  "Dined on November 13, 2016" 
+[47] "Dined on November 7, 2016"   "Dined on October 20, 2016"  
+[49] "Dined on October 18, 2016"   "Dined on September 23, 2016"
+  [1] "Reviewed 9 February 2017"   "Reviewed 6 February 2017"  
+  [3] "Reviewed 2 February 2017"   "Reviewed 2 February 2017"  
+  [5] "Reviewed 31 January 2017"   "Reviewed 29 January 2017"  
+  [7] "Reviewed 28 January 2017"   "Reviewed 27 January 2017"  
+  [9] "Reviewed 24 January 2017"   "Reviewed 19 January 2017"  
+ [11] "Reviewed 13 January 2017"   "Reviewed 5 January 2017"   
+ [13] "Reviewed 1 January 2017"    "Reviewed 29 December 2016" 
+ [15] "Reviewed 26 December 2016"  "Reviewed 8 December 2016"  
+ [17] "Reviewed 3 December 2016"   "Reviewed 29 November 2016" 
+ [19] "Reviewed 28 November 2016"  "Reviewed 27 November 2016" 
+ [21] "Reviewed 9 November 2016"   "Reviewed 6 November 2016"  
+ [23] "Reviewed 31 October 2016"   "Reviewed 26 October 2016"  
+ [25] "Reviewed 24 October 2016"   "Reviewed 23 October 2016"  
+ [27] "Reviewed 20 October 2016"   "Reviewed 17 October 2016"  
+ [29] "Reviewed 17 October 2016"   "Reviewed 16 October 2016"  
+ [31] "Reviewed 9 October 2016"    "Reviewed 9 October 2016"   
+ [33] "Reviewed 5 October 2016"    "Reviewed 4 October 2016"   
+ [35] "Reviewed 29 September 2016" "Reviewed 26 September 2016"
+ [37] "Reviewed 10 September 2016" "Reviewed 3 September 2016" 
+ [39] "Reviewed 26 August 2016"    "Reviewed 25 August 2016"   
+ [41] "Reviewed 24 August 2016"    "Reviewed 23 August 2016"   
+ [43] "Reviewed 17 August 2016"    "Reviewed 14 August 2016"   
+ [45] "Reviewed 14 August 2016"    "Reviewed 11 August 2016"   
+ [47] "Reviewed 11 August 2016"    "Reviewed 4 August 2016"    
+ [49] "Reviewed 25 July 2016"      "Reviewed 25 July 2016"     
+ [51] "Reviewed 21 July 2016"      "Reviewed 19 July 2016"     
+ [53] "Reviewed 18 July 2016"      "Reviewed 18 July 2016"     
+ [55] "Reviewed 17 July 2016"      "Reviewed 16 July 2016"     
+ [57] "Reviewed 16 July 2016"      "Reviewed 14 July 2016"     
+ [59] "Reviewed 11 July 2016"      "Reviewed 6 July 2016"      
+ [61] "Reviewed 6 July 2016"       "Reviewed 5 July 2016"      
+ [63] "Reviewed 26 June 2016"      "Reviewed 19 June 2016"     
+ [65] "Reviewed 10 June 2016"      "Reviewed 6 June 2016"      
+ [67] "Reviewed 4 June 2016"       "Reviewed 30 May 2016"      
+ [69] "Reviewed 30 May 2016"       "Reviewed 28 May 2016"      
+ [71] "Reviewed 25 May 2016"       "Reviewed 21 May 2016"      
+ [73] "Reviewed 19 May 2016"       "Reviewed 4 May 2016"       
+ [75] "Reviewed 4 April 2016"      "Reviewed 21 March 2016"    
+ [77] "Reviewed 15 March 2016"     "Reviewed 13 March 2016"    
+ [79] "Reviewed 6 March 2016"      "Reviewed 4 March 2016"     
+ [81] "Reviewed 26 February 2016"  "Reviewed 21 February 2016" 
+ [83] "Reviewed 20 February 2016"  "Reviewed 16 February 2016" 
+ [85] "Reviewed 9 February 2016"   "Reviewed 9 February 2016"  
+ [87] "Reviewed 19 January 2016"   "Reviewed 14 January 2016"  
+ [89] "Reviewed 1 January 2016"    "Reviewed 22 December 2015" 
+ [91] "Reviewed 21 December 2015"  "Reviewed 20 December 2015" 
+ [93] "Reviewed 16 December 2015"  "Reviewed 15 December 2015" 
+ [95] "Reviewed 12 December 2015"  "Reviewed 11 December 2015" 
+ [97] "Reviewed 18 November 2015"  "Reviewed 17 November 2015" 
+ [99] "Reviewed 15 November 2015"  "Reviewed 15 November 2015" 
+[101] "Reviewed 9 November 2015"   "Reviewed 7 November 2015"  
+[103] "Reviewed 6 November 2015"   "Reviewed 3 November 2015"  
+[105] "Reviewed 26 October 2015"   "Reviewed 26 October 2015"  
+[107] "Reviewed 24 October 2015"   "Reviewed 20 October 2015"  
+[109] "Reviewed 17 October 2015"   "Reviewed 17 October 2015"  
+[111] "Reviewed 24 September 2015" "Reviewed 20 September 2015"
+[113] "Reviewed 20 September 2015" "Reviewed 14 September 2015"
+[115] "Reviewed 7 September 2015"  "Reviewed 7 September 2015" 
+[117] "Reviewed 30 August 2015"    "Reviewed 29 August 2015"   
+[119] "Reviewed 29 August 2015"    "Reviewed 28 August 2015"   
+[121] "Reviewed 21 August 2015"    "Reviewed 19 August 2015"   
+[123] "Reviewed 18 August 2015"    "Reviewed 17 August 2015"   
+[125] "Reviewed 12 August 2015"    "Reviewed 11 August 2015"   
+[127] "Reviewed 10 August 2015"    "Reviewed 4 August 2015"    
+[129] "Reviewed 3 August 2015"     "Reviewed 2 August 2015"    
+[131] "Reviewed 1 August 2015"     "Reviewed 29 July 2015"     
+[133] "Reviewed 23 July 2015"      "Reviewed 21 July 2015"     
+[135] "Reviewed 19 July 2015"      "Reviewed 18 July 2015"     
+[137] "Reviewed 8 July 2015"       "Reviewed 6 July 2015"      
+[139] "Reviewed 2 July 2015"       "Reviewed 22 June 2015"     
+[141] "Reviewed 20 June 2015"      "Reviewed 20 June 2015"     
+[143] "Reviewed 16 June 2015"      "Reviewed 14 June 2015"     
+[145] "Reviewed 9 June 2015"       "Reviewed 8 June 2015"      
+[147] "Reviewed 4 June 2015"       "Reviewed 31 May 2015"      
+[149] "Reviewed 30 May 2015"       "Reviewed 30 May 2015"      
+[151] "Reviewed 24 May 2015"       "Reviewed 24 May 2015"      
+[153] "Reviewed 17 May 2015"       "Reviewed 17 May 2015"      
+[155] "Reviewed 10 May 2015"       "Reviewed 7 May 2015"       
+[157] "Reviewed 2 April 2015"      "Reviewed 26 March 2015"    
+[159] "Reviewed 15 March 2015"     "Reviewed 13 March 2015"    
+[161] "Reviewed 5 March 2015"      "Reviewed 16 February 2015" 
+[163] "Reviewed 3 February 2015"   "Reviewed 31 January 2015"  
+[165] "Reviewed 30 January 2015"   "Reviewed 30 January 2015"  
+[167] "Reviewed 24 January 2015"   "Reviewed 12 January 2015"  
+[169] "Reviewed 8 January 2015"    "Reviewed 5 January 2015"   
+[171] "Reviewed 5 January 2015"    "Reviewed 1 January 2015"   
+[173] "Reviewed 29 December 2014"  "Reviewed 17 December 2014" 
+[175] "Reviewed 16 December 2014"  "Reviewed 15 December 2014" 
+[177] "Reviewed 6 December 2014"   "Reviewed 2 December 2014"  
+[179] "Reviewed 1 December 2014"   "Reviewed 26 November 2014" 
+[181] "Reviewed 22 November 2014"  "Reviewed 13 November 2014" 
+[183] "Reviewed 6 November 2014"   "Reviewed 6 November 2014"  
+[185] "Reviewed 3 November 2014"   "Reviewed 1 November 2014"  
+[187] "Reviewed 23 October 2014"   "Reviewed 26 September 2014"
+[189] "Reviewed 1 September 2014"  "Reviewed 22 August 2014"   
+[191] "Reviewed 16 August 2014"    "Reviewed 16 August 2014"   
+[193] "Reviewed 8 August 2014"     "Reviewed 5 August 2014"    
+[195] "Reviewed 30 June 2014"      "Reviewed 18 June 2014"     
+[197] "Reviewed 28 May 2014"       "Reviewed 11 May 2014"      
+[199] "Reviewed 13 April 2014"     "Reviewed 7 April 2014"     
 [1] "2016-08-01 16:22:56" "2016-04-20 05:25:03" "2016-01-15 23:20:46"
 [4] "2015-12-23 00:15:16" "2015-11-19 01:28:48" "2015-10-12 04:06:25"
-[1] "1/24/2017"  "1/31/2017"  "1/10/2017"  "12/27/2016" "7/12/2016" 
-[6] "7/29/2016" 
-[1] "17233"             "17233"             "February 27, 2017"
-[4] "February 23, 2017" "February 19, 2017" "February 19, 2017"
-[1] "17233" "17233" "17224" "17220" "17216" "17216"
-character(0)
-character(0)
+[1] "3/19/2017"  "1/31/2017"  "1/24/2017"  "1/10/2017"  "12/27/2016"
+[6] "7/12/2016" 
+[1] "17242"             "March 9, 2017"     "March 9, 2017"    
+[4] "February 27, 2017" "February 23, 2017" "February 19, 2017"
+[1] "17242" "17234" "17234" "17224" "17220" "17216"
+[1] "22 March 2017"    "21 March 2017"    "5 March 2017"     "1 March 2017"    
+[5] "20 February 2017" "17 February 2017"
+[1] "17247" "17246" "17230" "17226" "17217" "17214"
 [1] "2016-08-01 16:22:56" "2016-04-20 05:25:03" "2016-01-15 23:20:46"
 [4] "2015-12-23 00:15:16" "2015-11-19 01:28:48" "2015-10-12 04:06:25"
-Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	672 obs. of  4 variables:
- $ Reviews: chr  "I've been meaning to come to Reds for sometime. Well reviewed and recommended in circles around the office. Often used by colle"| __truncated__ "Attended a winterlicious lunch. $18 for 3 courses. I ordered, and enjoyed:Tuna TostadasSteak Bibimbap. (steak slices are pretty"| __truncated__ "As a young barrister  I often visited Red's older, fancier sibling further downtown. Now a seasoned public servant I prefer thi"| __truncated__ "I came here for dinner and had wine and entrees. I wish they have nicer sitting areas that are more comfortable. However, the w"| __truncated__ ...
- $ Ratings: chr  "4.0 star rating" "3.0 star rating" "4.0 star rating" "3.0 star rating" ...
- $ Dates  : Date, format: "2017-01-24" "2017-01-31" ...
+[1] "17014" "16911" "16815" "16792" "16758" "16720"
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	677 obs. of  4 variables:
+ $ Reviews: chr  "The first time I started dining here was due to summerlicious. My friends and I all loved their summerlicious menu. Everything "| __truncated__ "Attended a winterlicious lunch. $18 for 3 courses. I ordered, and enjoyed:Tuna TostadasSteak Bibimbap. (steak slices are pretty"| __truncated__ "I've been meaning to come to Reds for sometime. Well reviewed and recommended in circles around the office. Often used by colle"| __truncated__ "As a young barrister  I often visited Red's older, fancier sibling further downtown. Now a seasoned public servant I prefer thi"| __truncated__ ...
+ $ Ratings: chr  "4.0 star rating" "3.0 star rating" "4.0 star rating" "4.0 star rating" ...
+ $ Dates  : Date, format: "2017-03-19" "2017-01-31" ...
  $ Website: chr  "Yelp" "Yelp" "Yelp" "Yelp" ...
  - attr(*, "vars")=List of 1
   ..$ : symbol Website
  - attr(*, "drop")= logi TRUE
  - attr(*, "indices")=List of 4
-  ..$ : int  134 135 136 137 138 139 140 141 142 143 ...
-  ..$ : int  452 453 454 455 456 457 458 459 460 461 ...
+  ..$ : int  136 137 138 139 140 141 142 143 144 145 ...
+  ..$ : int  455 456 457 458 459 460 461 462 463 464 ...
   ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
-  ..$ : int  442 443 444 445 446 447 448 449 450 451
- - attr(*, "group_sizes")= int  308 220 134 10
- - attr(*, "biggest_group_size")= int 308
+  ..$ : int  445 446 447 448 449 450 451 452 453 454
+ - attr(*, "group_sizes")= int  309 222 136 10
+ - attr(*, "biggest_group_size")= int 309
  - attr(*, "labels")='data.frame':	4 obs. of  1 variable:
   ..$ Website: chr  "OpenTable" "TripAdvisor" "Yelp" "Zomato"
   ..- attr(*, "vars")=List of 1
   .. ..$ : symbol Website
   ..- attr(*, "drop")= logi TRUE
-[1] "4.0 star rating" "3.0 star rating" "4.0 star rating" "3.0 star rating"
-[5] "3.0 star rating" "4.0 star rating"
-[1] "4.0 " "3.0 " "4.0 " "3.0 " "3.0 " "4.0 "
-[1] "5" "5" "3" "5" "3" "5"
-[1] "4 of 5 bubbles" "4 of 5 bubbles" "5 of 5 bubbles" "5 of 5 bubbles"
+[1] "4.0 star rating" "3.0 star rating" "4.0 star rating" "4.0 star rating"
+[5] "3.0 star rating" "3.0 star rating"
+[1] "4.0 " "3.0 " "4.0 " "4.0 " "3.0 " "3.0 "
+[1] "3" "5" "5" "3" "5" "3"
+[1] "4 of 5 bubbles" "2 of 5 bubbles" "4 of 5 bubbles" "4 of 5 bubbles"
 [5] "5 of 5 bubbles" "5 of 5 bubbles"
-[1] "4 " "4 " "5 " "5 " "5 " "5 "
+[1] "4 " "2 " "4 " "4 " "5 " "5 "
 [1] "Rated 3.0" "Rated 5.0" "Rated 4.5" "Rated 1.5" "Rated 4.0" "Rated 1.0"
 [1] "3.0" "5.0" "4.5" "1.5" "4.0" "1.0"
-Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	672 obs. of  4 variables:
- $ Reviews: chr  "I've been meaning to come to Reds for sometime. Well reviewed and recommended in circles around the office. Often used by colle"| __truncated__ "Attended a winterlicious lunch. $18 for 3 courses. I ordered, and enjoyed:Tuna TostadasSteak Bibimbap. (steak slices are pretty"| __truncated__ "As a young barrister  I often visited Red's older, fancier sibling further downtown. Now a seasoned public servant I prefer thi"| __truncated__ "I came here for dinner and had wine and entrees. I wish they have nicer sitting areas that are more comfortable. However, the w"| __truncated__ ...
- $ Ratings: num  4 3 4 3 3 4 1 1 3 4 ...
- $ Dates  : Date, format: "2017-01-24" "2017-01-31" ...
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	677 obs. of  4 variables:
+ $ Reviews: chr  "The first time I started dining here was due to summerlicious. My friends and I all loved their summerlicious menu. Everything "| __truncated__ "Attended a winterlicious lunch. $18 for 3 courses. I ordered, and enjoyed:Tuna TostadasSteak Bibimbap. (steak slices are pretty"| __truncated__ "I've been meaning to come to Reds for sometime. Well reviewed and recommended in circles around the office. Often used by colle"| __truncated__ "As a young barrister  I often visited Red's older, fancier sibling further downtown. Now a seasoned public servant I prefer thi"| __truncated__ ...
+ $ Ratings: num  4 3 4 4 3 3 4 1 1 3 ...
+ $ Dates  : Date, format: "2017-03-19" "2017-01-31" ...
  $ Website: Factor w/ 4 levels "Yelp","OpenTable",..: 1 1 1 1 1 1 1 1 1 1 ...
  - attr(*, "vars")=List of 1
   ..$ : symbol Website
  - attr(*, "drop")= logi TRUE
  - attr(*, "indices")=List of 4
-  ..$ : int  134 135 136 137 138 139 140 141 142 143 ...
-  ..$ : int  452 453 454 455 456 457 458 459 460 461 ...
+  ..$ : int  136 137 138 139 140 141 142 143 144 145 ...
+  ..$ : int  455 456 457 458 459 460 461 462 463 464 ...
   ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
-  ..$ : int  442 443 444 445 446 447 448 449 450 451
- - attr(*, "group_sizes")= int  308 220 134 10
- - attr(*, "biggest_group_size")= int 308
+  ..$ : int  445 446 447 448 449 450 451 452 453 454
+ - attr(*, "group_sizes")= int  309 222 136 10
+ - attr(*, "biggest_group_size")= int 309
  - attr(*, "labels")='data.frame':	4 obs. of  1 variable:
   ..$ Website: chr  "OpenTable" "TripAdvisor" "Yelp" "Zomato"
   ..- attr(*, "vars")=List of 1

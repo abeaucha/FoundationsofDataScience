@@ -24,16 +24,26 @@ rm(list=ls())
 # Input: Data frame containing Review variable that has customer reviews
 # Output: List containing text analytics properties of reviews such as Corpus, Term Document Matrix, and word freqneucies.
 #
-WordCloudAnalysis <- function(dataset){
+WordCloudAnalysis <- function(dataset, use.sentences=TRUE){
   
   #Remove "The" or "the"  from reviews, since the tm_map() function below doesn't do it. 
   dataset$Reviews <- gsub("[Tt]he", "", dataset$Reviews)
   
-  #Create corpus from the text data
-  dataCorpus <- dataset$Reviews %>% VectorSource() %>% Corpus()
+  if(use.sentences==TRUE){
+    dataCorpus <- get_sentences(dataset$Reviews) %>% VectorSource %>% Corpus()
+  }
+  else {
+    #Create corpus from the full text data
+    dataCorpus <- dataset$Reviews %>% VectorSource() %>% Corpus()
+  }
   
   #Remove punctuation and english stopwords from text data
-  dataCorpus <- dataCorpus %>% tm_map(removePunctuation) %>% tm_map(removeWords, stopwords("english"))
+  dataCorpus <- dataCorpus %>% 
+    tm_map(removePunctuation) %>% 
+    tm_map(removeWords, stopwords("english")) %>% 
+    tm_map(content_transformer(tolower))
+  
+  
   
   #Create term document matrix and convert to matrix class.
   TDM <- TermDocumentMatrix(dataCorpus)
@@ -163,6 +173,7 @@ library(tidyr)
 library(tm)
 library(wordcloud)
 library(ggplot2)
+library(syuzhet)
 
 #Read in clean data
 CapstoneDF <- read_csv("./Data/CapstoneCleanData.csv")
@@ -266,6 +277,10 @@ ggsave(filename="./Plots/Global/global_WebsiteYearHist.png", global_p7, width=wd
 global_p8 <- ggplot(CapstoneDF, aes(ceiling(Ratings))) + geom_bar() + facet_grid(.~Website)
 ggsave(filename="./Plots/Global/global_RatingsWebsiteHist.png", global_p8, width=wd, height=ht)
 
+
+ggplot(CapstoneDF, aes(x=Website, y=ceiling(Ratings), col=Website)) + 
+  stat_summary(fun.y=mean, geom="point", size=10)
+
 #Let's build a plot that describes the time series of the percent of individual star ratings
 
 #Percentage time series analysis. 
@@ -362,34 +377,44 @@ Capstone_wA <- WordCloudAnalysis(CapstoneDF)
 names(Capstone_wA)
 
 #Let's look at most common words for full data set.
-head(Capstone_wA$wordFreq)
-wordcloud(Capstone_wA$Corpus, max.word=200, random.order=F)
+head(Capstone_wA$wordFreq, n=20)
+wordcloud(Capstone_wA$Corpus,min.freq=100, max.word=200, random.order=F)
 
 #Now this is the part where Saurabh suggest I do my hypotheses. 
 
 # Obvious one to start with is food. Associations aren't really relevant.
 # E.g. the strongest one is "came". 
+findAssocs(Capstone_wA$TDM, "reds", 0.20)
 findAssocs(Capstone_wA$TDM, "food", .18)
-findAssocs(Capstone_wA$TDM, "good", .20)
-findAssocs(Capstone_wA$TDM, "great", .20)
+findAssocs(Capstone_wA$TDM, "good", .15)
+findAssocs(Capstone_wA$TDM, "great", .10)
+findAssocs(Capstone_wA$TDM, "service", 0.15)
 
 #I don't understand how great could have such a high correlation with "blasting". 
 #Only one review in the entire data set contains the word "blasting", while 
 # 270 reviews contain the word "great". 
-CapstoneDF$Reviews[grepl("[Bb]lasting",CapstoneDF$Reviews)]
-CapstoneDF$Reviews[grepl("awkwardly",CapstoneDF$Reviews)] #Again only one review
-CapstoneDF$Reviews[grepl("college",CapstoneDF$Reviews)] #One review
-CapstoneDF$Reviews[grepl("article",CapstoneDF$Reviews)] #2 reviews
+#CapstoneDF$Reviews[grepl("[Bb]lasting",CapstoneDF$Reviews)]
+#CapstoneDF$Reviews[grepl("awkwardly",CapstoneDF$Reviews)] #Again only one review
+#CapstoneDF$Reviews[grepl("college",CapstoneDF$Reviews)] #One review
+#CapstoneDF$Reviews[grepl("article",CapstoneDF$Reviews)] #2 reviews
+#
+# This problem has been fixed by breaking the reviews down into sentences before
+# performing the text analysis. This makes the correlations a lot more relevant. 
 
 length(CapstoneDF$Reviews[grepl("[Gg]reat",CapstoneDF$Reviews)]) #270 reviews
 length(CapstoneDF$Reviews[grepl("[Gg]reat",CapstoneDF$Reviews)])/length(CapstoneDF$Reviews) #40%
 
+temp <- CapstoneDF
+temp$isgreat <- as.numeric(grepl("[Gg]reat",CapstoneDF$Reviews))
+glimpse(temp)
+ggplot(temp, aes(x=isgreat, y=..count../sum(..count..))) + geom_bar()
+
 
 #Let's look at what "good" associates with. 
-CapstoneDF$Reviews[grepl("croutons",CapstoneDF$Reviews)] # 2 reviews
-length(CapstoneDF$Reviews[grepl("surprisingly",CapstoneDF$Reviews)]) #6 reviews
-length(CapstoneDF$Reviews[grepl("vinaigrette",CapstoneDF$Reviews)]) #2 reviews
-length(CapstoneDF$Reviews[grepl("[Tt]hursday.* good",CapstoneDF$Reviews)]) #4 reviews
+#CapstoneDF$Reviews[grepl("croutons",CapstoneDF$Reviews)] # 2 reviews
+#length(CapstoneDF$Reviews[grepl("surprisingly",CapstoneDF$Reviews)]) #6 reviews
+#length(CapstoneDF$Reviews[grepl("vinaigrette",CapstoneDF$Reviews)]) #2 reviews
+#length(CapstoneDF$Reviews[grepl("[Tt]hursday.* good",CapstoneDF$Reviews)]) #4 reviews
 
 length(CapstoneDF$Reviews[grepl("[Gg]ood",CapstoneDF$Reviews)]) #287 reviews
 length(CapstoneDF$Reviews[grepl("[Gg]ood",CapstoneDF$Reviews)])/length(CapstoneDF$Reviews) #43%
@@ -406,8 +431,21 @@ CapstoneBad_wA <- WordCloudAnalysis(CapstoneDF_bad)
 CapstoneGood_wA <- WordCloudAnalysis(CapstoneDF_good)
 
 #Bad review freq. words
-head(CapstoneBad_wA$wordFreq)
-wordcloud(CapstoneBad_wA$Corpus, max.words=200, random.order=F)
+head(CapstoneBad_wA$wordFreq,n=10)
+wordcloud(CapstoneBad_wA$Corpus, min.freq=30,max.words=200, random.order=F)
+
+findAssocs(CapstoneBad_wA$TDM, "food",0.15)
+findAssocs(CapstoneBad_wA$TDM, "service",0.15)
+findAssocs(CapstoneBad_wA$TDM, "personality",0.15)
+findAssocs(CapstoneBad_wA$TDM, "good",0.15)
+findAssocs(CapstoneBad_wA$TDM, "place",0.15)
+findAssocs(CapstoneBad_wA$TDM, "time",0.15)
+findAssocs(CapstoneBad_wA$TDM, "server",0.15)
+findAssocs(CapstoneBad_wA$TDM, "staff",0.20)
+findAssocs(CapstoneBad_wA$TDM, "great",0.20)
+findAssocs(CapstoneBad_wA$TDM, "reds",0.20)
+
+
 
 #Apparently "good" and "great" are showing up in "bad" reviews too. 
 # Do these occur in 3 star reviews or in 1 or 2? 
@@ -429,16 +467,15 @@ CapstoneDF_bad$Reviews[log]
 #Okay that makes more sense of things. A lot of it says great in the past tense, 
 # or hypothetically, or about another restaurant. 
 
-findAssocs(CapstoneBad_wA$TDM, "food", 0.25)
-findAssocs(CapstoneBad_wA$TDM, "service", 0.30)
 
 length(CapstoneDF_bad$Reviews[grepl("food", CapstoneDF_bad$Reviews)])
 length(CapstoneDF_bad$Reviews[grepl("[Ss]ervice", CapstoneDF_bad$Reviews)])
 length(CapstoneDF_bad$Reviews[grepl("food.*service|service.*food", CapstoneDF_bad$Reviews)])
 
-#Look at random samples
-CapstoneDF_bad_food <-CapstoneDF_bad %>% filter(grepl("food", CapstoneDF_bad$Reviews)) %>% sample_n(5,replace=TRUE)
-CapstoneDF_bad_food$Ratings
+#Look at random samples. 
+# Want to try to identify sentiment regex. 
+CapstoneDF_bad_food <-CapstoneDF_bad %>% filter(grepl("[Ff]ood( +[^ ]+ +){1,10}(poor|awful|bland|disgusting|horrible|overcooked)", CapstoneDF_bad$Reviews)) %>% sample_n(10,replace=TRUE)
+select(CapstoneDF_bad_food,Ratings,YearMonth, YearQuarters)
 CapstoneDF_bad_food$Reviews
 
 CapstoneDF_bad_great <-CapstoneDF_bad %>% filter(grepl("[Gg]reat", CapstoneDF_bad$Reviews)) %>% sample_n(5,replace=TRUE)
@@ -449,8 +486,19 @@ CapstoneDF_bad_great$Reviews
 
 
 #Good review freq. words
-head(CapstoneGood_wA$wordFreq)
-wordcloud(CapstoneGood_wA$Corpus, max.words=200, random.order=F)
+head(CapstoneGood_wA$wordFreq,n=10)
+wordcloud(CapstoneGood_wA$Corpus, min.freq=50,max.words=200, random.order=F, colors=brewer.pal(8, "Dark2"))
+
+findAssocs(CapstoneGood_wA$TDM, "great", 0.15)
+findAssocs(CapstoneGood_wA$TDM, "food",0.15)
+findAssocs(CapstoneGood_wA$TDM, "quality",0.20)
+findAssocs(CapstoneGood_wA$TDM, "good",0.20)
+findAssocs(CapstoneGood_wA$TDM, "service",0.15)
+findAssocs(CapstoneGood_wA$TDM, "reds",0.20)
+findAssocs(CapstoneGood_wA$TDM, "menu",0.15)
+findAssocs(CapstoneGood_wA$TDM, "place",0.15)
+findAssocs(CapstoneGood_wA$TDM, "atmosphere",0.13)
+findAssocs(CapstoneGood_wA$TDM, "back",0.15)
 
 dim(CapstoneDF_good)[1]
 length(CapstoneDF_good$Reviews[grepl("food", CapstoneDF_good$Reviews)])
@@ -499,7 +547,7 @@ auxData
 # Want format similar to percentData df.
 ggplot(auxData, aes(x=Year, y=ratioGoodRating)) + 
   geom_point() + 
-  geom_line(aes(x=Year, y=ratioBadRating))
+  geom_point(aes(x=Year, y=ratioBadRating))
 
 
 

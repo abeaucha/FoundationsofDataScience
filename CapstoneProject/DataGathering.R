@@ -17,9 +17,9 @@ rm(list=ls())
 
 #Load required libraries
 library(rvest)
-library(dplyr)
+suppressMessages(library(dplyr))
 library(tidyr)
-library(readr)
+suppressMessages(library(readr))
 
 
 ######################### Function: YelpScrape ###############################
@@ -305,98 +305,3 @@ OpenTableData$Dates[DatesLogic] <- DineDate
 
 save(YelpData,OpenTableData,TripAdData,ZomatoData, file="./Data/CapstoneRawData.RData")
 
-#######
-#
-# Data Cleaning
-# 
-#
-
-
-# Clean Yelp data
-
-#Remove additional previous reviews from Yelp data
-NoPrevRev <- grepl("has-previous-review",YelpData$PrevRev) == FALSE
-YelpData$Ratings <- YelpData$Ratings[NoPrevRev]
-YelpData$Dates <- YelpData$Dates[NoPrevRev]
-
-#Create vector to describe the review category as Yelp
-YelpVec <- rep("Yelp",length(YelpData$Reviews))
-
-#Combine Yelp data vectors in DF
-YelpDF <- data_frame(Reviews=YelpData$Reviews,Ratings=YelpData$Ratings,Dates=YelpData$Dates, Website=YelpVec)
-
-
-#Clean OpenTable Data
-#
-#
-
-# Create vector to describe category of OpenTable
-OpenTableVec <- rep("OpenTable", length(OpenTableData$Reviews))
-
-#Create OpenTable data frame
-OpenTableDF <- data_frame(Reviews=OpenTableData$Reviews, Ratings=OpenTableData$Ratings, Dates=OpenTableData$Dates,Website=OpenTableVec)
-
-
-#Clean Zomato Data 
-#Remove the double value from the ratings, which take on NAs
-RatingsNA <- is.na(ZomatoData$Ratings)==FALSE
-ZomatoData$Ratings <- ZomatoData$Ratings[RatingsNA]
-
-#Remove double reviews resulting from full review expansion
-FullRev <- grepl("read more",ZomatoData$Reviews) == FALSE
-ZomatoData$Ratings <- ZomatoData$Ratings[FullRev]
-ZomatoData$Reviews <- ZomatoData$Reviews[FullRev]
-
-#Create vector describe website category
-ZomatoVec <- rep("Zomato", length(ZomatoData$Reviews))
-
-ZomatoDF <- data_frame(Reviews=ZomatoData$Reviews,Ratings=ZomatoData$Ratings, Dates=ZomatoData$Dates, Website=ZomatoVec)
-
-
-
-#Clean TripAdvisor data
-
-#Replace dates of the form "Reviewed ## days ago" with the proper dates
-TripAdData$Dates2[grepl("ago",TripAdData$Dates2)] <- TripAdData$Dates1
-
-#Create vector describing website
-TripAdVec <- rep("TripAdvisor",length(TripAdData$Reviews))
-
-TripAdDF <- data_frame(Reviews=TripAdData$Reviews,Ratings=TripAdData$Ratings,Dates=TripAdData$Dates2,Website=TripAdVec)
-
-
-#Merge all data frames
-d1 <-full_join(YelpDF,OpenTableDF)
-d2 <- full_join(d1,ZomatoDF)
-RawDF <- full_join(d2,TripAdDF) %>% group_by(Website)
-
-
-write_csv(RawDF,"CapstoneRawData.csv")
-
-
-######################## NOTES ####################################
-
-#Some things I'm noticing by working with CSS selectors. 
-#If there's an element labelled <div class="classname">, it can be selected using the node
-# ".classname". 
-#If, within this <div> block, there exists a paragraph blocks, <p>, we can access that using
-# ".classname p". 
-#Similarly, if within the <div> block, there exists a hyperlink, <a>, we can access that using
-# ".classname a". The actual attribute "href" of the hyperlink can be obtained by then piping 
-# the selector to html_attr("href")
-#
-# So for example, the code block read_html(testhtml) %>% html_nodes(".quote a") %>% html_attr("href")
-# will go find something like this: <div class="quote" .... > <a href=" ...">, and will return
-# just the hyperlink info. 
-#
-# We can also go find all the <p> or <a> blocks by just using "p" or "a". But this is less selective. 
-# We can do the same with "div" and "span"
-#
-# Okay so it seems that any HTML format of the type <...> can be accessed simply by typing
-# the command. But this will select all items of that sort. So for instance if we want all images
-# we would access "img"
-#
-# There aren't actually that many basic html commands. The complexities come from associating classes
-# to different items. <div class="...". for instance. 
-#
-# I'm not clear on what the hashtag does. 
