@@ -1,18 +1,20 @@
 ---
-title: "REDS Midtown Tavern Online Review Analytics (WORKING TITLE)"
+title: "REDS Midtown Tavern Online Review Analytics"
 author: "Antoine Beauchamp"
-date: "March 27th, 2017"
+date: "March 28th, 2017"
 output: 
   pdf_document:
+    template: CapstoneTemplate.tex
     latex_engine: xelatex
     toc: true
     toc_depth: 3
     number_sections: true
     includes:
       in_header: CapstoneHeader.sty
-    highlight: haddock
+    highlight: tango
 fontsize: 11pt
 indent: 2pt
+geometry: top=1in
 documentclass: article
 bibliography: SpringboardFoundationsCapstone.bib
 subtitle: "Foundations of Data Science: Capstone Project Report"
@@ -40,8 +42,13 @@ We can modify the formatting of different aspects of the document by changing th
 
 The default highlight is "tango". 
 Make sure that your hyperlink colouring works with whatever highlight style you're using
+Possible options: tango, haddock, monochrome
+Not a large set of options for syntax highlighting. 
 
+3. Shortcut commands
 
+%>% : Command+Shift+M
+R code chunk: Command+Option+I
 
 -->
 
@@ -77,7 +84,7 @@ rm(list=ls())
 ```{r global_options, echo=FALSE}
 #Set default options for R code chuncks in Markdown.
 library(knitr)
-opts_chunk$set(tidy=FALSE, message=FALSE, size="small")
+opts_chunk$set(tidy=FALSE, message=FALSE, size="small", highlight = TRUE, background=c(0,0,0))
 ```
 
 ```{r str_break func, echo=FALSE}
@@ -420,7 +427,7 @@ Another feature that I've implemented is that the web scraping process for TripA
 
 # This function is used to scrape review data from TripAdvisor
 # Arguments:
-# LandingURL: URL for the landing page of the restaurant you want to scrape for. 
+# LandingURL: URL for the landing page of the restaurant to scrape 
 # It will be used to link to the full review pages
 TripAdScrape <- function(LandingURL) {
 
@@ -448,7 +455,8 @@ TripAdScrape <- function(LandingURL) {
     print(paste("Scraping TripAdvisor page",ReviewCount))
     
     #For the first page, the URL is just the base URL. 
-    #For subsequent iterations, grab hyperlink to the new page from the page links. 
+    #For subsequent iterations, grab hyperlink to the new page
+    # from the page links. 
     #E.g. page 1 carries a link to page 2 in its HTML, and so on. 
     if(ReviewCount == 1){
       page_url <- BaseURL
@@ -546,8 +554,6 @@ ZomatoScrape <- function(BaseURL) {
 
 With the web scraping functions defined, we can finish the data acquisition process. All that is left to do is to identify the URLs for the different review pages and pass them to the functions.
 
-\edit{Not sure what to do about these long URL strings}
-
 ```{r web scrape, eval=FALSE}
 #Yelp main review page URL
 BaseURL_Yelp <- 
@@ -562,7 +568,8 @@ LandingURL_TripAd <-
         "-Reviews-Reds_Midtown_Tavern-Toronto_Ontario.html")
 #Zomato main review page URL
 BaseURL_Zomato <- 
-  "https://www.zomato.com/toronto/reds-midtown-tavern-church-and-wellesley/reviews"
+  paste("https://www.zomato.com/toronto/",
+        "reds-midtown-tavern-church-and-wellesley/reviews")
 
 #Scrape data from websites
 YelpData <- YelpScrape(BaseURL_Yelp)
@@ -790,8 +797,7 @@ head(subset(CapstoneDF$Dates, CapstoneDF$Website=="TripAdvisor"),n=20)
 ```
 
 \ni The dates data should now be stripped of unnecessary characters. The next step in our cleaning process is to express all of this data in terms of a `Date` class. This will be done in parts since the date is formatted differently for the different websites.  
-
-
+\newline
 \ni \textbf{Yelp}:
 
 ```{r}
@@ -862,7 +868,7 @@ str(CapstoneDF$Dates)
 ## Numeric Ratings
 
 In the previous section, we removed unnecessary characters from the date data and converted the data to a common `Date` class. Here we will do the same with the ratings data. 
-     
+\newline
 \ni \textbf{Yelp}: 
 
 ```{r}
@@ -880,8 +886,8 @@ CapstoneDF$Ratings <- gsub("star rating","",CapstoneDF$Ratings)
 #Open Table ratings
 head(subset(CapstoneDF$Ratings, CapstoneDF$Website=="OpenTable"))
 ```
-\ni This data is already is a workable format.  
-   
+\ni This data is already in a workable format.  
+\newline
 \ni \textbf{TripAdvisor}:
 
 ```{r}
@@ -950,13 +956,11 @@ write_csv(CapstoneDF, "./Data/CapstoneCleanData.csv")
 \ni This completes the cleaning stage. 
 
 
-#Data Analysis
+#Data Analysis {#S4}
 
-##Time Series Analysis of Ratings
+Having completed the gritty process of first acquiring the customer review data from the web and subsequently cleaning it, we can now dive into the analysis stage. In the previous sections, we built a data frame with four variables: `Reviews`, `Ratings`, `Dates`, and `Website`. The variables that we will use primarily to extract insights are the `Reviews` and `Ratings` variables, containing respectively the written customer reviews and the associated numerical ratings. These variables contain two very different types of data, i.e. text data and numerical data, and so they will be manipulated in different ways. We will begin the analytic process by performing a time series analysis of the ratings data, and further move on to a text analysis of the review data. Let's take a moment to load some relevant libraries and read in the clean data. 
 
 ```{r}
-
-
 #Load libraries
 library(readr)
 library(dplyr)
@@ -965,27 +969,26 @@ library(tm)
 library(wordcloud)
 library(ggplot2)
 library(syuzhet)
-
 #Read in clean data
-CapstoneDF <- suppressMessages(read_csv("./Data/CapstoneCleanData.csv"))
-
+CapstoneDF <- read_csv("./Data/CapstoneCleanData.csv")
 #Summary of data frame
 glimpse(CapstoneDF)
 ```
 
-```{r}
+\ni We have data for `r {dim(CapstoneDF)[1]}` customer reviews from the four aformentioned websites. Before diving into the analysis, we will do some basic data wrangling to reformat the structure of the data frame. 
 
-#Create Quarters variable
+```{r}
+#Create variable describing annual quarters: Quarters
 CapstoneDF <- CapstoneDF  %>% mutate(Quarters = quarters.Date(Dates))
 
-#Separate date variable into Year, Month, Day
+#Separate Dates variable into Year, Month, Day variables
 CapstoneDF <- CapstoneDF %>% separate(Dates, c("Year","Month","Day"))
 
-#Create variable that describes month and year. 
+#Create variable that describes Month and Year together: YearMonth
 tempdf <- CapstoneDF %>% unite("YearMonth", Year, Month, sep="-")
 CapstoneDF$YearMonth <- tempdf$YearMonth
 
-#Create variable that describes quarters and years
+#Create variable that describes Quarters and Year together: YearQuarters
 tempdf <- CapstoneDF %>% unite("YearQuarters", Year, Quarters, sep="-")
 CapstoneDF$YearQuarters <- tempdf$YearQuarters
 
@@ -993,31 +996,107 @@ CapstoneDF$YearQuarters <- tempdf$YearQuarters
 CapstoneDF$Website <- factor(CapstoneDF$Website)
 CapstoneDF$Quarters <- factor(CapstoneDF$Quarters)
 
-#Take a look at the data
-head(CapstoneDF[-1])
 
+t1 <- CapstoneDF %>% group_by(Year) %>% summarise(countYear=n())
+CapstoneDF <- left_join(CapstoneDF,t1, by="Year")
+
+t2 <- CapstoneDF %>% group_by(YearQuarters) %>% summarise(countQuarters=n())
+CapstoneDF <- left_join(CapstoneDF,t2, by="YearQuarters")
+
+t3 <- CapstoneDF %>% group_by(YearMonth) %>% summarise(countMonth=n())
+CapstoneDF <- left_join(CapstoneDF,t3, by="YearMonth")
+
+head(CapstoneDF[-1])
 ```
 
-```{r}
-#Ratings aggregated by Year
-global_p1 <- ggplot(CapstoneDF, aes(x=Year, y=Ratings)) + 
-  stat_summary(fun.y=mean, geom="point") + 
-  coord_cartesian(ylim=c(2.5,4.5))
-global_p1
+\ni We are ready to begin our analysis. 
 
+
+##Time Series Analysis of Ratings
+
+The first part of our data analysis process will be focussed on examining the "dynamics" of the `Ratings` variable over time, aggregated at various levels of ganularity. As a first step, let's compute the mean value of the ratings for REDS Midtown Tavern. 
+
+```{r global mean}
+mean(CapstoneDF$Ratings)
+CapstoneDF$RatingsAvg <- 
+  rep(mean(CapstoneDF$Ratings), length(CapstoneDF$Ratings))
+```
+
+\ni The mean values of the numerical customer ratings is `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`. We can think of this as the ratings aggregated at the lowest possible level of granularity, i.e. all of the data is aggregated using the `mean()` function. This provides some insight into the global performance of the restaurant over its entire lifespan \edit{More insight here?}. We can mine for further insight by increasing the granularity of the data. First, let's aggregate the mean values by year. 
+
+\edit{For all of these plots, going to need to fix the themes for presentation. Get the analysis done first though.}
+
+```{r ratingsYear, fig.cap="Customer Ratings Averaged by Year\\label{fig:ratingsYear}"}
+#Ratings aggregated by Year
+ggplot(CapstoneDF, aes(x=Year, y=Ratings)) + 
+  geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",
+            colour="red", alpha=0.5) +
+  stat_summary(aes(size=countYear), fun.y=mean, geom="point") +
+  #coord_cartesian(ylim=c(2.5,4.5)) + 
+  scale_size_continuous(range=c(3,7)) +
+  coord_cartesian(ylim=c(3.0,4.5))
+```
+
+
+\edit{Not sure what to do about the scale here. I'd like to make the scale consistent for Year, QUarters and Months. But it makes the data harder to read for Years}
+
+Reference to \ref{fig:ratingsYear}
+
+
+By computing the mean value of the customer ratings for each year, we begin to see some of the dynamics of the ratings. In particular, we can observe that from 2013 to 2015, the restaurant experienced a decreasing trend in its ratings. 2015 was the worst year in terms of quality for the restaurant, as reported by the clientele. Interestingly, since then the ratings have been rising steadily. Now one quarter into 2017, the restaurant's ratings are at an all time high, with a mean value of `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$Year=="2017")),2), nsmall=2)}`. This is a great sign for the coming future. In order to better understand why the ratings were so low in 2015, and how they have improved since then, we will mine deeper into the data by looking at the mean ratings for individual quarters. 
+
+
+```{r ratingsQuarters, fig.cap="Customer Ratings Averaged by Yearly Quarters\\label{fig:ratingsQuarters}"}
 #Ratings aggregated by Year and Quarters
-global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings)) + 
-  stat_summary(fun.y=mean, geom="point") + 
-  coord_cartesian(ylim=c(2.5,4.5)) +
+global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings,col=Year)) + 
+  geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",
+            colour="black", alpha=0.5) +
+  stat_summary(aes(size=countQuarters), fun.y=mean, geom="point") + 
+  #coord_cartesian(ylim=c(2.5,4.5)) +
+  coord_cartesian(ylim=c(3.0,4.5)) +
+  scale_size_continuous(range=c(3,9)) +
   theme(axis.text.x =element_text(angle=90))
 global_p2
+```
 
-global_p3 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=YearQuarters)) +
-  stat_summary(fun.y=mean, geom="point") +
-  coord_cartesian(ylim=c(2.5,4.5)) + 
+In this plot we are able to see some interesting details in the data. In particular, the data can be subdivided into three periods of interest, as shown in Figure \edit{?????}. The first period is comprised of the restaurant's first year in business, i.e. from 2013-Q4 to 2014-Q4. During this period, the quarterly ratings are mainly scattered around the global mean of `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`. The exception is an unexpectedly low value for the ratings in 2014-Q2, which can effectively be treated as an outlier to the corresponding group. In this first year, the restaurant experienced no growth in terms of quality. The first quarter of 2015 appeared to promise that things would be different in 2015, but the data from the rest of the year shows that this isn't the case. This forms the second group of interest, which spans from 2015 to the beginning of 2016. During this period, REDS Midtown Tavern experienced a steady decline in ratings, reaching bottom in the fourth quarter of 2015. \edit{I'm not sure if this is the proper way to organize this data, by including 2016-Q1 in this "poor" group. Another way to think about it would be to include this quarter in the final group, as the beginning of the growth period. Could also just group data by year? Flat in 2014, decreasing in 2015, increasing in 2016. } What is rather remarkable is that, since the beginning of 2016, the restaurant has experienced a tremendous improvement in the quality of the ratings it has received. The ratings reached their earlier 2014 values in the second quarter of 2016, and continued on to an all-time high in 2016-Q4. This period of growth implies that the restaurant has undergone some significant changes in 2016. The final piece to examine is that, since the beginning of 2017, the ratings have dipped slightly, from `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2016-Q4")),2), nsmall=2)}` in 2016-Q4 to `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2017-Q1")),2), nsmall=2)}`. 
+
+```{r}
+CapstoneDF$QuarterGroup <- rep(0, dim(CapstoneDF)[1])
+CapstoneDF$QuarterGroup[CapstoneDF$YearQuarters %in% c("2013-Q4", "2014-Q1", "2014-Q3", "2014-Q4")] <- "Mid"
+CapstoneDF$QuarterGroup[CapstoneDF$YearQuarters %in% c("2015-Q2", "2015-Q3", "2015-Q4", "2016-Q1")] <- "Poor"
+CapstoneDF$QuarterGroup[CapstoneDF$YearQuarters %in% c("2016-Q2", "2016-Q3", "2016-Q4", "2017-Q1")] <- "Growth"
+CapstoneDF$QuarterGroup[CapstoneDF$YearQuarters %in% c("2014-Q2", "2015-Q1")] <- "Outliers"
+CapstoneDF$QuarterGroup <- factor(CapstoneDF$QuarterGroup)
+```
+
+```{r fig.cap="Customer Ratings Averaged by Yearly Quarters, Grouped"}
+#Ratings aggregated by Year and Quarters
+global_p3 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings,col=QuarterGroup)) + 
+  geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",
+            colour="black", alpha=0.5) +
+  stat_summary(aes(size=countQuarters),fun.y=mean, geom="point") + 
+  #coord_cartesian(ylim=c(2.5,4.5)) +
+  coord_cartesian(ylim=c(3.0,4.5)) +
+  scale_size_continuous(range=c(3,9)) +
   theme(axis.text.x =element_text(angle=90))
 global_p3
 ```
+
+
+
+
+```{r fig.cap="Customer Ratings Averaged by Month"}
+global_p4 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=Year)) +
+    geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",
+            colour="black", alpha=0.5) +
+  stat_summary(aes(size=countMonth),fun.y=mean, geom="point", alpha=0.8) +
+  coord_cartesian(ylim=c(2.5,4.5)) + 
+  scale_size_continuous(range=c(3,8)) +
+  theme(axis.text.x =element_text(angle=90))
+global_p4
+```
+
 
 
 ##Customer Reviews Text Analysis

@@ -1,19 +1,11 @@
-%%%
 %
-% NOTES: This is the original default template for knitting PDF documents from R Markdown. However this is not the most updated version. If left alone without specifying a template: argument in the .Rmd file, RStudio will not use this template. It will use the newer template default-1.17.0.2.tex. This will be done automatically as can be seen in the output log of the knitting process. 
-%
-% Date: March 25th, 2017
-% Antoine Beauchamp
+% Document template for Capstone report. 
+% Mostly the same as default-1.17.0.2.tex, but some customized mods. 
 %
 %
-%
-
-
+% Note: Don't put unnecessary spaces here or it will fuck everything up. 
 
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$paper,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
-$if(beamerarticle)$
-\usepackage{beamerarticle} % needs to be loaded first
-$endif$
 $if(fontfamily)$
 \usepackage[$for(fontfamilyoptions)$$fontfamilyoptions$$sep$,$endfor$]{$fontfamily$}
 $else$
@@ -33,19 +25,12 @@ $if(euro)$
   \usepackage{eurosym}
 $endif$
 \else % if luatex or xelatex
-$if(mathspec)$
   \ifxetex
     \usepackage{mathspec}
   \else
-    \usepackage{unicode-math}
+    \usepackage{fontspec}
   \fi
-$else$
-  \usepackage{unicode-math}
-$endif$
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-$for(fontfamilies)$
-  \newfontfamily{$fontfamilies.name$}[$fontfamilies.options$]{$fontfamilies.font$}
-$endfor$
 $if(euro)$
   \newcommand{\euro}{€}
 $endif$
@@ -59,15 +44,7 @@ $if(monofont)$
     \setmonofont[Mapping=tex-ansi$if(monofontoptions)$,$for(monofontoptions)$$monofontoptions$$sep$,$endfor$$endif$]{$monofont$}
 $endif$
 $if(mathfont)$
-$if(mathspec)$
-  \ifxetex
     \setmathfont(Digits,Latin,Greek)[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-  \else
-    \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-  \fi
-$else$
-  \setmathfont[$for(mathfontoptions)$$mathfontoptions$$sep$,$endfor$]{$mathfont$}
-$endif$
 $endif$
 $if(CJKmainfont)$
     \usepackage{xeCJK}
@@ -78,18 +55,17 @@ $endif$
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
 \IfFileExists{microtype.sty}{%
-\usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
+\usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
-$if(verbatim-in-note)$
-\usepackage{fancyvrb}
+$if(geometry)$
+\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
 $endif$
-\usepackage[unicode=true]{hyperref}
+\usepackage{hyperref}
 $if(colorlinks)$
 \PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
 $endif$
-\hypersetup{
+\hypersetup{unicode=true,
 $if(title-meta)$
             pdftitle={$title-meta$},
 $endif$
@@ -97,7 +73,7 @@ $if(author-meta)$
             pdfauthor={$author-meta$},
 $endif$
 $if(keywords)$
-            pdfkeywords={$for(keywords)$$keywords$$sep$, $endfor$},
+            pdfkeywords={$for(keywords)$$keywords$$sep$; $endfor$},
 $endif$
 $if(colorlinks)$
             colorlinks=true,
@@ -109,12 +85,6 @@ $else$
 $endif$
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
-$if(verbatim-in-note)$
-\VerbatimFootnotes % allows verbatim text in footnotes
-$endif$
-$if(geometry)$
-\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
-$endif$
 $if(lang)$
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[shorthands=off,$for(babel-otherlangs)$$babel-otherlangs$,$endfor$main=$babel-lang$]{babel}
@@ -134,7 +104,8 @@ $if(natbib)$
 \bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
 $endif$
 $if(biblatex)$
-\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
+\usepackage$if(biblio-style)$[style=$biblio-style$]$endif${biblatex}
+$if(biblatexoptions)$\ExecuteBibliographyOptions{$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$}$endif$
 $for(bibliography)$
 \addbibresource{$bibliography$}
 $endfor$
@@ -148,10 +119,12 @@ $endif$
 $if(highlighting-macros)$
 $highlighting-macros$
 $endif$
+$if(verbatim-in-note)$
+\usepackage{fancyvrb}
+\VerbatimFootnotes % allows verbatim text in footnotes
+$endif$
 $if(tables)$
 \usepackage{longtable,booktabs}
-% Fix footnotes in tables (requires footnote package)
-\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{long table}}{}
 $endif$
 $if(graphics)$
 \usepackage{graphicx,grffile}
@@ -186,7 +159,7 @@ $endif$
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 $if(numbersections)$
-\setcounter{secnumdepth}{$if(secnumdepth)$$secnumdepth$$else$5$endif$}
+\setcounter{secnumdepth}{5}
 $else$
 \setcounter{secnumdepth}{0}
 $endif$
@@ -220,33 +193,54 @@ $if(dir)$
 \fi
 $endif$
 
-% set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large\textbf{#1}\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+$if(title)$
+  \title{$title$}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+$else$
+  \title{}
+  \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+$endif$
+$if(subtitle)$
+\subtitle{$subtitle$}
+$endif$
+$if(author)$
+  \author{$for(author)$$author$$sep$ \\ $endfor$}
+  \preauthor{\centering\large} %This emphasizes the author
+  \postauthor{\par}
+$else$
+  \author{}
+  \preauthor{}\postauthor{}
+$endif$
+$if(date)$
+  \predate{\centering\large}%This emphasizes the date
+  \postdate{\par}
+  \date{$date$}
+$else$
+  \date{}
+  \predate{}\postdate{}
+$endif$
 
 $for(header-includes)$
 $header-includes$
 $endfor$
 
-$if(title)$
-\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
-$endif$
-$if(subtitle)$
-\providecommand{\subtitle}[1]{}
-\subtitle{$subtitle$}
-$endif$
-$if(author)$
-\author{$for(author)$$author$$sep$ \and $endfor$}
-$endif$
-$if(institute)$
-\providecommand{\institute}[1]{}
-\institute{$for(institute)$$institute$$sep$ \and $endfor$}
-$endif$
-\date{$date$}
-
-
-% Beginning of document
 \begin{document}
 $if(title)$
 \maketitle
@@ -299,4 +293,5 @@ $for(include-after)$
 $include-after$
 
 $endfor$
+
 \end{document}
