@@ -205,8 +205,17 @@ CapstoneDF$YearQuarters <- tempdf$YearQuarters
 CapstoneDF$Website <- factor(CapstoneDF$Website)
 CapstoneDF$Quarters <- factor(CapstoneDF$Quarters)
 
-#Take a look at the data
+t1 <- CapstoneDF %>% group_by(Year) %>% summarise(countYear=n())
+CapstoneDF <- left_join(CapstoneDF,t1, by="Year")
+
+t2 <- CapstoneDF %>% group_by(YearQuarters) %>% summarise(countQuarters=n())
+CapstoneDF <- left_join(CapstoneDF,t2, by="YearQuarters")
+
+t3 <- CapstoneDF %>% group_by(YearMonth) %>% summarise(countMonth=n())
+CapstoneDF <- left_join(CapstoneDF,t3, by="YearMonth")
+
 head(CapstoneDF[-1])
+
 
 
 ############### GLOBAL ANALYSIS #####################
@@ -217,19 +226,28 @@ ht=10.0
 
 #What is full mean of ratings? 
 mean(CapstoneDF$Ratings)
+CapstoneDF$RatingsAvg <- rep(mean(CapstoneDF$Ratings), length(CapstoneDF$Ratings))
 
 #We can actually do all of our summary statistics within ggplot()
 
 #Ratings aggregated by Year
 global_p1 <- ggplot(CapstoneDF, aes(x=Year, y=Ratings)) + 
-  stat_summary(fun.y=mean, geom="point") + 
-  coord_cartesian(ylim=c(2.5,4.5))
+  geom_line(aes(y=RatingsAvg, group=1), linetype="dashed", colour="red", alpha=0.5) +
+  stat_summary(aes(size=countYear), fun.y=mean, geom="point") +
+  #coord_cartesian(ylim=c(2.5,4.5)) + 
+  scale_size_continuous(range=c(3,7)) +
+  coord_cartesian(ylim=c(3.0,4.5))
 ggsave(filename="./Plots/Global/global_YearRatings.png",global_p1, width=wd, height=ht)
 
 #Ratings aggregated by Year and Quarters
-global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings)) + 
-  stat_summary(fun.y=mean, geom="point") + 
-  coord_cartesian(ylim=c(2.5,4.5))
+global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings,col=Year)) + 
+  geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",colour="black", alpha=0.5) +
+  stat_summary(aes(size=countQuarters), fun.y=mean, geom="point") + 
+  #coord_cartesian(ylim=c(2.5,4.5)) +
+  coord_cartesian(ylim=c(3.0,4.5)) +
+  scale_size_continuous(range=c(3,9)) +
+  theme(axis.text.x =element_text(angle=90))
+global_p2
 ggsave(filename="./Plots/Global/global_YearQuartersRatings.png",global_p2,width=wd,height=ht)
 
 #  stat_summary(fun.data=mean_sdl, fun.args=list(mult=1), position="identity") 
@@ -241,10 +259,13 @@ ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings)) +
   stat_summary(aes(x=Year), fun.y=mean, geom="point", colour="red", size=4.0, position="dodge")
 
 #Ratings aggregated by Year and Month
-global_p3 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=YearQuarters)) +
-  stat_summary(fun.y=mean, geom="point") +
+global_p3 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=Year)) +
+  geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",colour="black", alpha=0.5) +
+  stat_summary(aes(size=countMonth),fun.y=mean, geom="point", alpha=0.8) +
   coord_cartesian(ylim=c(2.5,4.5)) + 
+  scale_size_continuous(range=c(3,8)) +
   theme(axis.text.x =element_text(angle=90))
+global_p3
 ggsave(filename="./Plots/Global/global_YearMonthRatings.png",global_p3, width=wd, height=ht)
 
 #Something I could do here is fit a linear model to see how linear the growth is.
@@ -256,6 +277,7 @@ ggsave(filename="./Plots/Global/global_RatingsHist.png", global_p4, width=wd, he
 
 #Website distribution
 global_p5<-ggplot(CapstoneDF, aes(Website)) + geom_bar()
+global_p5
 ggsave(filename="./Plots/Global/global_Website.png", global_p5, width=wd, height=ht)
 
 #Add facet to encode time information.
@@ -272,6 +294,7 @@ global_p7 <- ggplot(CapstoneDF, aes(Website)) +
   geom_bar() + 
   facet_grid(.~Year) + 
   theme(axis.text.x =element_text(angle=90))
+global_p7
 ggsave(filename="./Plots/Global/global_WebsiteYearHist.png", global_p7, width=wd, height=ht)
 
 global_p8 <- ggplot(CapstoneDF, aes(ceiling(Ratings))) + geom_bar() + facet_grid(.~Website)
