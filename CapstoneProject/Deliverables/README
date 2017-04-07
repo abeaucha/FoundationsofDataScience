@@ -6,9 +6,86 @@
 | Author: Antoine Beauchamp
 | Date: April 6th, 2017 
 |
-| Project Directory: .../CapstoneProject/Deliverables 
+| Project Directory: FoundationsofDataSciece/CapstoneProject/Deliverables 
 |
 --------------------------------------------------------------
+
+| ------------------------- Project Overview --------------------
+
+
+
+
+
+
+|------------------------- Directories -----------------------
+
+
+./Data/: 
+Directory containing raw and clean data
+
+./Images/: 
+Directory containing images used in project report and slide deck
+
+./Plots/: 
+Directory containing plots generated as part of data analysis
+
+
+
+|------------------------ Programs -------------------------
+
+CapstoneGatherClean: 
+Bash script to run data gathering and data cleaning R scripts
+
+
+DataGathering.R:
+
+R script 
+
+
+DataCleaning.R:
+
+
+
+
+RMTAnalysis.R:
+
+
+
+
+
+
+| ---------------------- Project Report -------------------
+
+
+CapstoneHeader.sty:
+Header file for formatting project report
+
+
+CapstoneTemplate.tex:
+LaTeX template for project report
+
+
+CapstoneProjectReport.Rmd:
+Project report R Markdown file
+
+
+CapstoneProjectReport.pdf:
+Project report PDF file
+
+
+|---------------------- Slide Deck ---------------------
+
+
+CapstoneSlideDeck.key:
+Keynote file for project slide deck
+
+
+CapstoneSlideDeck.pdf:
+PDF file for project slide deck
+
+
+
+
 
 
 
