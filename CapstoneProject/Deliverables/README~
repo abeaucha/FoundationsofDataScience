@@ -1,5 +1,5 @@
 
--------------------------------------------------------------
+|-------------------------------------------------------------------------------
 |
 | Capstone Project: REDS Midtown Tavern Online Review Analytics
 | Springboard: Foundations of Data Science
@@ -8,16 +8,16 @@
 |
 | Project Directory: FoundationsofDataSciece/CapstoneProject/Deliverables 
 |
---------------------------------------------------------------
+|-------------------------------------------------------------------------------
 
-| ------------------------- Project Overview --------------------
-
-
+|--------------------------- Project Overview ----------------------------------
 
 
 
 
-|------------------------- Directories -----------------------
+
+
+|------------------------------ Directories ------------------------------------
 
 
 ./Data/: 
@@ -31,7 +31,7 @@ Directory containing plots generated as part of data analysis
 
 
 
-|------------------------ Programs -------------------------
+|-------------------------------- Programs ------------------------------------
 
 CapstoneGatherClean: 
 Bash script to run data gathering and data cleaning R scripts
@@ -52,9 +52,7 @@ RMTAnalysis.R:
 
 
 
-
-
-| ---------------------- Project Report -------------------
+|------------------------------ Project Report -------------------------------
 
 
 CapstoneHeader.sty:
@@ -73,7 +71,7 @@ CapstoneProjectReport.pdf:
 Project report PDF file
 
 
-|---------------------- Slide Deck ---------------------
+|-------------------------------- Slide Deck --------------------------------
 
 
 CapstoneSlideDeck.key:
