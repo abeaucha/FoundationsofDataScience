@@ -80,7 +80,7 @@ revCount <- function(grepVec, revVec,wordFreq){
 ######################## HEADER ###############################
 
 #Set working directory
-CapstoneDir = "/Users/Antoine/Documents/Work/DataScience/Springboard/FoundationsofDataScience/CapstoneProject/Deliverables"
+CapstoneDir = "/Users/Antoine/Documents/Work/DataScience/Springboard/FoundationsofDataScience/CapstoneProject/CapstoneDeliverables"
 setwd(CapstoneDir)
 
 #Load libraries

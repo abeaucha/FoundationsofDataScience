@@ -17,7 +17,7 @@
 
 ################## INTRO #######################
 
-CapstoneDir = "/Users/Antoine/Documents/Work/DataScience/Springboard/FoundationsofDataScience/CapstoneProject/Deliverables"
+CapstoneDir = "/Users/Antoine/Documents/Work/DataScience/Springboard/FoundationsofDataScience/CapstoneProject/CapstoneDeliverables"
 
 setwd(CapstoneDir)
 
