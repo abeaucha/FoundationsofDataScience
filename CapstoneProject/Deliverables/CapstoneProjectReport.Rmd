@@ -16,7 +16,6 @@ fontsize: 11pt
 indent: 2pt
 geometry: top=1in
 documentclass: article
-bibliography: SpringboardFoundationsCapstone.bib
 subtitle: "Foundations of Data Science: Capstone Project Report"
 ---
 
@@ -61,7 +60,7 @@ R code chunk: Command+Option+I
 
 The past decade has been met with an explosion in the volume of data that we humans produce every day by way of our technological activity. An important consequence of this ever-growing data output is that we are increasingly becoming saturated with information regarding any number of topics in a wide range of areas of human activity, from personalized healthcare to federal policy to corporate finance. The sheer volume of data available makes the process of deriving insight seem difficult and inaccessible. However with the right tools and the right approach, it is possible to uncover a wealth of important information about various aspects of human and business activity. By manipulating and analyzing the available data, we can uncover and solidify insights that previously may only have been hinted at on an intuitive level. The data, when analyzed properly, provides a solid foundation for making decisions and recommendations based on concrete evidence. In the context of business, this is an extremely useful advantage to leverage in order to promote growth and to allocate resources properly. One especially important source of data is the World Wide Web. The Internet provides a massive agglomeration of human opinion and behaviour from all areas of life. From a business perspective, the clientele's online behaviour often provides abundant information regarding patterns that may be influential to business activity. For businesses that operate within the service and hospitality industries, important data pertaining to customer sentiment is abundantly available on popular review and travel websites.
 
-In this report, I will demonstrate how we can use a variety of tools available in R to acquire and mine the data from such websites in order to uncover insights and make informed business recommendations. In particular, I will focus on gathering and analyzing the customer review data for [REDS Midtown Tavern](www.redsmidtowntavern.com) (RMT). RMT is an upscale restaurant located in Toronto, Ontario, that offers a large selection of beverages with a focus on an extensive gin bar and a gastropub-style menu. RMT is a subsidiary of [SIR Corp](http://www.sircorp.com/) and has been in business since 2013. Using the online customer review data for RMT, I endeavour to build a data-founded understanding of the restaurant's performance over time, as well as the types of sentiments that are commonly associated with various aspects of the customer experience. More specifically:  
+In this report, I will demonstrate how we can use a variety of tools available in R to acquire and mine the data from such websites in order to uncover insights and make informed business recommendations. In particular, I will focus on gathering and analyzing the online customer review data for [REDS Midtown Tavern](www.redsmidtowntavern.com) (RMT). RMT is an upscale restaurant located in Toronto, Ontario, that offers a large selection of beverages with a focus on an extensive gin bar and a gastropub-style menu. RMT is a subsidiary of [SIR Corp](http://www.sircorp.com/) and has been in business since 2013. Using the online customer review data for RMT, I endeavour to build a data-founded understanding of the restaurant's performance over time, as well as the types of sentiments that are commonly associated with various aspects of the customer experience. Specifically:  
 
 * How has RMT performed over the years? What periods of time have been associated with positive, negative reviews? How has the restaurant's performance changed over time? How is it performing now? 
 * Based on the customer feedback, what are the restaurant's strengths? What are its weaknesses?
@@ -69,7 +68,7 @@ In this report, I will demonstrate how we can use a variety of tools available i
 
 \ni In addition to providing data-driven answers to these questions, I will make recommendations for potential improvements to the restaurant. 
 
-This report is divided into five primary sections. In [Section 2](#S2), I will elaborate on the methods and tools I used to acquire the customer review data for RMT using popular review and travel websites. Once the data is collected and stored locally, I will discuss the process of transforming this raw data into a form suitable for analysis. This is done in [Section 3](#S3). In [Section 4](#S4), I will dive into the analysis of this customer review data in order to mine for actionable insights. [Section 5](#S5) will dedicated to summarising the main points of the report, providing data-driven recommendations, and outlining potential areas for future work. 
+This report is divided into five primary sections. In [Section 2](#S2), I will elaborate on the methods and tools I used to acquire the customer review data for RMT using popular review and travel websites. Once the data is collected and stored locally, I will discuss the process of transforming this raw data into a form suitable for analysis. This is done in [Section 3](#S3). In [Section 4](#S4), I will dive into the analysis of this customer review data in order to mine for actionable insights. Finally, [Section 5](#S5) will be dedicated to summarising the main points of the report and analysis, providing data-driven recommendations, and outlining potential areas for future work. Sections [2](#S2) and [3](#S3) will be more technical in nature, while Sections [4](#S4) and Section [5](#S5) will be focused primarily on analysis. For complete access to the programming scripts used to complete this project, as well as additional content, please refer to my [GitHub repository](https://github.com/abeaucha/FoundationsofDataScience/tree/master/CapstoneProject/Deliverables).
 
 
 
@@ -106,39 +105,39 @@ str_break = function(x, width = 60L) {
 
 # Data Acquisition {#S2}
 
-As mentioned in the [Introduction](#S1), the aim of this project is to perform an analysis of online customer review data for RMT. For the purpose of this investigation, I have focussed my efforts on the following review and travel websites: [Yelp](https://www.yelp.com/toronto), [OpenTable](https://www.opentable.com/toronto-restaurants), [TripAdvisor](https://www.tripadvisor.ca/), and [Zomato](https://www.zomato.com/toronto). These review websites are similar in that they provide a 5-star rating scale. The first step in being able to analyze the data from these websites is to gather the data. Though this data is readily available to see and read, we would like to acquire it in a more structured way. This can be done relatively simply using a variety of tools available online. More specifically, I gathered the review data from the aforementioned websites by using the [`rvest` package](https://cran.r-project.org/web/packages/rvest/index.html) in R and the web scraping tool, [SelectorGadget](http://selectorgadget.com/). I will elaborate on the use of these tools below.
+As mentioned in the [Introduction](#S1), the aim of this project is to perform an analysis of online customer review data for RMT. For the purpose of this investigation, I have focussed my efforts on the following review and travel websites: [Yelp](https://www.yelp.com/toronto), [OpenTable](https://www.opentable.com/toronto-restaurants), [TripAdvisor](https://www.tripadvisor.ca/), and [Zomato](https://www.zomato.com/toronto). These review websites are similar in that they provide a 5-star rating scale. The first step in being able to analyze the data from these websites is to gather the data and store it locally. Though this data is readily available to see and read online, we would like to acquire it in a more structured way. This can be done relatively simply using a variety of tools available online. More specifically, I gathered the review data from the aforementioned websites by using the [`rvest` package](https://cran.r-project.org/web/packages/rvest/index.html) in R and the web scraping tool, [SelectorGadget](http://selectorgadget.com/). I will elaborate on the use of these tools below, beginning with the latter.
 
 <!---------------- SELECTORGADGET AND CSS SELECTORS --------------------->
 
-## SelectorGadget and CSS Selectors
+## SelectorGadget and CSS Selectors {#S21}
 
 ### Identifying Content with SelectorGadget \label{S211}
 
-Acquiring data from the web means being able to identify exactly what content needs to be extracted. In practice, this is accomplished with the use of **CSS selectors**. CSS Selectors are what allows us to gather data from the web by using packages such as `rvest`. A more detailed discussion of CSS Selectors is given in Section \ref{S_CSS}. The difficulty in using CSS Selectors arises in identifying which selectors are associated with what content on a webpage. Traditionally, one might attempt to identify a selector for specific content by scouring the HTML source code for a website. Though it is possible, this isn't exactly effortless. Fortunately, an alternative way of identifying the appropriate CSS selector is to use a tool, such as SelectorGadget, that improves this process. SelectorGadget is an open source tool, developed by Andrew Cantino and Kyle Maxwell, that allows us to identify CSS selectors from a website by **clicking** on select items of interest. SelectorGadget greatly facilitates the process of identifying CSS selectors by providing a point-and-click interface between the webpage content and the underlying selector. In order to better understand how to use SelectorGadget to obtain CSS selectors from a website, I will provide a relevant example.
+Acquiring data from the web means being able to identify exactly what content needs to be extracted. In practice, this is accomplished with the use of **CSS selectors**. CSS selectors are what allows us to gather data from the web by using packages such as `rvest`. A more detailed discussion of CSS selectors is given in Section \ref{S_CSS}. The difficulty in using CSS selectors arises when identifying which selectors are associated with what content on a webpage. Traditionally, one might attempt to identify a selector for specific content by scouring a website's HTML source code. Though it is possible, this isn't exactly effortless. Fortunately, an alternative way of identifying the appropriate CSS selector is to use a tool, such as SelectorGadget. SelectorGadget is an open source tool, developed by Andrew Cantino and Kyle Maxwell, that allows us to identify CSS selectors from a website by **clicking** on select items of interest. SelectorGadget greatly facilitates the process of identifying CSS selectors by providing a point-and-click interface between the webpage content and the underlying selector. In order to better understand how to use SelectorGadget to obtain CSS selectors from a website, I will provide a relevant example.
 
 The way in which we will gather the customer review data to be used in our analysis is to **scrape** the websites for the customer reviews. In this example, I will work with the first page of reviews for RMT on Yelp. Here is the relevant URL:  https://www.yelp.ca/biz/reds-midtown-tavern-toronto-2. The reviews are located not too far down the page, as displayed in Figure \ref{REDSYelpRev}.
 
 \begin{figure}[!ht]
 \centering
-\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpReviews.png}}
+\fbox{\includegraphics[width=0.95\textwidth]{./Images/REDSYelpReviews.png}}
 \caption{Customer reviews for RMT on Yelp \label{REDSYelpRev}}
 \end{figure}
 
 <!--Note figure \label{} must appear in caption or afterwards in order to work properly. Don't overlook this. Provides a lot of grief if you don't this right, because figure references will be numbered according to sections and not figure captions.  -->
 
-\ni The SelectorGadget interface manifests itself on the webpage as a grey search bar at the bottom of the page. To begin identifying the CSS Selector that corresponds to the customer review content, we can select the first customer review by clicking on it. The result of this action is shown in Figure \ref{REDSYelpRev2}. We see that the SelectorGadget has returned the CSS Selector "`p`". The content that we have selected via point-and-click has been highlighted in green, while the content that matches that selector has been highlighted in yellow. This selector includes the customer reviews, which is desired, but it also appears to include additional content, such as the text "Was this review ...?" and additional text under the heading "From the business". We don't need these elements of the webpage. The selector "`p`" is returning too broad a selection. We can now choose to add additional content to our filter by clicking on content that is not yet highlighted, or we can remove content from our filter by clicking on content that has been highlighted. In this case, we want to click on the text below "From the business" to remove it from our selection. In doing so, we observe that content that had previously been highlighted but is now de-selected becomes red. This is shown in Figure \ref{REDSYelpRev3}. We also notice that the text "Was this review...?" is no longer included in our selection, so that only the customer reviews remain in our selection. It appears that the CSS selector "`.review-content p`" is the correct selector associated with the review content on this webpage. This can verified by noting that SelectorGadget has found 20 items matching this selector (identified in parentheses on the SelectorGadget tool), which corresponds to the number of reviews on this particular page. Having identified the correct CSS Selector for the customer review content, we can import the data into R. This process will be described in Section \ref{S22}.
+The SelectorGadget interface manifests itself on the webpage as a grey search bar at the bottom of the page. To begin identifying the CSS selector that corresponds to the customer review content, we can select the first customer review by clicking on it. The result of this action is shown in Figure \ref{REDSYelpRev2}. We see that the SelectorGadget has returned the CSS selector "`p`" in the search bar. The content that we have selected via point-and-click has been highlighted in green, while the content that matches that selector has been highlighted in yellow. This selector includes the customer reviews, which is desired, but it also appears to include additional content, such as the text "Was this review ...?" and additional text under the heading "From the business". We don't need these elements of the webpage. The selector "`p`" is returning too broad a selection. We can now choose to add additional content to our filter by clicking on content that is not yet highlighted, or we can remove content from our filter by clicking on content that has been highlighted. In this case, we want to click on the text below "From the business" to remove it from our selection. In doing so, we observe that content that had previously been highlighted but is now de-selected becomes red. This is shown in Figure \ref{REDSYelpRev3}. We also notice that the text "Was this review...?" is no longer included in our selection, so that only the customer reviews remain. It appears that the CSS selector "`.review-content p`" is the correct selector associated with the review content on this webpage. This can verified by noting that SelectorGadget has found 20 items matching this selector (identified in parentheses on the SelectorGadget tool), which corresponds to the number of reviews on this particular page. Having identified the correct CSS selector for the customer review content, we can import the data into R. This process will be described in Section \ref{S22}.
 
 
 
 \begin{figure}[!ht]
 \centering
-\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpReviews2.png}}
+\fbox{\includegraphics[width=0.95\textwidth]{./Images/REDSYelpReviews2.png}}
 \caption{First attempt at selecting Yelp customer reviews with SelectorGadget \label{REDSYelpRev2}}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpReviews3.png}}
+\fbox{\includegraphics[width=0.95\textwidth]{./Images/REDSYelpReviews3.png}}
 \caption{Correct use of SelectorGadget on Yelp \label{REDSYelpRev3}}
 \end{figure}
 
@@ -160,7 +159,7 @@ An HTML file is comprised of different blocks of content, which are identified b
 
 \begin{figure}[!ht]
 \centering
-\fbox{\includegraphics[width=0.95\textwidth]{REDSYelpHTML.png}}
+\fbox{\includegraphics[width=0.95\textwidth]{./Images/REDSYelpHTML.png}}
 \caption{HTML source for REDS Midtown Tavern on Yelp \label{REDSYelpHTML}}
 \end{figure}
 
@@ -168,25 +167,25 @@ An HTML file is comprised of different blocks of content, which are identified b
 
 
 
-The most basic CSS selector is simply a selector of type. To obtain all content that is contained within block of a certain type, simply use the indicator for that type. E.g., to obtain content that is contained within a paragraph block, use the selector "`p`". In fact, this is what happened when we used SelectorGadget in Figure \ref{REDSYelpRev2}: the customer review content was contained within a parapraph block, but so was other content that we didn't need. Using the selector `p` identified all of this content. 
+The most basic CSS selector is simply a selector of type. To obtain all content that is contained within blocks of a certain type, simply use the indicator for that type. E.g., to obtain content that is contained within a paragraph block, use the selector `p`. This is what happened when we used SelectorGadget in Figure \ref{REDSYelpRev2}: the customer review content was contained within a parapraph block, but so was other content that we didn't need. Using the selector `p` identified all of this content. 
 
 In order to diversify content, HTML types can be associated with an **ID** or with a **class**. E.g., `<div id="title">` or `<div class="section">`. These are both `<div>` blocks, but one has an ID called "title" and the other has a class called "section". In addition to basic type selection, content can be extracted from a webpage by selecting it based on ID or class. The CSS selector for an ID is a hashtag, `#`. E.g. if there exists a block defined by `<div id="title">` in the HTML file, we can select that element by using the selector `#title`. This will select all content with `id="title"`, including but not limited to the content that we want. Similarly, the selector for a class is a period, `.`. E.g. we can select a block such as `<div class="content">` using `.content`. 
 
 
-Now that we have these basic selectors, we can combine them to tailor our selection process and access more specific content. One way of doing this is to use the **descendant selector**. This allows us to select content that is nested within another content block. The descendant selector is expressed by writing two selectors separated by a space. E.g. We could select something like `<div id="title"><p> Text </p></div>` with the selector `div p`. This selects all paragraph content within a `<div>` block. We can also use the descendant selector in conjunction with the ID or class selectors. E.g. `#title p` will select all paragraph content contained within a block of any type with `id="title"`. In Section \ref{S211}, we used the selector `.review-content p` to obtain the customer review data from Yelp. With our new understanding of CSS selectors, we see that this is comprised of a descendant selector with the class and type selectors. We are selecting the paragraph blocks, `<p>`, within blocks of content with `class="review-content"`.
+Now that we have these basic selectors, we can combine them to tailor our selection process and access more specific content. One way of doing this is to use the **descendant selector**. This allows us to select content that is nested within another content block. The descendant selector is expressed by writing two selectors separated by a space. E.g. we could select something like `<div id="title"><p> Text </p></div>` with the selector `div p`. This selects all paragraph content within a `<div>` block. We can also use the descendant selector in conjunction with the ID or class selectors. E.g. `#title p` will select all paragraph content contained within a block of any type with `id="title"`. In Section \ref{S211}, we used the selector `.review-content p` to obtain the customer review data from Yelp. With our new understanding of CSS selectors, we see that this is comprised of a descendant selector with the class and type selectors. We are selecting the paragraph blocks, `<p>`, within blocks of content with `class="review-content"`.
 
 Finally, specific class content can be selected by combining the class selector with the type selector, in the following way: `type.class`. E.g. if there exists both `<div class="section">` and `<span class="section">` within the HTML file, we can select the `<div>` block specifically using `div.section`, rather than just `.section`, which would additionally select the `<span>` block.
 
-This covers the basics of CSS selectors. This should provide some context for what SelectorGadget is returning when clicking on webpage content. For a more detailed look at CSS selectors, follow the complete tutorial at https://flukeout.github.io/.
+This covers the basics of CSS selectors and should provide some context for what SelectorGadget is returning when clicking on webpage content. For a more detailed look at CSS selectors, follow the complete tutorial at https://flukeout.github.io/.
 
 <!------------ IMPORTING DATA WITH RVEST -------------------------->
 
 
 ##Importing Web Data with `rvest` \label{S22}
 
-In the previous [Section](#S2), we discussed how to work with SelectorGadget to identify content that we want to acquire from webpages. Once the correct CSS selectors are obtained for the content that we want to extract, the next step is to load this data into R for cleaning and processing. I performed this step of the data gathering process using Hadley Wickham's web data R package, [`rvest`](https://cran.r-project.org/web/packages/rvest/index.html). `rvest` allows us to gather data from the web using a few basic functions in R: `read_html()`, `html_nodes()`, `html_text()`, and `html_attrs()`. 
+In the previous [Section](#S21), I discussed how to work with SelectorGadget to identify content that we want to acquire from webpages. Once the correct CSS selectors are obtained for the content that we want to extract, the next step is to load this data into R for cleaning and processing. I performed this step of the data gathering process using Hadley Wickham's web data R package, [`rvest`](https://cran.r-project.org/web/packages/rvest/index.html). `rvest` allows us to gather data from the web using a few basic functions in R: `read_html()`, `html_nodes()`, `html_text()`, and `html_attrs()`. 
 
-Consider once again the problem of scraping reviews for  from Yelp. In Section \ref{S211}, we identified that the correct CSS selector for this content was `.review-content p`. This is great, but what do we do with this? This is where `rvest` comes in. Let's start by loading the package. If it isn't already installed, install it using `install.packages()`.
+Consider once again the problem of scraping reviews from Yelp. In Section \ref{S211}, we identified that the correct CSS selector for this content was `.review-content p`. This is a good start, but what do we do with this? This is where `rvest` comes in. Let's start by loading the package. If it isn't already installed, install it using `install.packages()`.
 
 ```{r rvest}
 library(rvest)
@@ -223,7 +222,9 @@ strtrim(head(YelpReviews_char2, n=2),65)
 ```
 
 
-\ni In this case we have the text in character format, but without the HTML tags associated with the content. Note that `html_text()` only works if there is text to extract, evidently. Other useful functions to extract data from these HTML nodes are the `html_attrs()` and `html_attr()` functions. Looking at `YelpReviews`, we see that the HTML tag is `<p lang="en">`. Thus the paragraph blocks are associated with an **attribute** called `lang`. We can pull all the attributes from our HTML data using `html_attrs()`.  
+\ni In this case we have the text in character format without the HTML tags associated with the content. Note that `html_text()` only works if there is text to extract, evidently. 
+
+Other useful functions to extract data from these HTML nodes are the `html_attrs()` and `html_attr()` functions. Looking at the output of `YelpReviews` above, we see that the HTML tag is `<p lang="en">`. Thus the paragraph blocks are associated with an **attribute** called `lang`, with a value of "en". We can pull all the attributes from our HTML data using `html_attrs()`.  
 
 ```{r Yelpattrs}
 head(html_attrs(YelpReviews), n=2)
@@ -238,7 +239,7 @@ head(html_attr(YelpReviews, "lang"))
 class(html_attr(YelpReviews, "lang"))
 ```
 
-\ni This is particularly useful when information that we want is stored within such attributes, rather than within the main content block. One example of this is extracting the numerical ratings that the customers have given to the restaurant. On Yelp this is presented as a number of stars filled in with the colour orange. Let's extract this data and see what it looks like. The correct CSS selector, obtained via SelectorGadget, is `.rating-large`.
+\ni This is particularly useful when information that we want is stored within such attributes, rather than within the main content block. One such example occurs when extracting the numerical ratings that the customers have given to the restaurant. On Yelp this is presented as a number of stars filled in with the colour orange. Let's extract this data and see what it looks like. The correct CSS selector, obtained via SelectorGadget, is `.rating-large`.
 
 ```{r Yelp ratings}
 YelpRatings <- html_nodes(YelpURL_data, ".rating-large")
@@ -246,7 +247,7 @@ as.character(YelpRatings)[1] %>% str_break()
 ```
 
 
-\ni Here we see that the value that we want, namely "4.0 star rating", is actually contained within the `"title"` attribute of the `<div`> block. It can also be obtained from the `"alt"` attribute of the `<img>` block. Let's see what `html_attrs()` gives us. 
+\ni This output has been broken into multiple lines to fit the page. We see that the value that we want, namely "4.0 star rating", is actually contained within the `"title"` attribute of the `<div`> block. It can also be obtained from the `"alt"` attribute of the `<img>` block. Let's see what `html_attrs()` gives us. 
 
 ```{r Yelp ratings attr}
 head(html_attrs(YelpRatings), n=2)
@@ -260,11 +261,11 @@ YelpRatings_clean <- html_attr(YelpRatings, "title")
 head(YelpRatings_clean)
 ```
 
-\ni The next step here would be to use regular expressions to isolate the number and then convert the data to `numeric` class for quantitative analysis. Now that we have a foundation in how to gather web data using SelectorGadget and `rvest`, let's acquire the full data set of online customer reviews for .  
+\ni The next step here would be to use regular expressions to isolate the numerical value and then convert the data to `numeric` class for quantitative analysis. Now that we have a foundation in how to gather web data using SelectorGadget and `rvest`, let's acquire the full data set of online customer reviews for RMT.  
 
-## Gathering Online Customer Review Data 
+## Gathering Online Customer Review Data \label{S_gatherdata}
 
-With a basic understanding of CSS selectors, SelectorGadget, and `rvest`, we are equipped to gather our customer review data for . As mentioned previously, the following websites were used as data sources: [Yelp](https://www.yelp.com/toronto), [OpenTable](https://www.opentable.com/toronto-restaurants), [TripAdvisor](https://www.tripadvisor.ca/), and [Zomato](https://www.zomato.com/toronto). Specifically, our data set will be comprised of the written customer reviews, the numerical customer ratings, and the review dates. Note that the code presented in this section will not be executable due to the longer computation times. Let's start by loading the necessary R packages.
+With a basic understanding of CSS selectors, SelectorGadget, and `rvest`, we are equipped to gather our customer review data for RMT. As mentioned previously, the following websites will be used as data sources: [Yelp](https://www.yelp.com/toronto), [OpenTable](https://www.opentable.com/toronto-restaurants), [TripAdvisor](https://www.tripadvisor.ca/), and [Zomato](https://www.zomato.com/toronto). Specifically, the data set will be comprised of the written customer reviews, the numerical customer ratings, and the review dates. Note that the code presented in this section will not be executable due to the longer computation times. Let's start by loading the necessary R packages.
 
 <!--
 ```{r  clear env,echo=FALSE}
@@ -287,9 +288,7 @@ library(readr)
 4. Check to see if we have reached the end of the reviews
 5. Increment counter and identify URL for next page of reviews
 
-\edit{Maybe mod this algorithm}
-
-\ni An important part of this process was identifying the structure of the URLs of the various review pages in order to go through them automatically. It was also important to see what data was available from each of the webpages and how to access that data. In the following subsections I will discuss some of the sticking points that arose when scrape the various websites for data. Only the code `YelpScrape()` function will be provided in full, since the scraping functions are similar. The full code can found in the file \edit{Rfile}.
+\ni An important part of this process was identifying the structure of the URLs of the various review pages in order to go through them automatically. It was also important to see what data was available from each of the webpages and how to access that data. In the following subsection I will discuss some of the sticking points that arose when scraping the various websites for data. Only the code for the `YelpScrape()` function will be provided in full, since the scraping functions are similar in structure. The full code can found in the [.Rmd file](https://github.com/abeaucha/FoundationsofDataScience/blob/master/CapstoneProject/Deliverables/CapstoneProjectReport.Rmd) associated with this document, or in the file [DataGathering.R](https://github.com/abeaucha/FoundationsofDataScience/blob/master/CapstoneProject/Deliverables/DataGathering.R). 
 
 ### Web Scraping Concerns \label{S_YelpData}
 
@@ -509,7 +508,7 @@ TripAdScrape <- function(LandingURL) {
 
 ```
 
-In the `TripAdScrape()` function I have extracted two sets of data for the dates, stored in `Dates1` and `Dates2`. The reason for this is that, for recent reviews, TripAdvisor presents its date information in the following form: "Dined ## days ago" or "Dined yesterday". This is not useful for analysis. However, the **actual** dates for these recent reviews can be obtained using the selector `.relativeDate`. The catch is that this selector does not select the dates for those older reviews that are not expressed in the forms "Dined ## days ago" and so on. This format is only used to express the most recent dates. Older reviews are associated with a proper date format. Consequently, we need a combination of both the information gathered by the  selectors `.relativeDate` and `.ratingDate`. 
+In the `TripAdScrape()` function I have extracted two sets of data for the dates, stored in `Dates1` and `Dates2`. The reason for this is that, for recent reviews, TripAdvisor presents its date information in the following form: "Dined ## days ago" or "Dined yesterday". This is not useful for analysis. However, the **actual** dates for these recent reviews can be obtained using the selector `.relativeDate`. The catch is that this selector does not select the dates for those older reviews that are not expressed in the forms "Dined ## days ago" and so on. This format is only used to express the most recent dates. Older reviews are associated with a proper date format. Consequently, we need a combination of the information gathered by both the selectors `.relativeDate` and `.ratingDate`. 
 
 
 The final website used to extract data is Zomato. The primary problem I ran into with this website was that the reviews are not written onto different URL pages. Rather, the reviews are accessed via a sort of drop down menu on the landing page. Due to this, and in the interest of time, I wasn't able to extract the full set of reviews available on Zomato. One thing to note is that longer reviews on Zomato will be truncated and have an associated "read more" option to show the full review. Reviews of this type are counted twice by SelectorGadget: once for the truncated version, and once for the full expanded version. Additionally, the format in which the ratings have been extracted is such that there will be double the amount of data, half of which consists of `NA` values. We will address these issues in the [data cleaning](#S3) stage. 
@@ -617,14 +616,14 @@ save(YelpData,OpenTableData,TripAdData,ZomatoData,
 
 # Data Cleaning {#S3} 
 
-In the previous section, we developed a number of functions to scrape the customer review data for  from a number of popular review and travel websites. With the raw data in hand, the next step of the process is to clean the data. There are a number of things that need to be done:
+In the previous section, we developed a number of functions to scrape the customer review data for RMT from a number of popular review and travel websites. With the raw data in hand, the next step of the process is to clean the data. There are a number of things that need to be done:
 
 * Remove unnecessary "previous review" data from Yelp data set
 * Remove the unnecessary `NA` values from Zomato ratings data
 * Remove the duplicate truncated reviews from Zomato
 * Consolidate `Dates1` and `Dates2` variables for TripAdvisor
 * Create vectors that describe which websites the data belongs to
-* Merge all customer review data into a data frame
+* Merge all online review data into a data frame
 * Clean up all dates and convert to `date` class
 * Clean up all ratings and convert to `numeric` class
 * Clean up reviews as needed
@@ -633,7 +632,7 @@ In the previous section, we developed a number of functions to scrape the custom
 
 ## Preliminary Cleaning
 
-\ni Since the code written in [Section 2](#S2) is not executable, we will load the raw data from the "CapstoneRawData.RData" file. 
+Since the code written in Section \ref{S_gatherdata} is not executable, we will load the raw data from the "CapstoneRawData_032017.RData" file. 
 
 ```{r examine data, tidy=TRUE, out.width=50}
 load("./Data/CapstoneRawData_032017.RData")
@@ -858,18 +857,18 @@ str(CapstoneDF$Dates, width=70, strict.width="cut")
 
 ```
 
+\ni The dates data is now properly formatted and ready for analysis.
 
 <!--- NUMERIC RATINGS ---> 
 
 
 ## Numeric Ratings
 
-In the previous section, we removed unnecessary characters from the date data and converted the data to a common `date` class. Here we will do the same with the ratings data. 
+In the previous section, we removed unnecessary characters from the date data and converted the data to a common `date` class. Here we will do the same with the ratings data.  
 \newline
 \ni \textbf{Yelp}: 
 
 ```{r}
-
 #Yelp ratings
 head(subset(CapstoneDF$Ratings, CapstoneDF$Website=="Yelp"))
 
@@ -951,12 +950,10 @@ CapstoneDF$Reviews <- gsub(" +Rated *","",CapstoneDF$Reviews)
 write_csv(CapstoneDF, "./Data/CapstoneCleanData.csv")
 ```
 
-\ni This completes the cleaning stage. 
+\ni This completes the cleaning stage. We are now ready to analyze the data and derive some insights.
 
 
 #Data Analysis {#S4}
-
-\edit{recap business questinos and bring back to business side of things. Report so far has been technical, but here we can make it more about analytics. Change themes}
 
 Having completed the gritty process of first acquiring the customer review data from the web and subsequently cleaning it, we can now dive into the analysis stage. As mentioned in the [Introduction](#S1), the analysis will be focussed on two main aspects of the customer reviews: The performance of RMT over time and common sentiments and feedback associated with the restaurant. The first of these points of focus will be explored in Section \ref{S_ratings} by means of a time-series analysis of the numerical customer ratings. Following this, in Section \ref{S_reviews}, I will perform a text analysis of the customer review data in order to examine the type of feedback that is provided by the restaurant's clientele. In the previous sections, we built a data frame with four variables: `Reviews`, `Ratings`, `Dates`, and `Website`. The variables that we will use primarily to extract insights are the `Reviews` and `Ratings` variables, containing respectively the written customer reviews and the associated numerical ratings. Let's take a moment to load some relevant libraries and read in the clean data. 
 
@@ -972,7 +969,7 @@ CapstoneDF <- read_csv("./Data/CapstoneCleanData.csv")
 glimpse(CapstoneDF)
 ```
 
-\ni We have data for `r {dim(CapstoneDF)[1]}` customer reviews from the four aformentioned websites: [Yelp](https://www.yelp.com/toronto), [OpenTable](https://www.opentable.com/toronto-restaurants), [TripAdvisor](https://www.tripadvisor.ca/), and [Zomato](https://www.zomato.com/toronto). Before diving into the analysis, we will do some basic data wrangling to reformat the structure of the data frame. 
+\ni We have data for `r {dim(CapstoneDF)[1]}` customer reviews from the four aformentioned websites: [Yelp](https://www.yelp.com/toronto), [OpenTable](https://www.opentable.com/toronto-restaurants), [TripAdvisor](https://www.tripadvisor.ca/), and [Zomato](https://www.zomato.com/toronto). Before diving into the analysis, we will do some basic data wrangling to reformat the structure of the data frame and facilitate analysis.
 
 ```{r}
 #Create variable describing annual quarters: Quarters
@@ -994,7 +991,8 @@ CapstoneDF$Website <- factor(CapstoneDF$Website)
 CapstoneDF$Quarters <- factor(CapstoneDF$Quarters)
 
 #Create new variables
-# Review count by year
+
+#Review count by year
 t1 <- CapstoneDF %>% group_by(Year) %>% summarise(countYear=n())
 CapstoneDF <- left_join(CapstoneDF,t1, by="Year")
 
@@ -1009,7 +1007,7 @@ CapstoneDF <- left_join(CapstoneDF,t3, by="YearMonth")
 head(CapstoneDF[-1])
 ```
 
-\ni For the purpose of clarity, the code used to generate the plots in the section has been ommitted. The full details of the code can be found in the \edit{filename} file. We are ready to begin our analysis. 
+\ni For the purpose of clarity, the code used to generate the plots in this section has been ommitted. Once again, the full details of the code can be found in the [.Rmd file](https://github.com/abeaucha/FoundationsofDataScience/blob/master/CapstoneProject/Deliverables/CapstoneProjectReport.Rmd) associated with this document, or in the [RMTAnalysis.R](https://github.com/abeaucha/FoundationsofDataScience/blob/master/CapstoneProject/Deliverables/RMTAnalysis.R) file. We are ready to begin our analysis. 
 
 
 ##Time Series Analysis of Ratings \label{S_ratings}
@@ -1022,7 +1020,8 @@ The first part of our data analysis process will be focussed on examining the "d
 * How is the restaurant performing currently? 
 
 
-\edit{mention use of ggplot etc.}
+\ni The primary package used to perform this analysis will be `ggplot2`. 
+
 ```{r}
 library(ggplot2)
 library(ggthemes)
@@ -1041,7 +1040,7 @@ CapstoneDF$RatingsAvg <-
 ```
 
 
-\ni The mean value of the numerical customer ratings is `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`. We can think of this as the ratings aggregated at the lowest possible level of granularity, i.e. all of the data is used to compute the average. This is just a single number so it isn't too informative, but it does provides some insight into the overall performance of the restaurant across its entire lifespan. We can deduce that RMT has done relatively well over its years of operation, with a cumulative rating that is above the average value of 3 out of 5. However this leads to more questions, namingly why this particular value? Why is the average not higher? Why not lower? We can mine for further insight into the history of the restaurant's quality by increasing the granularity of the data. Let's beginning by aggregating the average value of the ratings by year. This data is presented in Figure \ref{fig:ratingsYear}. The dashed blacked line is plotted to represent the cumulative average value of `r {round(mean(CapstoneDF$Ratings), 2)}`.
+\ni The mean value of the numerical customer ratings is `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`. We can think of this as the ratings aggregated at the lowest possible level of granularity, i.e. all of the data is used to compute the average. This is just a single number so it isn't too informative, but it does provides some insight into the overall performance of the restaurant across its entire lifespan. We can deduce that RMT has done relatively well over its years of operation, with a cumulative rating that is above the basic average value of 3 out of 5. However this leads to more questions, namingly why this particular value? Why is the average not higher? Why not lower? We can mine for further insight into the history of the restaurant's quality by increasing the granularity of the data. Let's begin by aggregating the average value of the ratings by year. This data is presented in Figure \ref{fig:ratingsYear}. The dashed blacked line is plotted to represent the cumulative average value of `r {round(mean(CapstoneDF$Ratings), 2)}`.
 
 ```{r echo=FALSE, ratingsYear, fig.cap="Customer ratings averaged by year\\label{fig:ratingsYear}", fig.pos="!ht", out.width="0.95\\textwidth"}
 #Ratings aggregated by Year
@@ -1050,19 +1049,16 @@ mytheme <-   theme(panel.background = element_rect(fill="gray92", colour = "blac
         axis.text = element_text(face="bold"),
         axis.title = element_text(size=12), 
         plot.margin = margin(t=1, r=1, b=1, l=1))
-        #legend.title = element_text(face="bold"))
 
 ggplot(CapstoneDF, aes(x=Year, y=Ratings)) + 
   geom_line(aes(y=RatingsAvg, group=1), linetype="dashed",
             colour="black", alpha=0.5) +
   stat_summary(aes(size=countYear), fun.y=mean, geom="point", col="skyblue3", alpha=1.0) +
-  #coord_cartesian(ylim=c(2.5,4.5)) + 
   scale_size_continuous(range=c(3,7), guide=guide_legend(title="Review Count")) +
   coord_cartesian(ylim=c(3.0,4.5)) + mytheme
 ```
 
-By computing the mean value of the customer ratings for each year, we begin to see some of the dynamics of the ratings. In particular, we can observe that from 2013 to 2015, the restaurant experienced a decreasing trend in its ratings. 2015 was the worst year in terms of quality for the restaurant, as reported by the clientele. Since then the ratings have been rising steadily. Now, one quarter into 2017, the restaurant's annual ratings are at an all time high, with a mean value of `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$Year=="2017")),2), nsmall=2)}`. The interplay between the initial negative trend and the more recent positive growth in the ratings is what causes the global average to be `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`. The recent improvement in ratings is a promising sign for the near future. However it should be met with some skepticism since things can change rapidly. In order to better understand why the ratings were lowest in 2015 and what we might expect from the present growth trend, we will mine deeper into the data. Another thing to note is that I have encoded the information about the number of reviews for each year in the size of data points. We can see that the years 2014 through 2016 have approximately the same number of reviews, whereas 2013 and 2017 have fewer reviews. This is to be expected since RMT \edit{?} opened in November 2013, and 2017 has only just begun. In order to obtain more insights into the ratings trends, we will continue our data mining process by computing an average for each yearly quarter, as shown in Figure \ref{fig:ratingsQuarters}. \edit{Edit this sentence}
-
+By computing the mean value of the customer ratings for each year, we begin to see some of the dynamics of the ratings. In particular, we can observe that from 2013 to 2015, the restaurant experienced a decreasing trend in its ratings. 2015 was the worst year in terms of quality for the restaurant, as reported by the clientele. Since then the ratings have been rising steadily. Now, one quarter into 2017, the restaurant's annual ratings are at an all time high, with a mean value of `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$Year=="2017")),2), nsmall=2)}`. The interplay between the initial negative trend and the more recent positive growth in the ratings is what causes the global average to be `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`. The recent improvement in ratings is a promising sign for the near future. However it should be met with some skepticism since things can change rapidly. Another thing to note is that I have encoded the information about the number of reviews for each year in the size of data points. We can see that the years 2014 through 2016 have approximately the same number of reviews, whereas 2013 and 2017 have fewer reviews. This is to be expected since RMT opened in November 2013, and 2017 has only just begun. The average value for 2017 will certainly be subject to change as the year progresses. In order to better understand why the ratings were lowest in 2015 and what we might expect from the present growth trend, we will mine deeper into the data by computing an average for each yearly quarter. This is shown in Figure \ref{fig:ratingsQuarters}. 
 
 ```{r echo=FALSE, ratingsQuarters, fig.cap="Customer ratings averaged by yearly quarters\\label{fig:ratingsQuarters}", fig.pos="!ht", out.width="0.95\\textwidth"}
 #Ratings aggregated by Year and Quarters
@@ -1077,7 +1073,7 @@ global_p2 <- ggplot(CapstoneDF, aes(x=YearQuarters, y=Ratings,col=Year)) +
 global_p2
 ```
 
-Figure \ref{fig:ratingsQuarters} presents some interesting details  in the data. During 's first year in business, from the end of 2013 to the end of 2014, the quarterly ratings are mainly scattered around the global mean of `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`, presented as the dashed black line. The exception is an unexpectedly low value for the ratings in 2014-Q2, which can be interpreted as an outlier during this period, since the ratings quickly recovered their previous values in the following quarters \edit{That's one way to interpret this. Other way is to treat it as part of an oscillatory pattern}. In this first year, the restaurant experienced no real growth in terms of quality, though it appears to have avoided the serious decrease in quality associated with 2014-Q2 \edit{Again, depends on interpretation}. Moving into the first quarter of 2015, the ratings appeared to promise that things would be different in the upcoming year, with an initial increase in quality. However the data from the rest of the year shows that this wasn't the case. Though the ratings for  started out high in 2015, they exhibited a relatively steady decline for the remainder of the year, reaching bottom in the fourth quarter of 2015 with an average value of `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2015-Q4")),2), nsmall=2)}`. Since the beginning of 2016 however, the restaurant has experienced a tremendous improvement in the quality of the ratings it has received. Following the low in 2015-Q4, the ratings quickly reached their earlier 2014 values in the second quarter of 2016, and continued on to an all-time high in 2016-Q4. This period of growth implies that the restaurant underwent some significant changes in 2016. The final piece to examine is that, since the beginning of 2017, the ratings have dipped slightly, from `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2016-Q4")),2), nsmall=2)}` in 2016-Q4 to `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2017-Q1")),2), nsmall=2)}`. It remains to be seen whether this is simply random scatter around a new high-valued average, or if this is the beginning of a new downward trend. Ultimately, the outcome will depend on the decisions that are made at . \edit{This is where I'm supposed to come in and be helpful..} To get a better sense of the underlying trends in the data, let's take a look at the ratings at a monthly level, described in Figure \ref{fig:ratingsMonth}.
+Figure \ref{fig:ratingsQuarters} presents some interesting details  in the data. During RMT's first year in business, from the end of 2013 to the end of 2014, the quarterly ratings are mainly scattered around the global mean of `r {format(round(mean(CapstoneDF$Ratings), 2), nsmall = 2)}`, presented as the dashed black line. The exception is an unexpectedly low value for the ratings in 2014-Q2, which can be interpreted as an outlier during this period, since the ratings quickly recovered their previous values in the following quarters. In this first year, the restaurant experienced no real growth in terms of quality, though it appears to have avoided the serious decrease in quality associated with 2014-Q2. Moving into the first quarter of 2015, the ratings appeared to promise that things would be different in the upcoming year, with an initial increase in quality. However the data from the rest of the year shows that this wasn't the case. Though the ratings for  started out high in 2015, they exhibited a relatively steady decline for the remainder of the year, reaching bottom in the fourth quarter of 2015 with an average value of `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2015-Q4")),2), nsmall=2)}`. Since the beginning of 2016 however, the restaurant has experienced a tremendous improvement in the quality of the ratings it has received. Following the low in 2015-Q4, the ratings quickly reached their earlier 2014 values in the second quarter of 2016, and continued on to an all-time high in 2016-Q4. This period of growth implies that the restaurant underwent some significant changes in 2016. The final piece to examine is that, since the beginning of 2017, the ratings have dipped slightly, from `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2016-Q4")),2), nsmall=2)}` in 2016-Q4 to `r {format(round(mean(subset(CapstoneDF$Ratings, CapstoneDF$YearQuarters=="2017-Q1")),2), nsmall=2)}` in 2017-Q1. It remains to be seen whether this is simply random scatter around a new high-valued average, or if this is the beginning of a new downward trend. Ultimately, the outcome will depend on the decisions that are made at RMT over the course of the following months. To get a better sense of the underlying trends in the data, let's take a look at the ratings at a monthly level, described in Figure \ref{fig:ratingsMonth}.
 
 
 ```{r echo=FALSE, fig.cap="Customer ratings averaged by month \\label{fig:ratingsMonth}", fig.pos="!ht", out.width="0.95\\textwidth"}
@@ -1092,7 +1088,7 @@ global_p3 <- ggplot(CapstoneDF, aes(x=YearMonth, y=Ratings, col=Year)) +
 global_p3
 ```
 
-Looking into the monthly ratings, we can observe that the general trends that were present in Figure \ref{fig:ratingsQuarters} are still present here, though the data exhibits a larger degree of scatter. We can see quite clearly that the low ratings in 2014-Q2 are due to a particularly poor performance in June 2014. Following the dip in ratings at this time, the restaurant quickly recovered its previous ratings. The strong first quarter of 2015 is due in large part to a strong month of January. The ratings for the remainder of 2015-Q1 sit around the cumulative mean, indicated by the dashed line. As in the previous discussion of the quarterly ratings, the rest of 2015 is met with a decrease in the ratings for the restaurant. Interestingly, there appears to be a high-valued outlier for the month of September 2015, though this spike in quality does not last. The ratings appear to pick up in January 2016, though in reality the true growth trend of 2016 doesn't begin until the month of April. There is a clear improvement in the ratings throughout 2016 despite the random scatter of the ratings, though it is unclear whether this trend has been continuing in recent months. It is possible to interpret the data from December 2016, January 2017 and February 2017 as being scattered around a new normal average of approximately 4.25. The month of March 2016 however suggests that this new average might be short-lived, since the ratings have dropped back down to around 3.5. Whether this is simply a low-valued outlier, like that of June 2014, or is instead indicative of an upcoming downward trend will depend on the performance of RMT in the immediate future. 
+Looking into the monthly ratings, we can observe that the general trends that were present in Figure \ref{fig:ratingsQuarters} are still present here, though the data exhibits a larger degree of scatter. We can see quite clearly that the low ratings in 2014-Q2 are due to a particularly poor performance in June 2014. Following the dip in ratings at this time, the restaurant quickly recovered its previous ratings. The strong first quarter of 2015 is due in large part to a strong month of January, which could potentially be interpreted as an outlier in the data. The ratings for the remainder of 2015-Q1 sit around the cumulative mean, indicated by the dashed line. As in the previous discussion of the quarterly ratings, the rest of 2015 is met with a decrease in the ratings for the restaurant. Interestingly, there appears to be a high-valued outlier for the month of September 2015, though this spike in quality does not last. The ratings appear to pick up in January 2016, though in reality the true growth trend of 2016 doesn't begin until the month of April. There is a clear improvement in the ratings throughout 2016 despite the random scatter of the data, though it is unclear whether this trend has been continuing in recent months. It is possible to interpret the data from December 2016, January 2017 and February 2017 as being scattered around a new normal average of approximately 4.25. The month of March 2016 however suggests that this new average might be short-lived, since the ratings have dropped back down to around 3.5. This explains the dip in the quarterly average for 2017-Q1. Whether this is simply a low-valued outlier, like that of June 2014, or is instead indicative of a forthcoming downward trend will depend on the performance of RMT in the immediate future. 
 
 ```{r echo=FALSE}
 perc1 <- round(length(subset(CapstoneDF$Ratings, ceiling(CapstoneDF$Ratings)==1))/dim(CapstoneDF)[1],2)
@@ -1103,7 +1099,7 @@ perc5 <- round(length(subset(CapstoneDF$Ratings, ceiling(CapstoneDF$Ratings)==5)
 ```
 
 
-In the next set of plots we will examine how the dispersion over ratings has changed over time. Figure \ref{fig:ratingsHist} displays the overall dispersion of the customer ratings, in which we can see that the majority of the ratings have had the values of 4 and 5, with respective percent frequencies of `r {perc4}` and `r {perc5}`. This comprises `r {(perc4 + perc5)*100}`% of the data. The remainder of the ratings have been 3 or less. \edit{Tie back to cumulative mean at the beginning of section.} 
+In the next set of plots we will examine how the distribution of ratings has changed over time. Figure \ref{fig:ratingsHist} displays the overall dispersion of the customer ratings, in which we can see that the majority of the ratings have had the values of 4 and 5, with respective percentages of `r {perc4*100}`% and `r {perc5*100}`%. This comprises `r {(perc4 + perc5)*100}`% of the data. The remainder of the ratings have been 3 or less. The fact that the overall distribution in ratings is skewed towards higher values is what causes the cumulative average for RMT to sit at `r {round(mean(CapstoneDF$Ratings), 2)}`, rather than at 3, which would be the expected value for a symmetrical distribution.
 
 ```{r echo=FALSE, fig.cap="Cumulative dispersion of numerical ratings \\label{fig:ratingsHist}", fig.pos="!ht", out.width="0.95\\textwidth"}
 t <- CapstoneDF %>% group_by(ceiling(Ratings)) %>% summarise(count = n())
@@ -1114,9 +1110,8 @@ global_p4 <- ggplot(CapstoneDF, aes(x=ceiling(Ratings))) + geom_bar(aes(y=..coun
 global_p4
 ```
 
-\edit{This plot needs better formatting}
 
-To better understand how these ratings are dispersed over time, we will break the data down by years. A histogram of the ratings percentages is shown in Figure \ref{fig:ratingsHistYear_dens}, while a scatter plot of the ratings percentages over time is presented in Figure \ref{fig:percentRatings_time}. The latter also includes a number of linear regression models that describe the trends of the ratings categories. These are presented in the form of dashed black lines and shaded error intervals. These plots allow us to observe the dispersion of the ratings for each of the years and understand how the ratings have changed over time. 
+To better understand how these ratings are dispersed over time, we will break the data down by years. A histogram of the rating fractions is shown in Figure \ref{fig:ratingsHistYear_dens}, while a scatter plot of the rating fractions over time is presented in Figure \ref{fig:percentRatings_time}. The latter also includes a number of linear regression models that describe the trends of the ratings categories. These models are presented in the form of dashed black lines and shaded error intervals. These plots allow us to observe the distribution of the ratings for each of the years and understand how the ratings have changed over time. 
 
 ```{r echo=FALSE,fig.cap="Density histogram of yearly customer ratings \\label{fig:ratingsHistYear_dens}", fig.pos="!ht", out.width="0.95\\textwidth"}
 global_p7 <- ggplot(CapstoneDF, aes(ceiling(Ratings), y=..density.., col=Year)) +
@@ -1173,35 +1168,15 @@ ggplot(percentData, aes(x=Year, y=percentRatings, group=Ratings)) +
   geom_smooth(data=subset(percentData, percentData$Ratings==4), method="lm", se=T, formula=y~poly(x,2, raw=TRUE), linetype="dashed", size=0.5, alpha=0.15, col="black") + 
   geom_smooth(data=subset(percentData, percentData$Ratings==5), method="lm", se=T, formula=y~poly(x,2, raw=TRUE), linetype="dashed", size=0.5, alpha=0.15, col="black") +
     geom_point(aes(col=Ratings,  size=countYear), alpha=0.9) + 
-  scale_size_continuous(range=c(3,7), guide = guide_legend(title = "Review Count")) + scale_fill_brewer(palette=1) +
+  scale_size_continuous(range=c(3,7), guide = guide_legend(title = "Review Count")) + scale_colour_brewer(palette="Dark2") +
   mytheme + labs(y="Review Fraction")
 ```
-\edit{Use differet colour palette for Figure \ref{fig:percentRatings_time} since it might be confusing with the histogram figure. DIfferent variables are being coloured.}
 
 
+We will go through each rating category separately in order to minimize confusion. In Figure \ref{fig:ratingsHist}, we can observe that 1-star ratings comprise `r {perc1*100}`% of the data overall. The majority of the 1-star ratings occured in 2014 and 2015, as shown in Figures \ref{fig:ratingsHistYear_dens} and \ref{fig:percentRatings_time}. The yearly trend of the 1-star ratings has been parabolic, as can be seen in Figure \ref{fig:percentRatings_time}. The peak occurred in 2015 and the number of 1-star ratings have been decreasing since then. For 2-star ratings, the story is slightly different. Though there are more 2-star ratings than 1-star ratings overall, they don't comprise a significant fraction of the data at `r {perc2*100}`%. Incidentally, the most 2-star ratings were given in 2013. They have since been decreasing and are now at their lowest point in 2017. This trend can be well approximated using a linear model with negative slope, as shown in Figure \ref{fig:percentRatings_time}. Moving on to the 3-star ratings, we can see that, though the number of ratings varies slightly from year to year, the overall trend is fairly constant. The percentage of 3-star ratings has not exhibited any real growth or decline over this period. For most of the restaurant's lifespan, 4 stars has been the restaurant's most common rating. This was especially the case from 2014 through to 2016, where 4-star ratings comprised around 40% of the ratings during those years. The percentage of 4-star ratings was slightly lower in 2013, but remained steady from 2014 to 2016. It is only in 2017 that the fraction of 4-star ratings has dipped below its 2013 value, resulting in an overall trend that can be approximated parabolically. This recent dip in the fraction of 4-star ratings might at first seem like a negative occurrence, but taking a look at the fraction of 5-star ratings tells a different story. In 2013, the number of 5-star ratings comprised around 30% of the ratings, but this fraction decreased in 2014 and 2015. This decrease in 5-star ratings and simulatenous increase in 1-star ratings over this period resulted in the low average value for 2015 that we observed in Figures \ref{fig:ratingsYear} and \ref{fig:ratingsQuarters}. From those Figures, we also noted that there was a strong growth trend in 2016. This can be explained by the fact that the percentage of 5-star ratings began to increase in 2016, while the fraction of 1- and 2-star ratings began to decrease. This trend continued into 2017 even as the fraction of 4-star ratings decreased. The surge in the percentage of 5-star ratings, coupled with the stability of 3-star ratings and the decrease in lower ratings has offset the effect of a decreasing fraction of 4-star ratings. This suggests that more customer have been rating RMT as 5 stars in the last few months, rather than 1, 2 or 4 stars.
 
-
-We will go through each rating category separately in order to minimize confusion. In Figure \ref{fig:ratingsHist}, we can observe that 1-star ratings only comprise `r {perc1*100}`% of the data overall. The majority of the 1-star ratings occured in 2014 and 2015, as shown in Figures \ref{fig:ratingsHistYear_dens} and \ref{fig:percentRatings_time}. The yearly trend of the 1-star ratings has been parabolic, as can be seen in Figure \ref{fig:percentRatings_time}.The peak occurred in 2015 and the number of 1-star ratings have been decreasing since then. For 2-star ratings, the story is slightly different. Though there are more 2-star ratings than 1-star ratings overall, they don't comprise a significant fraction of the data at `r {perc2*100}`%. Incidentally, the most 2-star ratings were given in 2013. They have since been decreasing and are now at their lowest point in 2017. This trend can be well approximated using a linear model with negative slope, as shown in Figure \ref{fig:percentRatings_time}. Moving on to the 3-star ratings, we can see that, though the number of ratings varies slightly from year to year, the overall trend is fairly constant. The percentage of 3-star ratings has not exhibited any real growth or decline over this period. For most of the restaurant's lifespan, 4 stars has been the restaurant's most common rating. This was especially the case in 2014 through 2016, where 4-star ratings comprised around 40% of the ratings during those years. The percentage of 4-star ratings was slightly lower in 2013, but remained steady from 2014 to 2016. It is only in 2017 that the fraction of 4-star ratings has dipped below its 2013 value, resulting in an overall trend that can be approximated parabolically. This recent dip in the fraction of 4-star ratings might at first seem like a negative occurrence, but taking a look at the fraction of 5-star ratings tells a different story. In 2013, the number of 5-star ratings comprised around 30% of the ratings, but this fraction decreased in 2014 and 2015. This decrease in 5-star ratings and simulatenous increase in 1-star ratings over this period resulted in the low average value for 2015 that we observed in Figures \ref{fig:ratingsYear} and \ref{fig:ratingsQuarters}. From those Figures, we also noted that there was a strong growth trend in 2016. This can be explained by the fact that the percentage of 5-star ratings began to increase in 2016, while the fraction of 1- and 2-star ratings began to decrease. This trend continued into 2017 even as the fraction of 4-star ratings decreased. The surge in the percentage of 5-star ratings, coupled with the stability of 3-star ratings the decrease in lower ratings has offset the effect of a decreasing fraction of 4-star ratings. We can explain this by suggesting that more customer have been rating RMT as 5 stars in the last few months, rather than 1,2 or 4 stars. \edit{Mention that values for 2013 and 2015 are less reliable because there is less data}
-
-\edit{I think this is most of it for the ratings analysis}
-
-<!--
-```{r echo=FALSE, eval=FALSE,fig.cap="\\label{fig:ratingsHistYear_count}", fig.pos="!ht", out.width="0.95\\textwidth"}
-global_p6 <- ggplot(CapstoneDF, aes(ceiling(Ratings), y=..count.., col=Year)) +
-  geom_histogram(binwidth=1, alpha=0.9) +
-  facet_grid(.~Year)
-global_p6
-```
--->
-
-<!--
-```{r echo=FALSE, eval=FALSE,fig.cap="\\label{fig:}", fig.pos="!ht", out.width="0.95\\textwidth"}
-global_p10 <- ggplot(percentData, aes(x=Year, y=percentRatings, group=Ratings)) + 
-  geom_point(aes(col=Ratings,  size=countYear), alpha=0.8) + 
-  scale_size_continuous(range=c(3,7))
-global_p10
-```
-
+This concludes the time-series analysis of the ratings. In Section \ref{S_reviews} we will attempt to understand some of the trends presented here by mining the text data from the online reviews.
+ 
 ```{r echo=FALSE, eval=FALSE, fig.cap="\\label{fig:}", fig.pos="!ht", out.width="0.95\\textwidth"}
 global_p11 <- global_p10 + 
   geom_smooth(data=subset(percentData, percentData$Ratings==1), method="lm", se=T, formula=y~poly(x,2, raw=TRUE), linetype="dashed", size=0.5, alpha=0.1, col="black") +
@@ -1228,7 +1203,7 @@ In the previous Section, we performed an analysis of the numerical ratings and o
 * What is the most common feedback that is returned by the restaurant's customers? 
 * What are the most important aspects of a customer's experience at RMT? 
 
-\ni We will dive into the customer review data using a number of methods in text analysis. The analysis will be broken down into two Sections. In Section \ref{S_textglobal}, we will perform a global analysis of the full set of customer review data in order to get an idea of the general sentiment towards RMT. Following this, in Section \ref{S_textgoodbad}, we will break the data down into a subset of positive and negative reviews to examine the different themes and sentiments associated with the different review subsets. The analysis will be performed using the following R packages: `tm`, `wordcloud`, and `syuzhet` \edit{not sure if I will use this last one?}. Additionally, I have written a function `TextAnalysis()` that performs the main data wrangling steps of the text analysis. For details on this function, refer to the \edit{R file}.
+\ni We will dive into the customer review data using a number of methods in text analysis. The analysis will be broken down into two Sections. In Section \ref{S_textglobal}, we will perform a global analysis of the full set of customer review data in order to get an idea of the general sentiment towards RMT. Following this, in Section \ref{S_textgoodbad}, we will break the data down into a subset of positive and negative reviews to examine the different themes and sentiments associated with the different review subsets. The analysis will be performed using the following R packages: `tm`, `wordcloud`, and `syuzhet`. Additionally, I have written a function `TextAnalysis()` that performs the main data wrangling steps of the text analysis. For details on this function, refer to the [RMTAnalysis.R](https://github.com/abeaucha/FoundationsofDataScience/blob/master/CapstoneProject/Deliverables/RMTAnalysis.R)) file. 
 
 ```{r}
 library(tm)
@@ -1285,11 +1260,10 @@ TextAnalysis <- function(dataset, use.sentences=TRUE){
 We will begin the overall text analysis of RMT reviews by calling the `TextAnalysis()` function on the full data set. 
 
 ```{r}
-#Word analysis
 Capstone_wA <- TextAnalysis(CapstoneDF)
 ```
 
-\ni The first thing that we can examine is the most frequent words from the customer reviews. This is depicted visually as a word cloud in Figure \ref{fig:wordcloud_global}, where the larger words are those with the higher number of occurrences. Another way to examine this data is to take a look at what fraction of reviews contain these common words, as shown in Figure \ref{fig:revPercentage}.
+\ni The first thing that we can examine is the set of words that occur most frequently within the customer reviews. This data is depicted visually as a word cloud in Figure \ref{fig:wordcloud_global}, where the larger words are those with the higher number of occurrences. Another way to examine this data is to take a look at what fraction of reviews contain these common words, as shown in Figure \ref{fig:revPercentage}.
 
 <!--
 ```{r}
@@ -1329,7 +1303,7 @@ ggplot(df_global, aes(x=word, y=reviewFraction)) +
   geom_text(aes(label=reviewFraction), vjust=2, fontface="bold") + theme(axis.text.x =element_text(angle=90)) + mytheme + labs(x="Word", y="Review Fraction")
 ```
 
-\ni From this combined output, we can see that the words that show up most often in all of the customer reviews are "food", "good", "great", and "service". We can immediately derive a number of insights from these results. The first is that food is the single most important aspect of the restaurant, the word "food" occurring `r {Capstone_wA$wordFreq["food"]}` times in `r {df_global$reviewFraction[df_global$word=="food"]*100}`% of the online reviews. This is the one word that is mentioned more than any other and so the aspects of a customer's experience related to food will be the most influential in their perception of the experience. Since the data has not yet been parsed according to the quality of ratings, we cannot tell whether the mention of food is placed within a positive or negative context. This will be explored in detail below. However we do have some potential insight into this, since the next most common words are "good" and "great". These are both terms indicating positive sentiment. The fact that these two words are the second and third most common words in the customer reviews indicate that the overall sentiment towards the customers' experience is positive. This is in line with the ratings analysis from Section \ref{S_ratings}, in which we discovered that overall, the restaurant was rated favourably. In Figure \ref{fig:wordcloud_global}, we can also see that words such as "delicious" and "excellent" are fairly common, which also suggests an overall positive sentiment towards the food. At this stage, it is important to maintain a degree of criticality towards the occurrence of words such as "good" and "great", since their frequency of occurrence does not take into account instances where the words are preceded by qualifiers or words indicating negation, e.g. "pretty good", "not good", etc. This will be addressed in Section \ref{S_textgoodbad}. Moving on, the second most important aspect of the customers' experience is the restaurant's service. The word "service" is the fourth most common word in the analysis. However, as seen in Figure \ref{fig:revPercentage}, it actually occurs in `r {df_global$reviewFraction[df_global$word=="service"]*100}`% of reviews, second only to the word "food". Furthermore, from the word cloud in Figure \ref{fig:wordcloud_global} we can also see that the words "staff" and "server" occur with a large frequency as well. This suggests that the customer's experience related to RMT's service and staff will have a large impact, either negative or positive, on their perception. Words such as "nice", "friendly" and "attentives", which show up in the word cloud analysis, suggest that, overall, the customers' experience of the restaurant's service is positive. 
+From this combined output, we can see that the words that show up most often in all of the customer reviews are "food", "good", "great", and "service". We can immediately derive a number of insights from these results. The first is that food is the single most important aspect of the restaurant, the word "food" occurring `r {Capstone_wA$wordFreq["food"]}` times in `r {df_global$reviewFraction[df_global$word=="food"]*100}`% of the online reviews. This is the one word that is mentioned more than any other and so the aspects of a customer's experience related to food will be the most influential in their perception of the experience. Since the data has not yet been parsed according to the quality of ratings, we cannot tell whether the mention of food is placed within a positive or negative context. This will be explored in detail below. However we do have some potential insight into this, since the next most common words are "good" and "great". These are both terms indicating positive sentiment. The fact that these two words are the second and third most common words in the customer reviews indicate that the overall sentiment towards the customers' experience is positive. This is in line with the ratings analysis from Section \ref{S_ratings}, in which we discovered that overall, the restaurant was rated favourably. In Figure \ref{fig:wordcloud_global}, we can also see that words such as "delicious" and "excellent" are fairly common, which also suggests an overall positive sentiment towards the food. At this stage, it is important to maintain a degree of criticality towards the occurrence of words such as "good" and "great", since their frequency of occurrence does not take into account instances where the words are preceded by qualifiers or words indicating negation, e.g. "pretty good", "not good", etc. This will be addressed in Section \ref{S_textgoodbad}. Moving on, the second most important aspect of the customers' experience is the restaurant's service. The word "service" is the fourth most common word in the analysis. However, as seen in Figure \ref{fig:revPercentage}, it actually occurs in `r {df_global$reviewFraction[df_global$word=="service"]*100}`% of reviews, second only to the word "food". Furthermore, from the word cloud in Figure \ref{fig:wordcloud_global} we can also see that the words "staff" and "server" occur with a large frequency as well. This suggests that the customer's experience related to RMT's service and staff will have a large impact, either negative or positive, on their perception. Words such as "nice", "friendly" and "attentive", which show up in the word cloud analysis, suggest that, overall, the customers' experience of the restaurant's service is positive. 
 
 This analysis allows us to gain some insight into what customer are talking about in their reviews. In order to dive deeper into the data, we examine what kinds of words are usually associated with these common words within the reviews. This is done using the `tm::findAssocs()` function. Let's begin with the word "food". 
 
@@ -1346,21 +1320,25 @@ sample(reds_sentences[grepl("[Rr][Ee][Dd][Ss]", reds_sentences)], 10)
 findAssocs(Capstone_wA$TDM, "food", .18)
 ```
 
-\ni The strongest association is with the word "service", which reinforces the idea that RMT's food nad service are its two most important characteristics. The next strongest associations are "good", "great" and "quality". The word "quality" suggests that reviewers often comment on the quality of the food they buy, while the words "good" and "great" speak to the characterization of this quality. The fact that "good" and "great" are strongly associated with "food" are a positive sign since, as mentioned previously, these are generally positive terms. However we notice that "good" has a slightly stronger association with "food" than "great", which means that overall the quality could be improved, since "great" is understood to express strong positive sentiment than "good". As mentioned above, we must maintain some skepticism since the data related to "good" and "great" can possibly include terms indicating negation and qualification. Next we will look into the associations with the word "service".  
+\ni The strongest association for "food" is with the word "service", which reinforces the idea that RMT's food and service are its two most important characteristics. The next strongest associations are "good", "great" and "quality". The word "quality" suggests that reviewers often comment on the quality of the food they buy, while the words "good" and "great" speak to the characterization of this quality. The fact that "good" and "great" are strongly associated with "food" are a positive sign since, as mentioned previously, these are generally positive terms. However we notice that "good" has a slightly stronger association with "food" than "great", which means that overall the quality could be improved, since "great" is understood to express strong positive sentiment than "good". As mentioned above, we must maintain some skepticism since the data related to "good" and "great" can possibly include terms indicating negation and qualification. 
+
+Next we will look into the associations with the word "service".  
 
 
 ```{r}
 findAssocs(Capstone_wA$TDM, "service", 0.15)
 ```
 
-\ni Here we find that the strongest association is "slow". It is clear that this suggests that the customers often experience slow service. This is a clear point of improvement for RMT. The next word is "food", which is to be expected from the results above. Following this we find the words "great", "friendly", and "excellent". This is encouraging as it suggests that despite being slow, the service at RMT is of high quality and the waitstaff are friendly.
+\ni Here we find that the strongest association is "slow". It is clear that this suggests that the customers often experience slow service. This is a clear point of improvement for RMT. The next word is "food", which is to be expected from the results above. Following this we find the words "great", "friendly", and "excellent". This is encouraging as it suggests that despite being slow, the service at RMT is of high quality and the waitstaff are friendly. Finally, looking into the associations for words "good" and "great", we find a number of results.
 
 
 ```{r}
 findAssocs(Capstone_wA$TDM, c("good","great"), c(0.15, 0.10))
 ```
 
-\ni Finally, looking into the associations for words "good" and "great", we find a number of results. Both of these words are strongly associated with food, as is expected from above. The word "great" is also associated with the words "service", "staff" and "atmosphere", while the word "good" is associated with "decoration". The associations with "atmosphere" and "decoration" suggest that consumers enjoy the decor and ambiance of the restaurant. Note that these results also return some artefacts of the algorithm that have no real generalizable meaning. 
+\ni Both of these words are strongly associated with food, as is expected from above. The word "great" is also associated with the words "service", "staff" and "atmosphere", while the word "good" is associated with "decoration". The associations with "atmosphere" and "decoration" suggest that consumers enjoy the decor and ambiance of the restaurant. Note that these results also return some artefacts of the algorithm that have no real generalizable meaning. 
+
+
 Another word that is mentioned frequently in the customer reviews is the word "reds". Though this might simply be a result of reviewers mentioning the restaurant's name in their comments, we can get a better idea of how this word is contextualized by examining some of its associations. 
 
 ```{r}
@@ -1369,7 +1347,7 @@ findAssocs(Capstone_wA$TDM, "reds", 0.20)
 
 ```
 
-\ni The words most commonly associated with "reds" are "midtown", "tavern", and "adelaide". The first two suggest that "reds" is used mainly as a statement of the restaurant's name within the review comments. However, the third word, "adelaide", is a reference to RMT's other location, [REDS Wine Tavern](http://www.redswinetavern.com/), on Adelaide Street West in Toronto. This suggests that there is a degree of brand recognition among RMT's clientele. References to REDS Wine Tavern imply that customers have had previous experiences at this restaurant before trying the newer location of RMT. 
+\ni The words most commonly associated with "reds" are "midtown", "tavern", and "adelaide". The first two suggest that "reds" is used mainly as a statement of the restaurant's name within the review comments. However, the third word, "adelaide", is a reference to RMT's other location, [REDS Wine Tavern](http://www.redswinetavern.com/), on Adelaide Street West in Toronto, indicating that there is a degree of brand recognition among RMT's clientele. References to REDS Wine Tavern imply that customers have had previous experiences at this restaurant before trying the newer location of RMT. 
 
 The final way in which we will examine the review data is by performing a sentiment analysis on it. The purpose of this analysis is to identify key words within the data that are associated with basic emotions and sentiments. These word-sentiment and word-emotion associations are based on the [NRC Word-Emotion Association Lexicon](http://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm). R provides functions for performing this type of analysis in the `syuzhet` package. The general idea is that each review will contain a number of words expressing different emotions and sentiments. These words can be tallied and plotted to show the distribution of emotions and sentiments within the data. This is shown for the review data in Figure \ref{fig:sentiments}.
 
@@ -1392,7 +1370,7 @@ ggplot(data = sentimentTotals[1:8,], aes(x = sentiment, y = count)) +
 ```
 
 
-\ni Based on this analysis, the strongest emotions associated with customers' experience of RMT are joy, trust, and anticipation. \edit{I don't know what to say about this}.
+Based on this analysis, the strongest emotions associated with customers' experience of RMT are joy, trust, and anticipation. That joy is the strongest sentiment expressed in the reviews reinforces the analysis so far that RMT provides an experience of high quality for most customers. The sentiment of trust indicates that REDS has a strong brand value and credibility. The clientele trusts the restaurant and expect to be satisfied with great food and service when they visit. This is also outlined in that the next most common sentiment is that of anticipation. Anticipation speaks to how the guests feel before going to RMT, but also how they feel afterwards. Customers may be excited to dine out at RMT based on the restaurant's strong brand and previous experiences at REDS Wine Tavern. The sentiment of anticipation can also indicate that guests expect more value for their money when visiting RMT. 
 
 This concludes our analysis of the full set of customer review data. We will now mine more deeply into the data by examining how the data varies for positive and negative reviews. 
 
@@ -1537,25 +1515,27 @@ findAssocs(CapstoneNeg_wA$TDM, "menu", 0.15)
 
 \ni The strongest association to the word "menu" within the positive reviews is the word "winterlicious", which refers to a food festival that occurs during the winter in Toronto. During this festival, a large number of restaurants create prix-fixe menus that showcase some of the restaurant's food. Additional associations to the word "menu" within the positive reviews include the word "fixe" and "prix", which may refer to the Winterlicious menu, but might also suggest a reference to the relatively new prix-fixe menu at RMT. These associations imply that customers have had a positive experiences with these different non-standard menus at RMT. The associations to "menu" in the negative reviews are not as immediately descriptive, though interestingly, the word "summerlicious" makes an appearance, suggesting that the Summerlicious prix-fixe menus have not been received as favourably as their winter counterpart.
 
-```{r}
-length(CapstoneDF_neg$Reviews[grepl("[Ss]ummerlicious", CapstoneDF_neg$Reviews)])
-length(CapstoneDF_neg$Reviews[grepl("[Ww]interlicious", CapstoneDF_neg$Reviews)])
-```
-
 Next we will take a look at the associations for words related to the restaurant's service, such as "service", "staff" and "server", beginning with the positive reviews. 
 
 
 ```{r}
-findAssocs(CapstonePos_wA$TDM, c("service", "staff", "server"), c(0.15,0.19,0.16))
+findAssocs(CapstonePos_wA$TDM, 
+           c("service", "staff", "server"),
+           c(0.15,0.19,0.16))
 ```
 
 \ni From this output, we see that the word "slow" is one of the words that is most associated with the word "service". This indicates that the speed of the service at RMT is an important point of concern. Beyond this however, "service" is associated with words indicating strong positive sentiments such as "great" and "excellent", as well as words that speak to the quality of the service, such as "friendly" and "attentive". These words are also associated with the words "staff" and "server". Other words that show up are "engage", "interacted", and "helped". These associations suggest that customers have a positive experience related to service when the waitstaff is present in their interactions with the customer, is friendly towards them, and is willing to go above and beyond for them. Next we will look into the negative reviews. 
 
 ```{r}
-findAssocs(CapstoneNeg_wA$TDM, c("service", "staff", "server"), c(0.19, 0.2, 0.2))
+findAssocs(CapstoneNeg_wA$TDM, 
+           c("service", "staff", "server"), 
+           c(0.19, 0.2, 0.2))
 ```
 
 \ni We find once again that the word "slow" is strongly associated with "service". Most of the words that show up in this case are not as informative as the ones for the positive reviews, suggesting that the customers' experience related to service wasn't extremely terrible, but wasn't anything special either. Associated with the word "staff" however are words such as "chatting" and "milling", indicating experiences in which the customers observed the waitstaff socializing and being inattentive rather than tending to their guests. 
+
+In this Section we extracted the main insights from the online customer reviews, both globally as well as in negative and positive reviews. In the following Section, I will summarise the work that I have done and provide some recommendations and potential directions for future work.
+
 
 
 #Summary, Recommendations and Future Directions {#S5}
@@ -1568,20 +1548,20 @@ Over the course of this report I have elaborated on some of the tools and method
 
 \ni We were able to find some answers to these questions by analyzing the web data. In Section \ref{S_ratings}, we examined in detail how the restaurant's ratings changed over time. The overall average rating for RMT was `r {round(mean(CapstoneDF$Ratings),2)}`. Looking at the yearly data, we found that the ratings began around this average value, hit their lowest value in 2015 and are now at all-time high in 2017, with a mean rating of `r {round(mean(CapstoneDF$Ratings[CapstoneDF$Year=="2017"]),2)}`. The quarterly ratings data gave us more insight into this, where we observed no real movement in 2014, an initial surge followed by a steady decline in 2015, reaching a low in 2015-Q4, and a subsequent period of tremendous growth in 2016. The restaurant's highest quarterly ratings were in 2016-Q4. The first quarter of 2017 has been met with a slight decline in ratings. The monthly ratings data allowed us to observe that this decline has been due to poor ratings in March 2017. In the remainder of Section \ref{S_ratings} we examined the different distributions of ratings over the years. In particular, we found that since 2016, the ratings have been characterized by an increasing fraction of 5-star ratings and a decreasing fraction of 1-, 2-, and 4-star ratings. This is positive as it indicates that more customer are rating the restaurant favourably. The significant improvements in ratings made in 2016 are a positive sign for the restaurant's future. Ideally we would like to extend this trend into the future by continuously improving the important aspects of customer experience. Another fairly positive outcome is one in which the ratings in the near future remain stable at a new normal value of around `r {round(mean(CapstoneDF$Ratings[CapstoneDF$Year=="2017"]),2)}`. The ratings for the month of March 2017 however suggest that we are facing the possibility of a new downward trend. Another possible way to interpret this lower average is as an outlier in the data. This is not unheard of as something similar happened in June 2014. Ultimately, the future trends of the restaurant's ratings will depend on the decisions that are made at RMT. It is up to the management and the staff at the restaurant whether this recent low becomes an outlier, or the beginning of a negative trend. In order to ensure a favourable outcome, such as a continuing upward trend or a period of stability around a new high, it is important to improve upon the restaurant's weaknesses and to effectively leverage its strengths. These different aspects of the restaurant can be hinted at by mining the text data from the customer reviews. 
 
-In Section \ref{S_reviews}, we performed a text and sentiment analysis of the customer review data in order to derive insights pertaining to the positive and negative aspects of the customer experience at RMT, as well as the restaurant's strengths and weaknesses. We began with a global analysis of the full set of review data, in which we found that the two most important aspects of a guest's experience at the restaurant are the food and the service. Positive or negative experiences related to these two aspects will make or break a customer's experience. Overall, the sentiment associated with these aspects of the restaurant was positive. The food was associated with words such as "good", "great", and "quality", and the service with words such as "great", "friendly" and "excellent". We did find however that the service was also strongly associated with the word "slow", suggesting that improvements can be made in this regard. Some positive sentiments were additionally associated with words like "atmosphere" and "decoration", implying that the customer enjoys the physical aspects of RMT. \edit{Mention highlights of sentiment analysis that I haven't done yet}. After performing an analysis on the full data set, we subsequently divided the data into positive ($> 3$ stars) and negative ($\leq 3$ stars) reviews to mine for deeper insight. The positive data subset comprised `r {round(dim(CapstoneDF_pos)[1]/dim(CapstoneDF)[1],2)*100}`% of the full data set, while the negative subset comprised `r {round(dim(CapstoneDF_neg)[1]/dim(CapstoneDF)[1],2)*100}`%. In parsing the data in this way, we found that food and service were still the primary aspects of RMT that were being commented on. These were the aspects of the customers' experience that, when executed properly lead to positive reviews, and when executed poorly lead to negative reviews. During the analysis, we also found that positive sentiments were associated with special menus at RMT such as the Winterlicious menu or the more recent prix-fixe menu. In terms of the service, positive reviews contained associations to words such as "friendly", "attentive", "engage", "delightful". Negative reviews, though they still presented an association of service to "friendly", also resulted in associations to words like "chatting" and "milling". These results, combined with association of the word "slow" with service in both positive and negative reviews, suggest that customers have a positive experience when they feel they are being tended to and given positive attention, and a negative experience when they feel ignored, or when they feel the waitstaff is preoccupied with something other than their work. From the comparative analysis of positive and negative reviews, we also found that the word "food" was associated with a larger fraction of negative reviews, while the word "service" was associated with larger fraction of positive reviews. Additionally, a significant fraction of positive reviews mentioned words like "staff" and "friendly", while these words were not present in as significant a fraction of negative reviews. Finally, a significant fractino of positive reviews contained words expressing greater positive sentiments, such as "great", "excellent", "really", and "delicious". The abundance of positive reviews over negative reviews and the significant fractions of positive reviews containing words related to service suggest that the service at RMT is one of its greatest strengths. This is especially true in terms of how the waitstaff relate to the guests. The one aspect of service that has been tagged for clear improvement is the speed. Slow service appears to be a common complaint that is put forth by the customers. The other point of improvement related to service the work-orientation of the employees. When it comes to food, the reviews are mixed. Some of the customers have had positive experiences related to the food at RMT, while others have had negative experiences. A point of focus for the culinary aspects of RMT would be to ensure that the quality is consistent regardless of the kitchen staff and menu. In order to ensure that the ratings and review for RMT continue to exhibit a positive trend, it is important to make decisions that will have a positive impact on the restaurant. To that end I will make a number of recommendations based on the results obtained from the data analysis.  
+In Section \ref{S_reviews}, we performed a text and sentiment analysis of the customer review data in order to derive insights pertaining to the positive and negative aspects of the customer experience at RMT, as well as the restaurant's strengths and weaknesses. We began with a global analysis of the full set of review data, in which we found that the two most important aspects of a guest's experience at the restaurant are the food and the service. Positive or negative experiences related to these two aspects will make or break a customer's experience. Overall, the sentiment associated with these aspects of the restaurant was positive. The food was associated with words such as "good", "great", and "quality", and the service with words such as "great", "friendly" and "excellent". We did find however that the service was also strongly associated with the word "slow", suggesting that improvements can be made in this regard. Some positive sentiments were additionally associated with words like "atmosphere" and "decoration", implying that the customer enjoys the physical aspects of RMT. After performing an analysis on the full data set, we subsequently divided the data into positive ($> 3$ stars) and negative ($\leq 3$ stars) reviews to mine for deeper insight. The positive data subset comprised `r {round(dim(CapstoneDF_pos)[1]/dim(CapstoneDF)[1],2)*100}`% of the full data set, while the negative subset comprised `r {round(dim(CapstoneDF_neg)[1]/dim(CapstoneDF)[1],2)*100}`%. In parsing the data in this way, we found that food and service were still the primary aspects of RMT that were being commented on. These were the aspects of the customers' experience that, when executed properly lead to positive reviews, and when executed poorly lead to negative reviews. During the analysis, we also found that positive sentiments were associated with special menus at RMT such as the Winterlicious menu or the more recent prix-fixe menu. In terms of the service, positive reviews contained associations to words such as "friendly", "attentive", "engage", "delightful". Negative reviews, though they still presented an association of service to "friendly", also resulted in associations to words like "chatting" and "milling". These results, combined with association of the word "slow" with service in both positive and negative reviews, suggest that customers have a positive experience when they feel they are being tended to and given positive attention, and a negative experience when they feel ignored, or when they feel the waitstaff is preoccupied with something other than their work. From the comparative analysis of positive and negative reviews, we also found that the word "food" was associated with a larger fraction of negative reviews, while the word "service" was associated with larger fraction of positive reviews. Additionally, a significant fraction of positive reviews mentioned words like "staff" and "friendly", while these words were not present in as significant a fraction of negative reviews. Finally, a significant fraction of positive reviews contained words expressing greater positive sentiments, such as "great", "excellent", "really", and "delicious". The abundance of positive reviews over negative reviews and the significant fractions of positive reviews containing words related to service suggest that the service at RMT is one of its greatest strengths. This is especially true in terms of how the waitstaff relate to the guests. The one aspect of service that has been tagged for clear improvement is the speed. Slow service appears to be a common complaint that is put forth by the customers. The other point of improvement related to service the work-orientation of the employees. When it comes to food, the reviews are mixed. Some of the customers have had positive experiences related to the food at RMT, while others have had negative experiences. A point of focus for the culinary aspects of RMT would be to ensure that the quality is consistent regardless of the kitchen staff and menu. In order to ensure that the ratings and review for RMT continue to exhibit a positive trend, it is important to make decisions that will have a positive impact on the restaurant. To that end I will make a number of recommendations based on the results obtained from the data analysis.  
 
-1. Ensure that the quality of the food is consistently great. Do this by randomly sampling different items on the menu, taking detailed notes, and tracking the performance of the kitchen staff responsible for preparing the food items. 
-2. Address the slowness of service by ensuring that times associated with different steps of service are strictly met. Guests should not be waiting to be greeted or to place an order. The use of an expeditor in the kitchen will be useful to ensuring that bill times are met. This is especially important in down times, when kitchen staff tends to move more slowly. Should also be enforced for drinks. 
-3. Friendliness and approachability of wait staff is one of RMT's greatest strengths. Implement a program that focuses on developing these qualities in the wait staff. 
-4. Keep using prix-fixe menu as this is associated with positive reviews. 
-5. RMT has strong from RWT. Might be beneficial to engage in below the line marketing campaigns to reach target clientele. 
-6. Ensure that wait staff is performing as effectively as they could be. Lots of communication and encouraging critical feedback to ensure continued improvement. Keep track of how staff are performing, address concerns regarding poor performance as they arise, note for improvements, cut ties if improvement is not happening. 
-7. Trust = brand loyalty -> loyalty promotions?
-8. Anticipation = ? 
+1. Ensure that the quality of the food is consistently great. One way of doing this could be by randomly sampling different items on the menu, taking detailed notes, and tracking the performance of the kitchen staff responsible for preparing those food items. 
+2. Address the slowness of service by ensuring that times associated with different steps of service are strictly met. Guests should not be waiting to be greeted or to place an order. The use of an expeditor in the kitchen will be useful for ensuring that bill times are met. This is especially important in down times, when staff tends to move more slowly. 
+3. Friendliness and approachability of the waitstaff is one of RMT's greatest strengths. Implement a program that focuses on developing these qualities in the staff. 
+4. Keep providing RMT's prix-fixe menu as this is associated with positive reviews. 
+5. RMT has strong brand recognition and trust from clientele. It might be beneficial to engage in below the line marketing campaigns to reach target customers, while providing a loyalty program to those who visit regularly.
+6. Ensure that the waitstaff is performing as effectively as they could be by communicating effectively and providing critical feedback to ensure continued improvement. Keep track of how staff are performing, address concerns regarding poor performance as they arise, and maintain strict standards.
 
-\ni Using recommendations such as these, RMT will hopefully experience 2017 as a period of continued improvement, or one of steady positive reviews.  
+\ni Using recommendations such as these, RMT will hopefully experience 2017 as a period of continued improvement.  
 
-This project has allowed me to develop the ground work for acquiring, cleaning, and analyzing customer reviews from a variety of websites. I have taken the time to analyze certain aspects of the review data, such as the evolution of the restaurant's ratings and common sentiments expressed in reviews over the restaurant's history. Given the volume of the available data, there are still a lot of ways in which we might analyze the data to mine for deeper insight. Future directions related to this project might involve a text analysis of specific periods of time in the restaurant's history in order to better understand trends in the time series data. For instance, we might strive to answer the following questions: Why were the ratings low in June 2014? Why were they low in 2015? What aspects of the customer experience were associated with the improvements in 2016? Why did the quality of the ratings fall in March 2017? In addition to this, it might be informative to perform a comparative analysis of the review data for RMT and that for its sister restaurant, REDS Wine Tavern, or one of its close competitors, such as [Scaddabush](http://www.scaddabush.com/). This could provide insight into what is working for these other restaurants that might also work for RMT. Another, more technical, direction might be to develop a logistic regression model to predict the numerical rating of a customer review based on the existence of certain words within the review. \edit{Write closing remarks}
+This project has allowed me to develop the ground work for acquiring, cleaning, and analyzing customer reviews from a variety of websites. I have taken the time to analyze certain aspects of the review data, such as the evolution of the restaurant's ratings and common sentiments expressed in reviews over the restaurant's history. Given the volume of the available data, there are still a lot of ways in which we might analyze the data to mine for deeper insight. Future directions related to this project might involve a text analysis of specific periods of time in the restaurant's history in order to better understand trends in the time series data. For instance, we might strive to answer the following questions: Why were the ratings low in June 2014? Why were they low in 2015? What aspects of the customer experience were associated with the improvements in 2016? Why did the quality of the ratings fall in March 2017? In addition to this, it might be informative to perform a comparative analysis of the review data for RMT and that for its sister restaurant, REDS Wine Tavern, or one of its close competitors, such as [Scaddabush](http://www.scaddabush.com/). This could provide insight into what is working for these other restaurants that might also work for RMT. Another, more technical, direction might be to develop a logistic regression model to predict the numerical rating of a customer review based on the existence of certain words within the review.
+
+\edit{Write closing remarks}
 
 
 
